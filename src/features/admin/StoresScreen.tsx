@@ -16,7 +16,7 @@ export function storeAddress(store: Pick<StoreRow, "address_line_1" | "address_l
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <View style={{ flex: 1, minWidth: 64 }}>
+    <View style={{ width: "29%", flexGrow: 0 }}>
       <Text variant="bodyStrong" tabular numberOfLines={1}>
         {value}
       </Text>
@@ -50,14 +50,14 @@ function StoreCard({ store, index, onClose, onReopen }: { store: StoreRow; index
         <Row gap={2} wrap>
           {store.is_active ? <Badge label="Open" tone="success" /> : <Badge label="Closed" tone="danger" icon="lock-closed" />}
           {store.is_discoverable ? <Badge label="On WowCity" tone="info" icon="globe-outline" /> : <Badge label="Hidden from buyers" tone="neutral" icon="eye-off-outline" />}
-          {store.invoice_prefix ? <Badge label={`Bills ${store.invoice_prefix}/…`} tone="neutral" icon="receipt-outline" /> : null}
+          {store.invoice_prefix ? <Badge label={`Bill prefix ${store.invoice_prefix}`} tone="neutral" icon="receipt-outline" /> : null}
         </Row>
         {store.stats ? (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.space[3], padding: theme.space[3], borderRadius: theme.radius.control, backgroundColor: theme.colors.surfaceSunken }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", rowGap: theme.space[3], columnGap: theme.space[3], padding: theme.space[3], borderRadius: theme.radius.control, backgroundColor: theme.colors.surfaceSunken }}>
             <Stat label="Sales today" value={formatMoneyShort(store.stats.salesToday)} />
-            <Stat label="Bills" value={formatNumber(store.stats.billsToday)} />
-            <Stat label="Units" value={formatNumber(store.stats.units)} />
-            <Stat label="Items" value={formatNumber(store.stats.skus)} />
+            <Stat label="Bills today" value={formatNumber(store.stats.billsToday)} />
+            <Stat label="Units in stock" value={formatNumber(store.stats.units)} />
+            <Stat label="Items in stock" value={formatNumber(store.stats.skus)} />
             <Stat label="Staff" value={formatNumber(store.stats.staff)} />
           </View>
         ) : null}

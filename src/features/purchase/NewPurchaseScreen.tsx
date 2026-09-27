@@ -368,7 +368,7 @@ export function NewPurchaseScreen() {
               </Row>
             </View>
             <View style={{ flexGrow: 1, flexBasis: 150 }}>
-              <Input label="Supplier invoice no." value={draft.invoice} onChangeText={(invoice) => draft.set({ invoice: invoice.slice(0, 40) })} placeholder="e.g. RT/2026/118" autoCapitalize="characters" icon="document-text-outline" />
+              <Input label="Invoice no." value={draft.invoice} onChangeText={(invoice) => draft.set({ invoice: invoice.slice(0, 40) })} placeholder="e.g. RT-118" accessibilityLabel="Supplier invoice number" autoCapitalize="characters" icon="document-text-outline" />
             </View>
           </View>
         </Card>

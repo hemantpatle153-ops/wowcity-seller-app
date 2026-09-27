@@ -11,7 +11,8 @@ import { formatMoney, formatQty } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { uuid } from "@/lib/id";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Badge, Button, Card, Chip, confirm, EmptyState, ErrorState, Header, Icon, Input, Row, Screen, SectionTitle, SkeletonCards, Stack, Stepper, Text, toast } from "@/ui";
+import { Badge, Button, Card, Chip, confirm, EmptyState, ErrorState, Header, Icon, Input, Row, Screen, SectionTitle, SkeletonCards, Stack, Text, toast } from "@/ui";
+import { QtyButton } from "./ItemCard";
 import { returnableQty, usePurchaseBill } from "./PurchaseDetailScreen";
 
 const reasons = ["Damaged", "Defective", "Wrong size", "Wrong colour", "Excess stock"];
@@ -141,7 +142,19 @@ export function ReturnScreen({ id }: { id: string }) {
                     <Badge label={`${formatQty(item.inStock)} in stock`} tone={item.inStock < left ? "warning" : "neutral"} icon="layers-outline" />
                   </Row>
                   {max > 0 ? (
-                    <Stepper value={value} min={0} max={max} onChange={(n) => setQty({ ...qty, [item.id]: n })} label={`Return quantity for ${item.name}`} />
+                    <View
+                      accessibilityRole="adjustable"
+                      accessibilityLabel={`Return quantity for ${item.name}: ${value}`}
+                      accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
+                      onAccessibilityAction={(e) => setQty({ ...qty, [item.id]: Math.min(max, Math.max(0, value + (e.nativeEvent.actionName === "increment" ? 1 : -1))) })}
+                      style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+                    >
+                      <QtyButton icon="remove" size={48} label="One less" disabled={value <= 0} onPress={() => setQty({ ...qty, [item.id]: Math.max(0, value - 1) })} />
+                      <Text variant="title" tabular weight="700" style={{ minWidth: 36, textAlign: "center" }}>
+                        {formatQty(value)}
+                      </Text>
+                      <QtyButton icon="add" size={48} label="One more" disabled={value >= max} onPress={() => setQty({ ...qty, [item.id]: Math.min(max, value + 1) })} />
+                    </View>
                   ) : (
                     <Text variant="small" color="textMuted">
                       {left <= 0 ? "All returned" : "None in stock to return"}

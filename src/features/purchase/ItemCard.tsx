@@ -30,7 +30,7 @@ export function MoneyInput(props: Omit<InputProps, "onChangeText"> & { onChangeT
 }
 
 /** Compact − / + inside the quantity field (the whole row stays a 48 dp target). */
-function QtyButton({ icon, label, onPress, disabled }: { icon: "add" | "remove"; label: string; onPress: () => void; disabled?: boolean }) {
+export function QtyButton({ icon, label, onPress, disabled, size = 40 }: { icon: "add" | "remove"; label: string; onPress: () => void; disabled?: boolean; size?: number }) {
   const theme = useTheme();
   return (
     <PressableScale
@@ -42,7 +42,7 @@ function QtyButton({ icon, label, onPress, disabled }: { icon: "add" | "remove";
       accessibilityLabel={label}
       hitSlop={6}
       scaleTo={0.88}
-      style={{ width: 40, height: 36, borderRadius: theme.radius.control - 2, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.surfaceSunken }}
+      style={{ width: size, height: size === 40 ? 36 : size, borderRadius: theme.radius.control - 2, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.surfaceSunken }}
     >
       <Icon name={icon} size={20} color="text" />
     </PressableScale>

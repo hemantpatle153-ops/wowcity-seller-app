@@ -77,7 +77,7 @@ export function PurchaseDetailScreen({ id }: { id: string }) {
             {printable ? (
               <Button label="Print labels" icon="barcode-outline" variant={canReturn ? "secondary" : "primary"} size="lg" style={{ flex: 1 }} onPress={() => router.push(`/labels?job=${data.labelJobId}`)} />
             ) : null}
-            {canReturn ? <Button label="Return to supplier" icon="return-up-back-outline" size="lg" style={{ flex: 1 }} onPress={() => router.push(`/purchases/${data.id}/return`)} /> : null}
+            {canReturn ? <Button label="Return" accessibilityLabel="Return to supplier" icon="return-up-back-outline" size="lg" style={{ flex: 1 }} onPress={() => router.push(`/purchases/${data.id}/return`)} /> : null}
           </View>
         ) : undefined
       }
