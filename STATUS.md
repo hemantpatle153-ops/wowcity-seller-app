@@ -27,8 +27,6 @@ _Last updated: 27 Sep 2026 (autonomous build session). Every feature area from t
 
 - Hardware testing on real phones (camera scanning speed, SQLite with a large catalogue, print dialog on Android/iOS).
 - Bluetooth ESC/POS transport in a development build (see blockers).
-- Calendar picker for custom report dates (dates are typed as YYYY-MM-DD today).
-- "Use my location" for store coordinates (needs `expo-location`).
 
 ## Fixed after the build (backend and app, verified against the real API)
 
@@ -39,14 +37,24 @@ _Last updated: 27 Sep 2026 (autonomous build session). Every feature area from t
 - `POST /suppliers` and `POST /stores` return the new id.
 - Store picker: the first pick after sign-in opens the app (it used to reopen the picker).
 
-Still open (app side): a cancelled label print is recorded as a print job, because the app records it after the print dialog closes.
+## Production readiness pass
+
+- **Dates:** every date field uses a themed calendar (report and purchase-list custom ranges, purchase date, back-dated dues, date-type custom columns).
+- **Stores:** "Use my location" pins the store (foreground permission only, asked when tapped) and fills empty address fields.
+- **Labels:** a cancelled print is never recorded; after the dialog closes the app asks whether the labels printed and saves to history only on yes. Receipt print/share treats a closed dialog as a cancel.
+- **Shared counter phones:** queued bills belong to the person who made them and only post under their login; every sign-out clears the cart, drafts, cached screens and the offline catalogue/customers (waiting bills are kept).
+- **Money:** returns preview and print the amount the server actually refunds (what was paid per unit); a single payment follows the total when discounts change; save can't be double-tapped; auto-print uses the server's invoice.
+- **Offline:** the phone's catalogue refreshes every 3 minutes online and after purchases, so scans bill current prices; rate-limited bills retry; discard is only offered for bills the server rejected.
+- **Builds:** shop builds contain no mock backend or demo sign-ins (metro swaps in a stub); production builds refuse to start without `EXPO_PUBLIC_API_URL` or with mock mode on; iOS privacy manifest; unused Bluetooth permissions removed until the printer module; friendly crash screen with Try again.
+- **Other fixes from review:** debit-note amounts hidden without cost access, empty purchase drafts dated today, stock "Print label" adds the item, +91 mobile paste, old customer states normalised, payments refresh Sell balances, toasts above sheets and reachable with screen readers.
 
 ## Blockers / needs the owner
 
 | Blocker | Why | What to do |
 |---|---|---|
 | Store accounts | Needed to publish | Google Play Console (USD 25) and Apple Developer Program (USD 99/yr, organisation enrolment needs a D-U-N-S number). Then `eas init` to create the EAS project and set `EAS_PROJECT_ID`/`EXPO_OWNER`. |
-| Bluetooth printing | Needs a native BLE/SPP module in a development build and a real printer to test | Everything above the transport is ready (ESC/POS encoding for 58/80 mm incl. QR, settings, test print). Add e.g. `react-native-ble-plx`, implement `BluetoothTransport` in `src/printing/printers/bluetooth.ts`, test on hardware. Until then receipts print through the system dialog/PDF. |
+| Bluetooth printing | Needs a native BLE/SPP module in a development build and a real printer to test | Everything above the transport is ready (ESC/POS encoding for 58/80 mm incl. QR, settings, test print). Add e.g. `react-native-ble-plx` (its config plugin adds the Android Bluetooth permissions, which were removed until then), implement `BluetoothTransport` in `src/printing/printers/bluetooth.ts`, test on hardware. Until then receipts print through the system dialog/PDF. |
+| Production API URL | Not known to the app yet | Set `EXPO_PUBLIC_API_URL` (e.g. `https://<your-domain>/api/v1`) in EAS → Environment variables for preview and production. Production builds stop with a clear error if it's missing. Also set `EAS_PROJECT_ID` (from `eas init`) so over-the-air updates are enabled. |
 | Privacy policy URL, reviewer login | Store listing | Publish e.g. `https://luzzan.com/privacy`; keep a demo shop with a password login for App Review. |
 | Maps | Store location | No Google Maps key is needed yet (stores take a Google Maps link and optional lat/long). |
 
