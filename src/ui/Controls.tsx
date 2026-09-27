@@ -203,7 +203,7 @@ export function Stepper({
       onAccessibilityAction={(e) => change(value + (e.nativeEvent.actionName === "increment" ? step : -step))}
       style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
     >
-      {button(value - step <= 0 ? "trash-outline" : "remove", -step, value - step <= 0 ? "Remove" : `Decrease ${label}`, value <= min && min > 0)}
+      {button(min <= 0 && value - step <= 0 ? "trash-outline" : "remove", -step, min <= 0 && value - step <= 0 ? "Remove" : `Decrease ${label}`, value <= min && min > 0)}
       <Animated.View style={[{ minWidth: 36, alignItems: "center" }, style]}>
         <Text variant="title" tabular weight="700">
           {value}

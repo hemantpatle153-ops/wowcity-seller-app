@@ -20,7 +20,7 @@ import { customValueText, movementMeta, shortStoreName, stockTone, variantLine }
 function Gallery({ images, width }: { images: StockItemDetail["images"]; width: number }) {
   const theme = useTheme();
   const [index, setIndex] = useState(0);
-  const height = Math.round(Math.min(width * 1.05, 380));
+  const height = Math.round(Math.min(width * 0.9, 320));
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const next = Math.round(e.nativeEvent.contentOffset.x / width);
     if (next !== index) setIndex(next);
@@ -179,8 +179,8 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
         footer={
           footerButtons.length ? (
             <View style={{ flexDirection: "row", gap: 8, padding: theme.space[4], paddingBottom: Math.max(insets.bottom, 12), backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
-              {owner ? <Button label="Adjust stock" icon="construct-outline" variant="secondary" size="lg" onPress={() => open("adjust")} style={{ flex: 1 }} /> : null}
-              {canEdit ? <Button label="Edit" icon="create-outline" size="lg" onPress={() => router.push(`/stock/${d.variantId}/edit`)} style={{ flex: 1 }} /> : null}
+              {owner ? <Button label="Adjust" icon="construct-outline" variant="secondary" accessibilityLabel="Adjust stock" size="lg" onPress={() => open("adjust")} style={{ flex: 1 }} /> : null}
+              {canEdit ? <Button label="Edit item" icon="create-outline" size="lg" onPress={() => router.push(`/stock/${d.variantId}/edit`)} style={{ flex: 1 }} /> : null}
             </View>
           ) : undefined
         }
@@ -202,8 +202,8 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
             </Text>
             {off > 0 ? (
               <>
-                <Text variant="body" color="textFaint" tabular style={{ textDecorationLine: "line-through", marginBottom: 4 }}>
-                  MRP {formatMoney(d.mrp)}
+                <Text variant="body" color="textFaint" tabular style={{ marginBottom: 4 }}>
+                  MRP <Text variant="body" color="textFaint" tabular style={{ textDecorationLine: "line-through" }}>{formatMoney(d.mrp)}</Text>
                 </Text>
                 <View style={{ marginBottom: 6 }}>
                   <Badge label={`${off}% off`} tone="success" icon="pricetag" />
@@ -227,7 +227,7 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
             <SectionTitle title="Other sizes & colours" />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }} style={{ marginHorizontal: -theme.space[4] }}>
               <View style={{ width: theme.space[2] }} />
-              <Chip label={detailLine || "This one"} selected />
+              <Chip label={[d.size, d.colour].filter(Boolean).join(" / ") || "This one"} selected />
               {d.siblings.map((s) => (
                 <Chip key={s.variantId} label={s.label} onPress={() => router.replace(`/stock/${s.variantId}`)} />
               ))}
@@ -254,7 +254,7 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
                       </Text>
                     ) : null}
                   </View>
-                  <Badge label={s.available <= 0 ? `${formatQty(s.available)} · Out` : `${formatQty(s.available)} pcs`} tone={stockTone(s.available)} showIcon={s.available <= 5} />
+                  <View><Badge label={s.available <= 0 ? `${formatQty(s.available)} · Out` : `${formatQty(s.available)} pcs`} tone={stockTone(s.available)} showIcon={s.available <= 5} /></View>
                 </Row>
               </View>
             ))}

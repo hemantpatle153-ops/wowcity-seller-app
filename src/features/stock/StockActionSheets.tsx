@@ -135,8 +135,10 @@ export function AdjustSheet({ visible, onClose, item, defaultStoreId }: { visibl
           if (d === "remove" && qty > maxRemove) setQty(Math.max(1, maxRemove));
         }}
       />
-      <Row justify="space-between" gap={3}>
-        <Text variant="bodyStrong">Quantity</Text>
+      <Row justify="space-between" gap={3} wrap>
+        <Text variant="bodyStrong" style={{ flex: 1, minWidth: 100 }}>
+          Quantity
+        </Text>
         <QtyStepper value={qty} onChange={setQty} min={1} max={direction === "remove" ? Math.max(1, maxRemove) : 9999} />
       </Row>
       <Arrow from={available} to={after} label={store ? `${shortStoreName(store.store)} stock` : "Stock"} />
@@ -224,8 +226,8 @@ export function TransferSheet({ visible, onClose, item, defaultStoreId }: { visi
         }}
         options={options.filter((o) => o.value !== fromId)}
       />
-      <Row justify="space-between" gap={3}>
-        <View style={{ flex: 1 }}>
+      <Row justify="space-between" gap={3} wrap>
+        <View style={{ flex: 1, minWidth: 100 }}>
           <Text variant="bodyStrong">Quantity</Text>
           <Text variant="small" color="textMuted">
             Up to {formatQty(available)}

@@ -101,7 +101,7 @@ function EditForm({
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <Screen
-        header={<Header back onBack={() => void leave()} title="Edit item" subtitle={detail.name} right={dirty ? <Badge label="Unsaved" tone="warning" icon="ellipse" /> : undefined} />}
+        header={<Header back onBack={() => void leave()} title="Edit item" subtitle={detail.name} right={dirty ? <View><Badge label="Unsaved" tone="warning" icon="ellipse" /></View> : undefined} />}
         footerSpace={100}
         footer={
           <View style={{ padding: theme.space[4], paddingBottom: Math.max(insets.bottom, 12), gap: 8, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
@@ -113,7 +113,7 @@ function EditForm({
                 </Text>
               </Row>
             ) : null}
-            <Button label={dirty ? "Save changes" : "No changes yet"} icon="checkmark" size="lg" fullWidth onPress={submit} loading={save.isPending} disabled={!dirty} />
+            <Button label="Save changes" variant={dirty ? "primary" : "secondary"} icon="checkmark" size="lg" fullWidth onPress={submit} loading={save.isPending} disabled={!dirty} />
           </View>
         }
       >

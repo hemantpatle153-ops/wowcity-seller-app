@@ -91,7 +91,9 @@ function BuyerPreview({ draft, listing }: { draft: ListingDraft; listing: Produc
           </Text>
         ) : null}
         <Row gap={2} wrap style={{ marginTop: 2 }}>
-          <Badge label={p.inStock ? "In stock" : "Out of stock"} tone={p.inStock ? "success" : "danger"} />
+          <View>
+            <Badge label={p.inStock ? "In stock" : "Out of stock"} tone={p.inStock ? "success" : "danger"} />
+          </View>
           {p.stores[0] ? <Badge label={`${shortStoreName(p.stores[0].name)}${p.stores.length > 1 ? ` +${p.stores.length - 1}` : ""}`} icon="location-outline" tone="neutral" /> : null}
         </Row>
       </View>
@@ -135,7 +137,7 @@ function StorePick({ store, selected, onPress, disabled }: { store: ProductListi
               {store.city}
             </Text>
           ) : null}
-          {store.discoverable ? <Badge label="Discoverable" tone="success" icon="eye-outline" /> : <Badge label="Hidden from search" tone="warning" icon="eye-off-outline" />}
+          <View>{store.discoverable ? <Badge label="Discoverable" tone="success" icon="eye-outline" /> : <Badge label="Hidden from search" tone="warning" icon="eye-off-outline" />}</View>
         </Row>
       </View>
     </PressableScale>
@@ -189,7 +191,7 @@ function ListingEditor({ listing, canPublish }: { listing: ProductListingRespons
 
   return (
     <Screen
-      header={<Header back onBack={() => void leave()} title="Online listing" subtitle={listing.product.name} right={dirty ? <Badge label="Unsaved" tone="warning" icon="ellipse" /> : undefined} />}
+      header={<Header back onBack={() => void leave()} title="Online listing" subtitle={listing.product.name} right={dirty ? <View><Badge label="Unsaved" tone="warning" icon="ellipse" /></View> : undefined} />}
       footerSpace={canPublish ? 100 : 0}
       footer={
         canPublish ? (
@@ -219,7 +221,7 @@ function ListingEditor({ listing, canPublish }: { listing: ProductListingRespons
         <Row gap={2} style={{ backgroundColor: theme.colors.infoSoft, padding: theme.space[3], borderRadius: theme.radius.control }}>
           <Icon name="lock-closed-outline" color="info" size={20} />
           <Text variant="small" color="info" style={{ flex: 1 }}>
-            Only the owner can change what's published. You can see how it looks.
+            Only the owner can change what’s published. You can see how it looks.
           </Text>
         </Row>
       ) : null}
@@ -337,7 +339,7 @@ function ListingEditor({ listing, canPublish }: { listing: ProductListingRespons
                       <Text variant="small" color="textMuted" style={{ flex: 1 }} numberOfLines={1}>
                         {shortStoreName(s.name)} · {formatQty(v.stock[s.id] ?? 0)} pcs
                       </Text>
-                      <Badge label={meta.label} tone={meta.tone} icon={meta.icon} />
+                      <View><Badge label={meta.label} tone={meta.tone} icon={meta.icon} /></View>
                     </Row>
                   );
                 })}

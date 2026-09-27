@@ -62,7 +62,7 @@ export function QtyStepper({ value, onChange, min = 1, max = 9999, label = "Quan
           maxFontSizeMultiplier={1.4}
           selectionColor={theme.colors.accent}
           style={{
-            minWidth: 64,
+            width: 76,
             height: TOUCH,
             textAlign: "center",
             fontSize: t.fontSize,

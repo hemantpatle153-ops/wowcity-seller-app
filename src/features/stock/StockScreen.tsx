@@ -22,13 +22,14 @@ import { useDebounced } from "./useDebounced";
 
 const PAGE = 40;
 
-function Metric({ label, value, tone }: { label: string; value: string; tone?: "warning" | "danger" }) {
+function Metric({ label, value }: { label: string; value: string }) {
+  const theme = useTheme();
   return (
-    <View style={{ flexGrow: 1, flexBasis: "40%", minWidth: 120, gap: 2 }}>
+    <View style={{ flexGrow: 1, flexBasis: "20%", minWidth: theme.fontScale > 1.05 ? 130 : 64, gap: 2 }}>
       <Text variant="caption" color="textMuted" numberOfLines={1}>
         {label}
       </Text>
-      <Text variant="title" weight="800" tabular numberOfLines={1} color={tone ?? "text"}>
+      <Text variant="title" weight="800" tabular numberOfLines={1}>
         {value}
       </Text>
     </View>
@@ -122,10 +123,10 @@ export function StockScreen() {
           }}
           accessibilityLabel={`${first.summary.skus} items, ${formatQty(first.summary.units)} units, worth ${formatMoneyShort(first.summary.mrpValue)} at MRP`}
         >
-          <Metric label="Items (SKUs)" value={formatNumber(first.summary.skus)} />
+          <Metric label="SKUs" value={formatNumber(first.summary.skus)} />
           <Metric label="Units" value={formatNumber(first.summary.units)} />
-          <Metric label="Value at MRP" value={formatMoneyShort(first.summary.mrpValue)} />
-          {showCost ? <Metric label="Value at cost" value={formatMoneyShort(first.summary.costValue)} /> : null}
+          <Metric label="MRP value" value={formatMoneyShort(first.summary.mrpValue)} />
+          {showCost ? <Metric label="Cost value" value={formatMoneyShort(first.summary.costValue)} /> : null}
           <Text variant="caption" color="textFaint" style={{ flexBasis: "100%" }}>
             {currentStore ? shortStoreName(currentStore.name) : stores.length > 1 ? "All your stores" : (stores[0]?.name ?? "")} · totals ignore filters
           </Text>
@@ -219,7 +220,7 @@ export function StockScreen() {
       />
       <View style={{ flexDirection: "row", gap: 8, alignItems: "center", paddingHorizontal: theme.space[4], paddingBottom: theme.space[3] }}>
         <View style={{ flex: 1 }}>
-          <SearchBar value={text} onChangeText={setText} placeholder="Search name, brand or barcode" onSubmitEditing={() => text.trim() && resolve(text.trim())} />
+          <SearchBar value={text} onChangeText={setText} placeholder="Search stock" onSubmitEditing={() => text.trim() && resolve(text.trim())} />
         </View>
         <IconButton
           icon="options-outline"
@@ -268,7 +269,7 @@ export function StockScreen() {
             <SkeletonList rows={2} />
           ) : items.length && !stock.hasNextPage && items.length > 8 ? (
             <Text variant="small" color="textFaint" align="center" style={{ padding: theme.space[4] }}>
-              That's all {first?.total} items
+              That’s all {first?.total} items
             </Text>
           ) : null
         }
