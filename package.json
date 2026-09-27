@@ -11,6 +11,7 @@
     "decimal.js": "^10.6.0",
     "expo": "~57.0.25",
     "expo-application": "~57.0.3",
+    "expo-asset": "~57.0.18",
     "expo-audio": "~57.0.5",
     "expo-blur": "~57.0.3",
     "expo-camera": "~57.0.5",
@@ -54,7 +55,7 @@
   },
   "devDependencies": {
     "@testing-library/react-native": "^14.0.1",
-    "@types/jest": "^30.0.0",
+    "@types/jest": "29.5.14",
     "@types/node": "^26.6.3",
     "@types/react": "~19.2.2",
     "eslint": "^9.39.5",
