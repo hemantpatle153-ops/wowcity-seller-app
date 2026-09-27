@@ -62,12 +62,12 @@ export function JobDetailScreen({ id }: { id: string }) {
       header={<Header back title="Print job" subtitle={job.data ? `${labels} labels · ${items.length} item${items.length === 1 ? "" : "s"}` : undefined} />}
       onRefresh={() => job.refetch()}
       refreshing={job.isRefetching}
-      footerSpace={canPrint && items.length ? 90 : 0}
+      footerSpace={canPrint && items.length ? (theme.fontScale > 1.1 ? 150 : 90) : 0}
       footer={
         canPrint && items.length ? (
-          <View style={{ padding: 16, paddingBottom: Math.max(insets.bottom, 12), flexDirection: "row", gap: 10, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
-            <Button label="Edit list" icon="create-outline" variant="secondary" size="lg" onPress={edit} style={{ flex: 1 }} />
-            <Button label="Reprint" icon="print-outline" size="lg" onPress={reprint} loading={busy} disabled={!template} style={{ flex: 1.4 }} />
+          <View style={{ padding: 16, paddingBottom: Math.max(insets.bottom, 12), flexDirection: theme.fontScale > 1.1 ? "column-reverse" : "row", gap: 10, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
+            <Button label="Edit list" icon="create-outline" variant="secondary" size="lg" onPress={edit} style={theme.fontScale > 1.1 ? undefined : { flex: 1 }} />
+            <Button label="Reprint" icon="print-outline" size="lg" onPress={reprint} loading={busy} disabled={!template} style={theme.fontScale > 1.1 ? undefined : { flex: 1.4 }} />
           </View>
         ) : undefined
       }

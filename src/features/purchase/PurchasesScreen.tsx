@@ -124,13 +124,13 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
       </ScrollView>
       {summary ? (
         <View style={{ marginHorizontal: 16, padding: 14, gap: 8, borderRadius: theme.radius.card, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border }}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", rowGap: 10 }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", rowGap: 10, columnGap: 16 }}>
             {[
               { label: "Purchased", value: formatMoney(summary.amount, { decimals: 0 }), tone: "text" as const },
               { label: "GST", value: formatMoney(summary.gst, { decimals: 0 }), tone: "text" as const },
               { label: "Due", value: formatMoney(summary.due, { decimals: 0 }), tone: summary.due > 0 ? ("warning" as const) : ("success" as const) }
             ].map((stat) => (
-              <View key={stat.label} style={{ flexGrow: 1, flexBasis: 100, gap: 2 }} accessible accessibilityLabel={`${stat.label} ${stat.value}`}>
+              <View key={stat.label} style={{ flexGrow: 1, flexBasis: theme.fontScale > 1.1 ? 130 : 88, gap: 2 }} accessible accessibilityLabel={`${stat.label} ${stat.value}`}>
                 <Text variant="caption" color="textMuted" weight="700" uppercase>
                   {stat.label}
                 </Text>
