@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { api, errorMessage } from "@/api";
 import type { OriginalBillResponse } from "@/api/types";
@@ -29,6 +29,11 @@ export function ReturnStart({ initialBill }: { initialBill?: string }) {
       }
     }
   });
+  // Opened from a bill's "Return items": look it up straight away.
+  useEffect(() => {
+    if (initialBill && online) find.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialBill]);
   const selected = bill?.items.filter((i) => (qty[i.originalItemId] ?? 0) > 0) ?? [];
   const refund = selected.reduce((s, i) => s + toNumber(i.unitRefund) * (qty[i.originalItemId] ?? 0), 0);
 
