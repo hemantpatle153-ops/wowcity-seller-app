@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { errorMessage } from "@/api";
 import { queueStatus } from "@/features/bills/QueuedBills";
 import { formatDateTime } from "@/lib/format";
-import { discardQueued, retryQueued, useOffline } from "@/offline/useQueue";
+import { discardQueued, isMine, retryQueued, useOffline } from "@/offline/useQueue";
 import { printReceipt, shareReceiptPdf, whatsappReceipt } from "@/printing/print";
 import { ReceiptPreview } from "@/printing/ReceiptPreview";
 import { useConnectivity } from "@/state/connectivity";
@@ -13,7 +13,8 @@ import { Badge, Button, Card, confirm, EmptyState, Header, Icon, Row, Screen, St
 export default function QueuedBillDetail() {
   const theme = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const entry = useOffline((s) => s.queue.find((q) => q.id === id));
+  const found = useOffline((s) => s.queue.find((q) => q.id === id));
+  const entry = found && isMine(found) ? found : undefined;
   const online = useConnectivity((s) => s.online);
   if (!entry)
     return (
@@ -62,25 +63,27 @@ export default function QueuedBillDetail() {
             }}
             style={{ flex: 1 }}
           />
-          <Button
-            label="Discard"
-            icon="trash-outline"
-            variant="secondary"
-            onPress={async () => {
-              if (
-                await confirm({
-                  title: "Discard this bill?",
-                  message: "It was never posted to the server. Stock and dues won't change. This can't be undone.",
-                  confirmLabel: "Discard bill",
-                  destructive: true
-                })
-              ) {
-                await discardQueued(entry.id);
-                router.back();
-              }
-            }}
-            style={{ flex: 1 }}
-          />
+          {entry.status === "failed" ? (
+            <Button
+              label="Discard"
+              icon="trash-outline"
+              variant="secondary"
+              onPress={async () => {
+                if (
+                  await confirm({
+                    title: "Discard this bill?",
+                    message: "The server rejected this bill, so it was never recorded. Stock and dues won't change. This can't be undone.",
+                    confirmLabel: "Discard bill",
+                    destructive: true
+                  })
+                ) {
+                  await discardQueued(entry.id);
+                  router.back();
+                }
+              }}
+              style={{ flex: 1 }}
+            />
+          ) : null}
         </Row>
       ) : null}
       {entry.receipt ? (

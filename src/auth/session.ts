@@ -61,6 +61,14 @@ async function cachedMe(): Promise<MeResponse | null> {
   }
 }
 
+const signedOutListeners = new Set<() => void | Promise<void>>();
+
+/** Run cleanup whenever the session ends (sign-out, session ended by the server, password change). */
+export function onSignedOut(listener: () => void | Promise<void>) {
+  signedOutListeners.add(listener);
+  return () => signedOutListeners.delete(listener);
+}
+
 export const useSession = create<SessionState>((set, get) => ({
   status: "loading",
   me: null,
@@ -132,6 +140,7 @@ export const useSession = create<SessionState>((set, get) => ({
     }
     await apiClient.clear();
     await cacheMe(null);
+    for (const listener of signedOutListeners) await Promise.resolve(listener()).catch(() => undefined);
     set({ status: "signedOut", me: null, storeId: null, offlineSession: false, endedReason: reason ?? null });
   }
 }));

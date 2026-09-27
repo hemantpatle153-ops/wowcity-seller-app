@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useSession } from "@/auth/session";
+import { resetLocalData } from "@/auth/localData";
+import { onSignedOut, useSession } from "@/auth/session";
 import { startUpdateChecks } from "@/lib/updates";
 import { initOffline, startQueueAutoSync, syncNow } from "@/offline/useQueue";
 import { startConnectivityMonitor } from "@/state/connectivity";
@@ -27,11 +28,13 @@ function Root() {
     const stopNet = startConnectivityMonitor();
     const stopQueue = startQueueAutoSync(() => useSession.getState().storeId);
     const stopUpdates = startUpdateChecks();
+    const stopReset = onSignedOut(resetLocalData);
     void initOffline().finally(() => useSession.getState().bootstrap());
     return () => {
       stopNet();
       stopQueue();
       stopUpdates();
+      stopReset();
     };
   }, []);
 

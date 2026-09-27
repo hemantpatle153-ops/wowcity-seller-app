@@ -1,8 +1,6 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { can, isOwner } from "@/auth/permissions";
 import { useSession } from "@/auth/session";
 import { MenuSection } from "@/features/more/MenuGrid";
-import { offlineStore } from "@/offline/store";
 import { useQueueCount } from "@/offline/useQueue";
 import { Avatar, Card, confirm, Header, Row, Screen, Stack, Text } from "@/ui";
 import { StorePill } from "@/ui/StorePill";
@@ -11,19 +9,18 @@ export default function More() {
   const me = useSession((s) => s.me);
   const signOut = useSession((s) => s.signOut);
   const queued = useQueueCount();
-  const qc = useQueryClient();
   const owner = isOwner(me);
   const doSignOut = async () => {
     const ok = await confirm({
       title: "Sign out of this phone?",
-      message: queued ? `${queued} bill${queued === 1 ? " is" : "s are"} still waiting to sync. They stay on this phone and send after the next sign-in.` : "You can sign in again any time.",
+      message: queued
+        ? `${queued} bill${queued === 1 ? " is" : "s are"} still waiting to sync. They stay safe on this phone and send the next time you sign in here.`
+        : "You can sign in again any time.",
       confirmLabel: "Sign out",
       destructive: true
     });
     if (!ok) return;
     await signOut();
-    qc.clear();
-    if (!queued) await offlineStore.clear();
   };
   return (
     <Screen header={<Header title="More" large right={<StorePill />} />}>

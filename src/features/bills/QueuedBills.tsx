@@ -3,7 +3,7 @@ import { View } from "react-native";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { errorMessage } from "@/api";
 import { formatMoney, formatRelative } from "@/lib/format";
-import { retryQueued, syncNow, useOffline } from "@/offline/useQueue";
+import { retryQueued, syncNow, useMyQueue, useOffline } from "@/offline/useQueue";
 import type { QueuedBill } from "@/offline/types";
 import { useSession } from "@/auth/session";
 import { useConnectivity } from "@/state/connectivity";
@@ -26,7 +26,7 @@ export function queueStatus(entry: QueuedBill): { label: string; tone: Tone; ico
 /** Bills saved on this phone that haven't reached the server (or just did). */
 export function QueuedBills({ showSynced = false }: { showSynced?: boolean }) {
   const theme = useTheme();
-  const queue = useOffline((s) => s.queue);
+  const queue = useMyQueue();
   const syncing = useOffline((s) => s.syncing);
   const online = useConnectivity((s) => s.online);
   const storeId = useSession((s) => s.storeId);

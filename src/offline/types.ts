@@ -21,6 +21,8 @@ export type QueuedBill = {
   summary: { total: number; items: number; customer: string | null; kind: "sale" | "return"; estimate: boolean };
   /** Snapshot for reprinting the provisional receipt. */
   receipt?: ReceiptData;
+  /** Who made the bill: only that person's session may post it (shared counter phones). */
+  owner?: { shopCode: string; actorKey: string; name: string };
 };
 
 export interface OfflineStore {
@@ -44,7 +46,9 @@ export interface OfflineStore {
   updateQueued(id: string, patch: Partial<QueuedBill>): Promise<void>;
   removeQueued(id: string): Promise<void>;
   listQueue(): Promise<QueuedBill[]>;
-  /** Wipe everything (sign-out). */
+  /** Remove catalogue, customers and sync cursors, keeping queued bills (sign-out, troubleshooting). */
+  clearCache(): Promise<void>;
+  /** Wipe everything, including queued bills. */
   clear(): Promise<void>;
 }
 

@@ -31,13 +31,17 @@ export function makeQueuedBill(payload: SaleRequest, summary: QueuedBill["summar
  * offline). Business-rule rejections (4xx) are marked failed with the server's message for the
  * person to review; they don't block the bills behind them.
  */
-export function createQueueProcessor(store: OfflineStore, post: PostSale, onChange?: () => void) {
+/**
+ * `belongsTo` limits a run to bills the signed-in person made, so a bill is never posted under
+ * someone else's login on a shared phone. Bills from before ownership was recorded count as theirs.
+ */
+export function createQueueProcessor(store: OfflineStore, post: PostSale, onChange?: () => void, belongsTo: (entry: QueuedBill) => boolean = () => true) {
   let running: Promise<SyncOutcome> | null = null;
 
   async function processOnce(options: { includeFailed?: boolean; onlyId?: string } = {}): Promise<SyncOutcome> {
     const outcome: SyncOutcome = { synced: [], failed: [], stoppedOffline: false };
     const entries = (await store.listQueue()).filter(
-      (e) => (options.onlyId ? e.id === options.onlyId : true) && (e.status === "pending" || e.status === "syncing" || (options.includeFailed && e.status === "failed"))
+      (e) => belongsTo(e) && (options.onlyId ? e.id === options.onlyId : true) && (e.status === "pending" || e.status === "syncing" || (options.includeFailed && e.status === "failed"))
     );
     for (const entry of entries) {
       await store.updateQueued(entry.id, { status: "syncing" });
@@ -50,7 +54,8 @@ export function createQueueProcessor(store: OfflineStore, post: PostSale, onChan
         await store.updateQueued(entry.id, synced);
         outcome.synced.push(synced);
       } catch (error) {
-        const network = error instanceof ApiError ? error.isNetwork || error.status >= 500 || error.status === 401 : true;
+        // Network trouble, server errors, an expired session and rate limits all clear up by themselves: retry later.
+        const network = error instanceof ApiError ? error.isNetwork || error.status >= 500 || error.status === 401 || error.status === 429 : true;
         const message = error instanceof ApiError ? error.message : "Could not send this bill.";
         if (network) {
           await store.updateQueued(entry.id, { status: "pending", attempts: entry.attempts + 1, lastError: message });

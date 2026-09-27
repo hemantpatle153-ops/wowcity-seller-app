@@ -1,4 +1,5 @@
 import { api } from "@/api";
+import { actorKey } from "@/auth/permissions";
 import { ApiError } from "@/api/errors";
 import type { MeResponse, SaleRequest, SaleResponse } from "@/api/types";
 import { offlineStore } from "@/offline/store";
@@ -28,7 +29,7 @@ export async function saveCurrentBill({ me, store, totals, canDiscount, printInt
   const summary = { total: totals.net, items: totals.quantity, customer: cart.customer?.name || null, kind: cart.mode, estimate: cart.billType === "estimate" } as const;
 
   const queue = async (): Promise<SaveResult> => {
-    const entry = makeQueuedBill(payload, summary);
+    const entry = { ...makeQueuedBill(payload, summary), owner: { shopCode: me.shopCode, actorKey: actorKey(me), name: me.displayName } };
     const receipt = receiptFromCart(cart, totals, me, store, entry.reference, true);
     await offlineStore.enqueue({ ...entry, receipt });
     if (cart.billType !== "estimate") {

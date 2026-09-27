@@ -116,3 +116,34 @@ describe("catalogue sync", () => {
     expect((await store.searchCatalog("s1", "item 3")).map((i) => i.variantId)).toEqual(["3"]);
   });
 });
+
+describe("shared phones", () => {
+  it("only posts bills made by the person signed in", async () => {
+    const store = createMemoryStore();
+    const mine = { ...makeQueuedBill(payload("key-mine00000000"), summary, new Date(1)), owner: { shopCode: "LUZ482", actorKey: "LUZ482:worker:ravi", name: "Ravi" } };
+    const theirs = { ...makeQueuedBill(payload("key-theirs000000"), summary, new Date(2)), owner: { shopCode: "LUZ482", actorKey: "LUZ482:worker:meena", name: "Meena" } };
+    await store.enqueue(mine);
+    await store.enqueue(theirs);
+    const post = jest.fn().mockResolvedValue(ok(1));
+    await createQueueProcessor(store, post, undefined, (e) => e.owner?.actorKey === "LUZ482:worker:ravi").run();
+    expect(post).toHaveBeenCalledTimes(1);
+    expect(post.mock.calls[0][0].idempotencyKey).toBe("key-mine00000000");
+    expect((await store.listQueue()).find((q) => q.id === theirs.id)?.status).toBe("pending");
+  });
+
+  it("keeps rate-limited bills pending instead of failing them", async () => {
+    const store = createMemoryStore();
+    await store.enqueue(makeQueuedBill(payload("key-429000000000"), summary, new Date(1)));
+    await createQueueProcessor(store, jest.fn().mockRejectedValue(new ApiError(429, "rate_limited", "Too many"))).run();
+    expect((await store.listQueue())[0].status).toBe("pending");
+  });
+
+  it("clearing the cache keeps waiting bills", async () => {
+    const store = createMemoryStore();
+    await store.enqueue(makeQueuedBill(payload("key-keep00000000"), summary, new Date(1)));
+    await store.setMeta("customersCursor", "x");
+    await store.clearCache();
+    expect(await store.listQueue()).toHaveLength(1);
+    expect(await store.getMeta("customersCursor")).toBeNull();
+  });
+});

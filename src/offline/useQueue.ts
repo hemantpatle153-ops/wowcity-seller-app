@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { api } from "@/api";
+import { actorKey } from "@/auth/permissions";
+import { useSession } from "@/auth/session";
 import { useConnectivity } from "@/state/connectivity";
 import { createQueueProcessor } from "./queue";
 import { offlineStore } from "./store";
@@ -31,15 +33,35 @@ export const useOffline = create<OfflineState>((set) => ({
   }
 }));
 
+/** Bills made by the person signed in now (bills from before owners were recorded count as theirs). */
+export function isMine(entry: QueuedBill, key = actorKey(useSession.getState().me)) {
+  return !entry.owner || entry.owner.actorKey === key;
+}
+
 export const queueProcessor = createQueueProcessor(
   offlineStore,
   (payload) => api.sales.post(payload),
-  () => void useOffline.getState().reload()
+  () => void useOffline.getState().reload(),
+  (entry) => isMine(entry)
 );
+
+/** This person's queued bills (others on a shared phone stay hidden and unsent until they sign in). */
+export function useMyQueue() {
+  const queue = useOffline((s) => s.queue);
+  const key = useSession((s) => actorKey(s.me));
+  return queue.filter((entry) => isMine(entry, key));
+}
+
+/** Bills other people made on this phone that are still waiting for them to sign in. */
+export function useOthersWaiting() {
+  const queue = useOffline((s) => s.queue);
+  const key = useSession((s) => actorKey(s.me));
+  return queue.filter((entry) => !isMine(entry, key) && entry.status !== "synced");
+}
 
 /** Bills still waiting to reach the server (pending, syncing or needing attention). */
 export function useQueueCount() {
-  return useOffline((s) => s.queue.filter((q) => q.status !== "synced").length);
+  return useMyQueue().filter((q) => q.status !== "synced").length;
 }
 
 export async function initOffline() {
@@ -89,7 +111,7 @@ export function startQueueAutoSync(getStoreId: () => string | null) {
     wasOnline = state.online;
   });
   const timer = setInterval(() => {
-    const pending = useOffline.getState().queue.some((q) => q.status === "pending");
+    const pending = useOffline.getState().queue.some((q) => q.status === "pending" && isMine(q));
     if (pending && !queueProcessor.busy) void queueProcessor.run();
   }, 30000);
   return () => {

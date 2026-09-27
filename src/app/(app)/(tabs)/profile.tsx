@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { can } from "@/auth/permissions";
 import { useSession } from "@/auth/session";
 import { MenuSection } from "@/features/more/MenuGrid";
@@ -30,7 +29,6 @@ export default function Profile() {
   const signOut = useSession((s) => s.signOut);
   const offline = useSession((s) => s.offlineSession);
   const queued = useQueueCount();
-  const qc = useQueryClient();
   return (
     <Screen header={<Header title="Profile" large right={<StorePill />} />}>
       <Card style={{ gap: 12 }}>
@@ -67,10 +65,14 @@ export default function Profile() {
             destructive: true,
             onPress: async () => {
               if (
-                await confirm({ title: "Sign out?", message: queued ? `${queued} bill(s) will sync after the next sign-in on this phone.` : undefined, confirmLabel: "Sign out", destructive: true })
+                await confirm({
+                  title: "Sign out?",
+                  message: queued ? `${queued} bill${queued === 1 ? " is" : "s are"} still waiting. They stay safe on this phone and send the next time you sign in here.` : undefined,
+                  confirmLabel: "Sign out",
+                  destructive: true
+                })
               ) {
                 await signOut();
-                qc.clear();
               }
             }
           }

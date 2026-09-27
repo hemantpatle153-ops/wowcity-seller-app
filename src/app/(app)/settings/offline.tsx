@@ -5,7 +5,7 @@ import { useSession } from "@/auth/session";
 import { QueuedBills } from "@/features/bills/QueuedBills";
 import { formatNumber, formatRelative } from "@/lib/format";
 import { offlineStore } from "@/offline/store";
-import { syncNow, useOffline } from "@/offline/useQueue";
+import { syncNow, useOffline, useOthersWaiting } from "@/offline/useQueue";
 import { useConnectivity } from "@/state/connectivity";
 import { Badge, Button, Card, confirm, Header, ListRow, Row, Screen, SectionTitle, Stack, StatTile, Text, toast, ToggleRow } from "@/ui";
 
@@ -15,7 +15,8 @@ export default function OfflineSettings() {
   const lastOnlineAt = useConnectivity((s) => s.lastOnlineAt);
   const state = useOffline();
   const [resetting, setResetting] = useState(false);
-  const waiting = state.queue.filter((q) => q.status !== "synced").length;
+  const others = useOthersWaiting();
+  const waiting = state.queue.filter((q) => q.status !== "synced").length - others.length;
   return (
     <Screen header={<Header back title="Offline & sync" />} onRefresh={() => syncNow(storeId)} refreshing={state.syncing}>
       <Card style={{ gap: 8 }}>
@@ -52,6 +53,16 @@ export default function OfflineSettings() {
       ) : null}
       <Button label="Sync now" icon="sync" size="lg" onPress={() => syncNow(storeId).then(() => toast.success("Up to date"))} loading={state.syncing} disabled={!online} fullWidth />
       <QueuedBills showSynced />
+      {others.length ? (
+        <Card style={{ gap: 4 }}>
+          <Text variant="bodyStrong">
+            {others.length} bill{others.length === 1 ? "" : "s"} from {[...new Set(others.map((o) => o.owner?.name ?? "someone else"))].join(", ")}
+          </Text>
+          <Text variant="small" color="textMuted">
+            Made on this phone by someone else. They stay safe here and send when that person signs in again.
+          </Text>
+        </Card>
+      ) : null}
       <SectionTitle title="Troubleshooting" />
       <Card padded={false}>
         <ListRow
@@ -84,9 +95,7 @@ export default function OfflineSettings() {
               !(await confirm({ title: "Clear offline data?", message: "Waiting bills stay safe. The catalogue downloads again next time you're online.", confirmLabel: "Clear", destructive: true }))
             )
               return;
-            const queue = await offlineStore.listQueue();
-            await offlineStore.clear();
-            for (const bill of queue) await offlineStore.enqueue(bill);
+            await offlineStore.clearCache();
             await useOffline.getState().reload();
             useOffline.setState({ catalogCount: 0, customerCount: 0, lastCatalogSync: null });
             toast.success("Offline data cleared");

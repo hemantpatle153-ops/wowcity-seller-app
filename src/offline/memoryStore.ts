@@ -121,6 +121,12 @@ export function createMemoryStore(persist?: Persist): OfflineStore {
     async listQueue() {
       return [...queue.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     },
+    async clearCache() {
+      catalog = new Map();
+      customers = new Map();
+      meta = new Map();
+      save();
+    },
     async clear() {
       catalog = new Map();
       customers = new Map();

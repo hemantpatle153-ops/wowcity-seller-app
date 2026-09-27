@@ -22,3 +22,9 @@ export function tabsFor(me: MeResponse | null | undefined) {
   tabs.push("profile");
   return tabs;
 }
+
+/** Stable key for "who is signed in", e.g. "LUZ482:worker:<id>". */
+export function actorKey(me: MeResponse | null | undefined) {
+  if (!me) return "";
+  return `${me.shopCode}:${me.actor === "seller" ? `owner:${me.userId ?? me.sellerId}` : `worker:${me.workerId}`}`;
+}

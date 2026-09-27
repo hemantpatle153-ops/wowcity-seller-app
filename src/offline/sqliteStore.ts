@@ -169,6 +169,10 @@ export function createSqliteStore(name = "wowcity-offline.db"): OfflineStore {
       const rows = await d.getAllAsync<QueueRow>("SELECT data FROM bill_queue ORDER BY created_at");
       return rows.map((r) => JSON.parse(r.data) as QueuedBill);
     },
+    async clearCache() {
+      const d = await get();
+      await d.execAsync("DELETE FROM catalog; DELETE FROM catalog_barcodes; DELETE FROM customers; DELETE FROM meta;");
+    },
     async clear() {
       const d = await get();
       await d.execAsync("DELETE FROM catalog; DELETE FROM catalog_barcodes; DELETE FROM customers; DELETE FROM meta; DELETE FROM bill_queue;");
