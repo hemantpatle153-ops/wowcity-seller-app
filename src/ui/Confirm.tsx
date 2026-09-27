@@ -9,6 +9,7 @@ type ConfirmRequest = {
   title: string;
   message?: string;
   confirmLabel?: string;
+  cancelLabel?: string;
   destructive?: boolean;
   /** Ask the person to type this text to enable the button (e.g. shop code for delete). */
   typeToConfirm?: string;
@@ -40,7 +41,7 @@ export function ConfirmHost() {
       footer={
         <>
           <Button label={request?.confirmLabel ?? "Confirm"} variant={request?.destructive ? "danger" : "primary"} size="lg" onPress={() => finish(true)} disabled={blocked} fullWidth />
-          <Button label="Cancel" variant="ghost" onPress={() => finish(false)} fullWidth />
+          <Button label={request?.cancelLabel ?? "Cancel"} variant="ghost" onPress={() => finish(false)} fullWidth />
         </>
       }
     >

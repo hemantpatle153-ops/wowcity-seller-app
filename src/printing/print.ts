@@ -1,6 +1,7 @@
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Linking, Platform } from "react-native";
+import { isPrintCancel } from "@/lib/printCancel";
 import { usePreferences } from "@/state/preferences";
 import { a4Html, receiptText, thermalHtml } from "./html";
 import { bluetoothPrinter } from "./printers/bluetooth";
@@ -17,7 +18,17 @@ export function currentPrinter(): ReceiptPrinter {
   return systemPrinter;
 }
 
+/** Print a receipt. A dialog the person closed counts as done, not as an error. */
 export async function printReceipt(receipt: ReceiptData, format?: "thermal" | "a4") {
+  try {
+    return await printReceiptUnsafe(receipt, format);
+  } catch (error) {
+    if (isPrintCancel(error)) return "cancelled" as const;
+    throw error;
+  }
+}
+
+async function printReceiptUnsafe(receipt: ReceiptData, format?: "thermal" | "a4") {
   const prefs = usePreferences.getState();
   const printer = currentPrinter();
   const options = { paper: prefs.paperWidth, format: format ?? prefs.receiptFormat };
@@ -46,7 +57,12 @@ export async function shareReceiptPdf(receipt: ReceiptData, format: "thermal" | 
     return;
   }
   const uri = await receiptPdf(receipt, format);
-  if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(uri, { mimeType: "application/pdf", dialogTitle: `Bill ${receipt.number}`, UTI: "com.adobe.pdf" });
+  if (!(await Sharing.isAvailableAsync())) throw new Error("Sharing isn't available on this phone.");
+  try {
+    await Sharing.shareAsync(uri, { mimeType: "application/pdf", dialogTitle: `Bill ${receipt.number}`, UTI: "com.adobe.pdf" });
+  } catch (error) {
+    if (!isPrintCancel(error)) throw error;
+  }
 }
 
 /** Open WhatsApp with the bill summary for the customer's number. */

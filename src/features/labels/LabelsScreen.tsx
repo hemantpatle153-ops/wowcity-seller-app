@@ -38,7 +38,7 @@ import {
 } from "@/ui";
 import { variantText } from "./labelHtml";
 import { LabelPreview } from "./LabelPreview";
-import { printLabelSheet, shareLabelSheet } from "./print";
+import { confirmLabelsPrinted, printLabelSheet, shareLabelSheet } from "./print";
 import { totalLabels, usePrintList } from "./printList";
 
 export const labelKeys = {
@@ -107,7 +107,7 @@ function PrintTab() {
       void qc.invalidateQueries({ queryKey: ["labels", "jobs"] });
       toast.success("Saved to print history");
     },
-    onError: (e) => toast.error(`Printed, but not saved to history: ${errorMessage(e)}`)
+    onError: (e) => toast.error(`Couldn't save to print history: ${errorMessage(e)}`)
   });
 
   const print = async (mode: "print" | "share") => {
@@ -115,8 +115,15 @@ function PrintTab() {
     setBusy(mode);
     try {
       const entries = list.lines.map((l) => ({ item: l.item, copies: l.copies }));
-      if (mode === "print") await printLabelSheet(template, entries, list.fields, me?.shopName ?? "");
-      else await shareLabelSheet(template, entries, list.fields, me?.shopName ?? "");
+      const outcome = mode === "print" ? await printLabelSheet(template, entries, list.fields, me?.shopName ?? "") : await shareLabelSheet(template, entries, list.fields, me?.shopName ?? "");
+      if (outcome === "cancelled") {
+        toast.info("Print cancelled. Nothing was saved to history.");
+        return;
+      }
+      if (!(await confirmLabelsPrinted(labels, mode))) {
+        toast.info("Not saved to history.");
+        return;
+      }
       haptic.success();
       record.mutate();
     } catch (e) {

@@ -13,7 +13,7 @@ import { Badge, Button, Card, Divider, EmptyState, ErrorState, Header, Row, Scre
 import { variantText } from "./labelHtml";
 import { LabelPreview } from "./LabelPreview";
 import { labelKeys } from "./LabelsScreen";
-import { printLabelSheet } from "./print";
+import { confirmLabelsPrinted, printLabelSheet } from "./print";
 import { usePrintList } from "./printList";
 
 export function JobDetailScreen({ id }: { id: string }) {
@@ -35,19 +35,27 @@ export function JobDetailScreen({ id }: { id: string }) {
   const record = useMutation({
     mutationFn: () => api.labels.recordPrint({ template: template!.key, items: items.slice(0, 500).map((i) => ({ barcodeId: i.barcodeId, copies: Math.min(2000, Math.max(1, i.copies)) })) }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ["labels", "jobs"] }),
-    onError: (e) => toast.error(`Printed, but not saved to history: ${errorMessage(e)}`)
+    onError: (e) => toast.error(`Couldn't save to print history: ${errorMessage(e)}`)
   });
 
   const reprint = async () => {
     if (!template || !items.length) return;
     setBusy(true);
     try {
-      await printLabelSheet(
+      const outcome = await printLabelSheet(
         template,
         items.map((i) => ({ item: i, copies: i.copies })),
         fields,
         me?.shopName ?? ""
       );
+      if (outcome === "cancelled") {
+        toast.info("Print cancelled. Nothing was saved to history.");
+        return;
+      }
+      if (!(await confirmLabelsPrinted(labels, "print"))) {
+        toast.info("Not saved to history.");
+        return;
+      }
       haptic.success();
       record.mutate();
     } catch (e) {
