@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { formatDate, isoDay } from "@/lib/format";
-import { Button, Chip, Input, Row, Sheet, Text } from "@/ui";
+import { View } from "react-native";
+import { daysBetween, nextRange, prettyDay } from "@/lib/dates";
+import { isoDay } from "@/lib/format";
+import { useTheme } from "@/theme/ThemeProvider";
+import { Button, Calendar, Chip, PressableScale, Row, Sheet, Text } from "@/ui";
 import { addDays, customRangeError } from "./ranges";
 
-/** Custom from/to dates (YYYY-MM-DD) with a few quick picks. Mount with a fresh key when opened. */
+/** Custom report period: tap the first day, then the last day, on a calendar. Mount with a fresh key when opened. */
 export function RangeSheet({
   visible,
   onClose,
@@ -17,9 +20,9 @@ export function RangeSheet({
   initialTo?: string;
   onApply: (from: string, to: string) => void;
 }) {
+  const theme = useTheme();
   const today = isoDay();
-  const [from, setFrom] = useState(initialFrom ?? addDays(today, -29));
-  const [to, setTo] = useState(initialTo ?? today);
+  const [range, setRange] = useState<{ from: string | null; to: string | null }>({ from: initialFrom ?? addDays(today, -29), to: initialTo ?? today });
   const [error, setError] = useState<string | null>(null);
   const quick: { label: string; days: number }[] = [
     { label: "Last 14 days", days: 14 },
@@ -27,50 +30,70 @@ export function RangeSheet({
     { label: "Last 90 days", days: 90 }
   ];
   const apply = () => {
+    const from = range.from ?? "";
+    const to = range.to ?? range.from ?? "";
     const problem = customRangeError(from, to, today);
     setError(problem);
     if (!problem) onApply(from, to);
   };
-  const pretty = (d: string) => (/^\d{4}-\d{2}-\d{2}$/.test(d) ? formatDate(`${d}T12:00:00`) : "");
+  const days = range.from && range.to ? daysBetween(range.from, range.to) + 1 : range.from ? 1 : 0;
+  const pill = (label: string, value: string | null, active: boolean, onPress: () => void) => (
+    <PressableScale
+      onPress={onPress}
+      accessibilityLabel={`${label}: ${value ? prettyDay(value) : "not chosen"}`}
+      style={{
+        flex: 1,
+        minHeight: 56,
+        borderRadius: theme.radius.control,
+        borderWidth: active ? 2 : 1,
+        borderColor: active ? theme.colors.accent : theme.colors.border,
+        backgroundColor: theme.colors.surface,
+        paddingHorizontal: 12,
+        justifyContent: "center"
+      }}
+    >
+      <Text variant="caption" color="textMuted">
+        {label}
+      </Text>
+      <Text variant="bodyStrong" color={value ? "text" : "textFaint"}>
+        {value ? prettyDay(value) : "Tap a day"}
+      </Text>
+    </PressableScale>
+  );
+  const choosingEnd = !!range.from && !range.to;
   return (
-    <Sheet visible={visible} onClose={onClose} title="Custom dates" subtitle="Type dates as YYYY-MM-DD" footer={<Button label="Show report" size="lg" onPress={apply} fullWidth icon="checkmark" />}>
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title="Custom dates"
+      subtitle={choosingEnd ? "Now tap the last day" : "Tap the first day, then the last day"}
+      footer={<Button label={days ? `Show ${days} day${days === 1 ? "" : "s"}` : "Show report"} size="lg" onPress={apply} fullWidth icon="checkmark" disabled={!range.from} />}
+    >
       <Row gap={2} wrap>
         {quick.map((q) => (
           <Chip
             key={q.label}
             label={q.label}
-            selected={to === today && from === addDays(today, -(q.days - 1))}
+            selected={range.to === today && range.from === addDays(today, -(q.days - 1))}
             onPress={() => {
-              setFrom(addDays(today, -(q.days - 1)));
-              setTo(today);
+              setRange({ from: addDays(today, -(q.days - 1)), to: today });
               setError(null);
             }}
           />
         ))}
       </Row>
-      <Input
-        label="From"
-        value={from}
-        onChangeText={(t) => {
-          setFrom(t.replace(/[^0-9-]/g, "").slice(0, 10));
+      <View style={{ flexDirection: "row", gap: 8 }}>
+        {pill("From", range.from, !choosingEnd, () => setRange({ from: null, to: null }))}
+        {pill("To", range.to, choosingEnd, () => range.from && setRange({ from: range.from, to: null }))}
+      </View>
+      <Calendar
+        value={range.from}
+        rangeEnd={range.to}
+        max={today}
+        onSelect={(day) => {
+          setRange(nextRange(range, day));
           setError(null);
         }}
-        placeholder="YYYY-MM-DD"
-        keyboardType="numbers-and-punctuation"
-        hint={pretty(from)}
-        icon="calendar-outline"
-      />
-      <Input
-        label="To"
-        value={to}
-        onChangeText={(t) => {
-          setTo(t.replace(/[^0-9-]/g, "").slice(0, 10));
-          setError(null);
-        }}
-        placeholder="YYYY-MM-DD"
-        keyboardType="numbers-and-punctuation"
-        hint={pretty(to)}
-        icon="calendar-outline"
       />
       {error ? (
         <Text variant="small" color="danger" accessibilityLiveRegion="assertive">

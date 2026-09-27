@@ -1,3 +1,4 @@
+import { isIsoDay, nextRange, prettyDay } from "@/lib/dates";
 import { FlashList } from "@shopify/flash-list";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -10,7 +11,7 @@ import { can } from "@/auth/permissions";
 import { useSession } from "@/auth/session";
 import { formatDate, formatMoney, formatQty, isoDay } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Badge, Button, Chip, ChipRow, EmptyState, ErrorState, Header, Icon, IconButton, Input, ListRow, PressableScale, Row, SearchBar, Sheet, SkeletonList, Text } from "@/ui";
+import { Badge, Button, Chip, ChipRow, EmptyState, ErrorState, Header, Icon, IconButton, ListRow, PressableScale, Row, SearchBar, Sheet, SkeletonList, Text, Calendar } from "@/ui";
 import { useSuppliers } from "./queries";
 
 const ranges = [
@@ -261,7 +262,7 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
             label="Show purchases"
             size="lg"
             fullWidth
-            disabled={!/^\d{4}-\d{2}-\d{2}$/.test(draftRange.from) || !/^\d{4}-\d{2}-\d{2}$/.test(draftRange.to) || draftRange.from > draftRange.to}
+            disabled={!isIsoDay(draftRange.from) || !isIsoDay(draftRange.to) || draftRange.from > draftRange.to}
             onPress={() => {
               setCustom(draftRange);
               setRange("custom");
@@ -270,20 +271,17 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
           />
         }
       >
-        <Input
-          label="From"
-          value={draftRange.from}
-          onChangeText={(t) => setDraftRange({ ...draftRange, from: t.replace(/[^0-9-]/g, "").slice(0, 10) })}
-          placeholder="YYYY-MM-DD"
-          icon="calendar-outline"
-        />
-        <Input
-          label="To"
-          value={draftRange.to}
-          onChangeText={(t) => setDraftRange({ ...draftRange, to: t.replace(/[^0-9-]/g, "").slice(0, 10) })}
-          placeholder="YYYY-MM-DD"
-          icon="calendar-outline"
-          error={draftRange.from > draftRange.to ? "The start date is after the end date." : null}
+        <Text variant="small" color="textMuted">
+          {draftRange.from && draftRange.to && draftRange.from !== draftRange.to ? `${prettyDay(draftRange.from)} – ${prettyDay(draftRange.to)}` : "Tap the first day, then the last day."}
+        </Text>
+        <Calendar
+          value={draftRange.from || null}
+          rangeEnd={draftRange.to || null}
+          max={isoDay()}
+          onSelect={(day) => {
+            const next = nextRange({ from: draftRange.from || null, to: draftRange.to || null }, day);
+            setDraftRange({ from: next.from, to: next.to ?? "" });
+          }}
         />
       </Sheet>
     </View>

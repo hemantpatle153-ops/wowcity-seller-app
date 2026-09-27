@@ -5,7 +5,7 @@ import { api, errorMessage } from "@/api";
 import { uuid } from "@/lib/id";
 import { formatDate, formatMoney, isoDay } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
-import { Button, Chip, Icon, Input, Row, Sheet, Stack, Text, toast } from "@/ui";
+import { Button, Calendar, Chip, Icon, Input, Row, Sheet, Stack, Text, toast } from "@/ui";
 import { addDays } from "@/features/reports/ranges";
 import { entryBody, parseAmount, payModes, quickAmounts, validateEntry, type EntryDraft, type EntryErrors, type Party } from "./logic";
 
@@ -178,15 +178,12 @@ export function EntrySheet({
           <Chip label="Earlier…" icon="calendar-outline" selected={dateMode === "other"} onPress={() => setDateMode("other")} />
         </Row>
         {dateMode === "other" ? (
-          <Input
-            value={draft.date}
-            onChangeText={(t) => set({ date: t.replace(/[^0-9-]/g, "").slice(0, 10) })}
-            placeholder="YYYY-MM-DD"
-            keyboardType="numbers-and-punctuation"
-            error={errors.date}
-            hint={draft.date.length === 10 && !errors.date ? formatDate(`${draft.date}T12:00:00`) : "Back-dated entries can't be in the future."}
-            accessibilityLabel="Date, year month day"
-          />
+          <View style={{ gap: 6 }}>
+            <Calendar value={draft.date} max={today} onSelect={(day) => set({ date: day })} />
+            <Text variant="small" color={errors.date ? "danger" : "textMuted"} accessibilityLiveRegion="polite">
+              {errors.date ?? `Recording for ${formatDate(`${draft.date}T12:00:00`)}. Back-dated entries can't be in the future.`}
+            </Text>
+          </View>
         ) : errors.date ? (
           <Text variant="small" color="danger">
             {errors.date}

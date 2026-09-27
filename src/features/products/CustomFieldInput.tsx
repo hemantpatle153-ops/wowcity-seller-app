@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Button, Chip, Input, Select, Text, ToggleRow } from "@/ui";
+import { Button, Chip, Input, Select, Text, ToggleRow, DateField } from "@/ui";
 import { splitList, type EditableCustomField } from "./editForm";
 import { fieldTypeMeta } from "./listingLogic";
 
@@ -60,17 +60,7 @@ export function CustomFieldInput({ field, value, onChange, error }: { field: Edi
         />
       );
     case "date":
-      return (
-        <Input
-          label={label}
-          value={value}
-          onChangeText={(t) => onChange(t.replace(/[^0-9-]/g, "").slice(0, 10))}
-          placeholder="YYYY-MM-DD"
-          keyboardType="numbers-and-punctuation"
-          error={error}
-          icon="calendar-outline"
-        />
-      );
+      return <DateField label={label} value={value || null} onChange={onChange} error={error} placeholder="Not set" />;
     case "url":
       return <Input label={label} value={value} onChangeText={onChange} placeholder="https://" keyboardType="url" autoCapitalize="none" autoCorrect={false} error={error} icon="link-outline" />;
     case "color":

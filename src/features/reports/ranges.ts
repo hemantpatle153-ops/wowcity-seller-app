@@ -28,8 +28,8 @@ export function isValidDay(value: string): boolean {
 
 /** Validate a custom from/to pair. Returns a message for the person, or null when fine. */
 export function customRangeError(from: string, to: string, today: string): string | null {
-  if (!isValidDay(from)) return "Enter the start date as YYYY-MM-DD.";
-  if (!isValidDay(to)) return "Enter the end date as YYYY-MM-DD.";
+  if (!isValidDay(from)) return "Pick a start date.";
+  if (!isValidDay(to)) return "Pick an end date.";
   if (from > to) return "The start date is after the end date.";
   if (to > today) return "The end date can't be in the future.";
   return null;

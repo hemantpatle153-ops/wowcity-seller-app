@@ -1,8 +1,7 @@
 import { View } from "react-native";
 import type { CustomFieldGridColumn } from "@/api/types";
-import { isoDay } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Chip, Input, Row, Select, Text, ToggleRow } from "@/ui";
+import { Chip, Input, Row, Select, Text, ToggleRow, DateField } from "@/ui";
 import { typingDecimal } from "./math";
 
 const splitMulti = (value: string) =>
@@ -57,18 +56,7 @@ export function CustomFieldInput({ field, value, onChange, error }: { field: Cus
     case "decimal":
       return <Input label={label} value={value} onChangeText={(t) => onChange(typingDecimal(t, 4))} keyboardType="decimal-pad" error={error} />;
     case "date":
-      return (
-        <Input
-          label={label}
-          value={value}
-          onChangeText={(t) => onChange(t.replace(/[^0-9-]/g, "").slice(0, 10))}
-          placeholder="YYYY-MM-DD"
-          keyboardType="numbers-and-punctuation"
-          icon="calendar-outline"
-          error={error}
-          right={!value ? <Chip label="Today" onPress={() => onChange(isoDay())} /> : undefined}
-        />
-      );
+      return <DateField label={label} value={value || null} onChange={onChange} error={error} placeholder="Not set" />;
     case "color":
       return (
         <Input

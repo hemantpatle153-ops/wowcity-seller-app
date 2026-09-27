@@ -20,6 +20,7 @@ import {
   Button,
   Card,
   Chip,
+  DateField,
   confirm,
   EmptyState,
   ErrorState,
@@ -39,6 +40,7 @@ import {
   Text,
   toast
 } from "@/ui";
+import { shiftDay } from "@/lib/dates";
 import { blankItem, draftHasContent, restockItem, usePurchaseDraft, type ItemDraft } from "./draft";
 import { ItemCard } from "./ItemCard";
 import { calculatePurchase, num } from "./math";
@@ -374,14 +376,7 @@ export function NewPurchaseScreen() {
 
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
             <View style={{ flexGrow: 1, flexBasis: 150, gap: 6 }}>
-              <Input
-                label="Purchase date"
-                value={draft.date}
-                onChangeText={(t) => draft.set({ date: t.replace(/[^0-9-]/g, "").slice(0, 10) })}
-                placeholder="YYYY-MM-DD"
-                keyboardType="numbers-and-punctuation"
-                icon="calendar-outline"
-              />
+              <DateField label="Purchase date" value={draft.date} max={shiftDay(isoDay(), 1)} onChange={(date) => draft.set({ date })} />
               <Row gap={2}>
                 <Chip label="Today" selected={draft.date === isoDay()} onPress={() => draft.set({ date: isoDay() })} />
                 <Chip label="Yesterday" selected={draft.date === yesterday()} onPress={() => draft.set({ date: yesterday() })} />
