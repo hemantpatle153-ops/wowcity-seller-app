@@ -3,13 +3,15 @@ import * as Crypto from "expo-crypto";
 /** RFC 4122 v4 UUID for idempotency keys and request ids. */
 export function uuid(): string {
   try {
-    return Crypto.randomUUID();
+    const value = Crypto.randomUUID();
+    if (typeof value === "string" && value.length === 36) return value;
   } catch {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-    });
+    // Fall through to the non-crypto fallback.
   }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
 }
 
 /** Short human reference printed on receipts made offline, e.g. "OFF-7K2Q-0915". */
