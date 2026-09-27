@@ -1,11 +1,11 @@
 /** Stock, products, custom fields and barcode labels. */
-import type { CustomFieldType, LabelItem, ProductListItem, ProductListingResponse, StockItem, StockItemDetail } from "@/api/types";
+import type { CustomFieldType, LabelItem, ProductImage, ProductListItem, ProductListingResponse, StockItem, StockItemDetail } from "@/api/types";
 import type { Db, DbVariant } from "../db";
 import { addStock, findProduct, findStore, findVariant, gstSlab, productOf, qtyAt, qtyIn, touchTime, variantLabel } from "../db";
 import { fyShortAt, logActivity, nextId, pad4 } from "../engine/common";
 import { body, has, need, ownerOnly, q, route, storeFilter, type Ctx, type Route } from "../http";
 import { matchesSearch } from "./sales";
-import { includesText, inRange, invalid, notFound, ok, pageParam, paginate, reject, resolveRange, r2, r3, str, toNum } from "../util";
+import { includesText, inRange, invalid, newId, notFound, ok, pageParam, paginate, reject, resolveRange, r2, r3, str, toNum } from "../util";
 
 const LOW = 5;
 
@@ -33,9 +33,14 @@ function stockItem(db: Db, variant: DbVariant, stores: string[]): StockItem {
     byStore,
     unitCost: variant.unitCost,
     imageKey: product.images[0] ? imageKey(db, product.id, product.images[0].id) : null,
+    image: product.images[0]?.url ?? null,
     isPublic: product.listing.enabled,
     createdAt: variant.createdAt
   };
+}
+
+function photosOf(images: Array<{ id: string; url: string | null; variantId: string | null; isPrimary: boolean }>): ProductImage[] {
+  return [...images].map((image, sortOrder) => ({ ...image, sortOrder })).sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary) || a.sortOrder - b.sortOrder);
 }
 
 export function labelItem(db: Db, variant: DbVariant, stores: string[]): LabelItem {
@@ -331,6 +336,48 @@ function productRoutes(): Route[] {
       return ok({ message: `Listed on WowCity in ${live} ${live === 1 ? "store" : "stores"}.` });
     }),
 
+    // Product photos after purchase: list, add (after the upload), make cover, remove.
+    route("GET", "/products/:id/images", (ctx) => {
+      need(ctx, "stock.view", "product.images.manage", "purchase.create");
+      const product = findProduct(ctx.db, ctx.params.id);
+      if (!product) notFound("This product no longer exists.");
+      return ok(photosOf(product.images));
+    }),
+
+    route("POST", "/products/:id/images", (ctx) => {
+      need(ctx, "product.images.manage");
+      const product = findProduct(ctx.db, ctx.params.id);
+      if (!product) notFound("This product no longer exists.");
+      const b = body(ctx);
+      const objectKey = str(b.objectKey, 300);
+      const variantId = str(b.variantId, 100) || null;
+      const folder = variantId ? `variants/${variantId}` : "product";
+      if (!objectKey.startsWith(`sellers/${ctx.db.sellerId}/products/${product.id}/${folder}/`)) reject("That upload does not belong to this product.");
+      if (product.images.length >= 4) reject("A product can have at most 4 photos. Remove one first.");
+      const id = newId();
+      product.images.push({ id, url: `https://picsum.photos/seed/${id}/600/800`, variantId, isPrimary: product.images.length === 0 });
+      return ok({ id, images: photosOf(product.images) }, 201);
+    }),
+
+    route("PATCH", "/products/:pid/images/:iid", (ctx) => {
+      need(ctx, "product.images.manage");
+      const product = findProduct(ctx.db, ctx.params.pid);
+      const image = product?.images.find((i) => i.id === ctx.params.iid);
+      if (!product || !image) notFound("That photo no longer exists.");
+      for (const i of product.images) i.isPrimary = i.id === image.id;
+      return ok(photosOf(product.images));
+    }),
+
+    route("DELETE", "/products/:pid/images/:iid", (ctx) => {
+      need(ctx, "product.images.manage");
+      const product = findProduct(ctx.db, ctx.params.pid);
+      const image = product?.images.find((i) => i.id === ctx.params.iid);
+      if (!product || !image) notFound("That photo no longer exists.");
+      product.images = product.images.filter((i) => i.id !== image.id);
+      if (image.isPrimary && product.images[0]) product.images[0].isPrimary = true;
+      return ok(photosOf(product.images));
+    }),
+
     route("PATCH", "/products/:pid/variants/:vid", (ctx) => {
       need(ctx, "product.edit");
       const { db } = ctx;
@@ -359,7 +406,7 @@ function productRoutes(): Route[] {
       variant.mrp = Number(mrpText);
       variant.saleRate = Number(rateText);
       if (gstCode) variant.gstCode = gstCode;
-      variant.internalDescription = str(b.internalDescription, 1000) || null;
+      if ("internalDescription" in b && has(ctx, "purchase.view_cost")) variant.internalDescription = str(b.internalDescription, 1000) || null;
       if (has(ctx, "product.publication.manage")) {
         product.listing.description = str(b.publicDescription, 1000);
         variant.tags = str(b.tags, 2000)

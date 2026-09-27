@@ -53,7 +53,13 @@ export function createEndpoints(client: ApiClient) {
       list: (query: { q?: string; filter?: string; page?: number }) => client.get<T.ProductListResponse>("/products", query),
       listing: (productId: string) => client.get<T.ProductListingResponse>(`/products/${productId}/listing`),
       saveListing: (productId: string, body: T.ProductListingBody) => client.put<T.FormActionOk>(`/products/${productId}/listing`, body),
-      updateVariant: (productId: string, variantId: string, body: T.ProductVariantUpdateBody) => client.patch<T.FormActionOk>(`/products/${productId}/variants/${variantId}`, body)
+      updateVariant: (productId: string, variantId: string, body: T.ProductVariantUpdateBody) => client.patch<T.FormActionOk>(`/products/${productId}/variants/${variantId}`, body),
+      images: {
+        list: (productId: string) => client.get<T.ProductImage[]>(`/products/${productId}/images`),
+        add: (productId: string, body: T.ProductImageAddBody) => client.post<{ id: string; images: T.ProductImage[] }>(`/products/${productId}/images`, body),
+        makeCover: (productId: string, imageId: string) => client.patch<T.ProductImage[]>(`/products/${productId}/images/${imageId}`, { primary: true }),
+        remove: (productId: string, imageId: string) => client.delete<T.ProductImage[]>(`/products/${productId}/images/${imageId}`)
+      }
     },
     customFields: {
       list: () => client.get<T.CustomFieldsResponse>("/custom-fields"),
@@ -126,7 +132,7 @@ export function createEndpoints(client: ApiClient) {
       password: (body: T.SettingsPasswordBody) => client.post<T.FormActionOk>("/settings/password", body)
     },
     account: {
-      /** Store requirement: owner deletes the account (closes the shop). Backend endpoint is being added. */
+      /** Store requirement: owner deletes the account (closes the shop). */
       delete: (shopCode: string) => client.delete<{ deleted: true; message?: string }>("/account", { confirm: shopCode })
     }
   };

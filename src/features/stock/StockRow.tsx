@@ -42,7 +42,7 @@ export const StockRow = memo(function StockRow({
       }}
     >
       <View style={{ flexDirection: "row", gap: theme.space[3], alignItems: "flex-start" }}>
-        <Thumb size={52} />
+        <Thumb url={item.image} size={52} />
         <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
           <Text variant="bodyStrong" numberOfLines={2}>
             {item.name}

@@ -591,14 +591,15 @@ export interface StockItem {
   barcode: string | null; // oldest barcode
   qty: number; // sum over selected stores
   byStore: Record<UUID, number>;
-  unitCost: number | null; // latest purchase cost — NOT hidden for workers without purchase.view_cost!
-  imageKey: string | null; // R2 object KEY, not a URL
+  unitCost: number | null; // latest purchase cost; null for staff without purchase.view_cost
+  imageKey: string | null; // storage key; use `image` for display
+  image: string | null; // thumbnail URL
   isPublic: boolean;
   createdAt: ISODateTime;
 }
 export interface StockListResponse {
   total: number;
-  summary: { skus: number; units: number; costValue: number; mrpValue: number; low: number; out: number }; // over ALL items (not filtered)
+  summary: { skus: number; units: number; costValue: number | null; mrpValue: number; low: number; out: number }; // over ALL items (not filtered)
   facets: { brands: string[]; sizes: string[]; colours: string[]; categories: string[] };
   items: StockItem[];
 }
@@ -1544,3 +1545,17 @@ export type SettingsMutationResponse = FormActionOk;
  * 20. PurchaseRowInput.rowId is only an echo key for errors; image upload `productId` just needs to be any UUID
  *     (the web uses a per-row UUID) since the object key is validated only by the "sellers/<sellerId>/" prefix.
  */
+
+// GET/POST /products/{productId}/images, PATCH/DELETE /products/{productId}/images/{imageId} (product.images.manage).
+export interface ProductImage {
+  id: UUID;
+  url: string | null;
+  isPrimary: boolean; // the cover buyers see first
+  sortOrder: number;
+  variantId: UUID | null;
+}
+export interface ProductImageAddBody {
+  objectKey: string; // from POST /api/r2/product-image-upload, after the PUT succeeded
+  contentType: "image/jpeg" | "image/png" | "image/webp";
+  variantId?: UUID;
+}

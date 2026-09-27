@@ -35,6 +35,7 @@ import {
   toast
 } from "@/ui";
 import { useEditableCustomFields, useStockItem } from "./hooks";
+import { PhotoManager } from "./PhotoManager";
 import { AdjustSheet, TransferSheet } from "./StockActionSheets";
 import { customValueText, movementMeta, shortStoreName, stockTone, variantLine } from "./stockLogic";
 
@@ -231,6 +232,7 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
         <Animated.View entering={theme.reduceMotion ? undefined : FadeIn.duration(250)}>
           <Gallery images={d.images} width={width} />
         </Animated.View>
+        {can(me, "product.images.manage") ? <PhotoManager productId={d.productId} variantId={d.variantId} images={d.images} /> : null}
 
         <Animated.View entering={enter(1)} style={{ gap: 6 }}>
           <Text variant="heading" selectable>
