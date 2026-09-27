@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { tabsFor } from "@/auth/permissions";
 import { useSession } from "@/auth/session";
 import { useTheme } from "@/theme/ThemeProvider";
 import { Button, Card, EmptyState, Header, Icon, IconCircle, Row, Screen, Text } from "@/ui";
@@ -42,9 +43,12 @@ export default function StorePicker() {
               >
                 <Card
                   onPress={() => {
+                    const switching = Boolean(storeId);
                     selectStore(store.id);
-                    if (router.canGoBack()) router.back();
-                    else router.replace("/");
+                    // Opened from the header to switch stores: go back to where we were. First pick after
+                    // sign-in: this screen was reached by a redirect, so going back would land on it again.
+                    if (switching && router.canGoBack()) router.back();
+                    else router.replace(`/${tabsFor(me)[0] ?? "sell"}` as never);
                   }}
                   accessibilityLabel={`${store.name}, ${store.city}${selected ? ", current" : ""}`}
                   style={selected ? { borderColor: theme.colors.accent, borderWidth: 2 } : undefined}
