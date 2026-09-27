@@ -115,7 +115,9 @@ function LockdownCard({ locked, count }: { locked: number; count: number }) {
     return (
       <Card style={{ gap: theme.space[3], borderColor: theme.colors.warning, backgroundColor: theme.colors.warningSoft }}>
         <Row gap={3} align="flex-start">
-          <IconCircle icon="lock-closed" tone="warning" size={44} />
+          <View style={{ width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.surface }}>
+            <Icon name="lock-closed" size={22} color="warning" />
+          </View>
           <View style={{ flex: 1, gap: 2 }}>
             <Text variant="bodyStrong">Staff are locked out</Text>
             <Text variant="small">
