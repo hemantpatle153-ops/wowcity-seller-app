@@ -8,12 +8,21 @@ import { dispatch } from "./router";
 import { expireAccessTokens, getDb, resetMockDb } from "./state";
 import type { MockResult } from "./util";
 
-let offline = false;
+const OFFLINE_KEY = "wowcity.mock.offline";
+const session = () => (typeof globalThis !== "undefined" && "sessionStorage" in globalThis ? (globalThis as { sessionStorage?: Storage }).sessionStorage : undefined);
+// On web the switch survives a page reload, so a demo can show offline billing end to end.
+let offline = session()?.getItem(OFFLINE_KEY) === "1";
 let fixedLatency: number | null = null;
 
 /** Pretend the phone lost its connection: every call fails like fetch does offline. */
 export function setMockOffline(value: boolean) {
   offline = value;
+  try {
+    if (value) session()?.setItem(OFFLINE_KEY, "1");
+    else session()?.removeItem(OFFLINE_KEY);
+  } catch {
+    // Storage unavailable: the switch lasts until reload.
+  }
 }
 export function isMockOffline() {
   return offline;

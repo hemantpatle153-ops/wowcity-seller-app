@@ -88,6 +88,8 @@ export type ListRowProps = {
   onPress?: () => void;
   onLongPress?: () => void;
   destructive?: boolean;
+  /** Extra content under the subtitle (e.g. a status badge). */
+  below?: ReactNode;
   accessibilityLabel?: string;
   accessibilityHint?: string;
   style?: StyleProp<ViewStyle>;
@@ -107,6 +109,7 @@ export function ListRow({
   onPress,
   onLongPress,
   destructive,
+  below,
   accessibilityLabel,
   accessibilityHint,
   style
@@ -129,6 +132,7 @@ export function ListRow({
             {meta}
           </Text>
         ) : null}
+        {below ? <View style={{ marginTop: 4 }}>{below}</View> : null}
       </View>
       {value ? (
         <Text variant="bodyStrong" color={valueColor} tabular numberOfLines={1}>

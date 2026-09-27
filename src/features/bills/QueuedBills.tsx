@@ -37,9 +37,13 @@ export function QueuedBills({ showSynced = false }: { showSynced?: boolean }) {
     <Animated.View entering={theme.reduceMotion ? undefined : FadeIn} layout={theme.reduceMotion ? undefined : LinearTransition} style={{ gap: 8 }}>
       <SectionTitle title={`On this phone · ${waiting} waiting`} />
       <Card padded={false} style={{ overflow: "hidden", borderColor: waiting ? theme.colors.warning : theme.colors.border }}>
-        <View style={{ padding: 12, gap: 8, backgroundColor: theme.colors.warningSoft }}>
-          <Text variant="small" color="warning" weight="600">
-            {online ? "These bills are being sent to the server. Bill numbers arrive after sync." : "You're offline. These bills are safe on this phone and will sync automatically."}
+        <View style={{ padding: 12, gap: 8, backgroundColor: waiting ? theme.colors.warningSoft : theme.colors.successSoft }}>
+          <Text variant="small" color={waiting ? "warning" : "success"} weight="600">
+            {!waiting
+              ? "Recently synced from this phone."
+              : online
+                ? "These bills are being sent to the server. Bill numbers arrive after sync."
+                : "You're offline. These bills are safe on this phone and will sync automatically."}
           </Text>
           {online && waiting ? (
             <Row gap={2}>
@@ -72,7 +76,7 @@ export function QueuedBills({ showSynced = false }: { showSynced?: boolean }) {
                   .join(" · ")}
                 meta={entry.status === "failed" ? (entry.lastError ?? undefined) : undefined}
                 value={formatMoney(entry.summary.total)}
-                right={<Badge label={status.label} tone={status.tone} icon={status.icon} />}
+                below={<Badge label={status.label} tone={status.tone} icon={status.icon} />}
                 chevron
                 onPress={() => (entry.status === "synced" && entry.invoiceId && entry.summary.kind === "sale" ? router.push(`/bills/${entry.invoiceId}`) : router.push(`/bills/queued/${entry.id}`))}
               />

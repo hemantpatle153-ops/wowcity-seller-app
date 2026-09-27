@@ -8,9 +8,10 @@ import { api, errorMessage } from "@/api";
 import type { HistoryRow } from "@/api/types";
 import { isOwner } from "@/auth/permissions";
 import { useSession } from "@/auth/session";
+import { useConnectivity } from "@/state/connectivity";
 import { formatMoney, formatQty, formatRelative } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Badge, ChipRow, EmptyState, ErrorState, Header, IconButton, ListRow, Row, SearchBar, Segmented, SkeletonList, StatTile, Text } from "@/ui";
+import { Badge, Chip, ChipRow, EmptyState, ErrorState, Header, ListRow, SearchBar, Segmented, SkeletonList, StatTile, Text } from "@/ui";
 import { StorePill } from "@/ui/StorePill";
 import { QueuedBills } from "./QueuedBills";
 
@@ -38,11 +39,13 @@ export function BillsScreen({ back }: { back?: boolean }) {
   const [allStores, setAllStores] = useState(isOwner(me));
   const storeId = useSession((s) => s.storeId);
   const query = useDeferredValue(q.trim());
+  const online = useConnectivity((s) => s.online);
   const sales = useInfiniteQuery({
     queryKey: ["sales", "list", view, range, query, allStores ? "all" : storeId],
     initialPageParam: 1,
     queryFn: ({ pageParam }) => api.sales.list({ view, range, q: query || undefined, store: allStores ? undefined : (storeId ?? undefined), page: pageParam }),
-    getNextPageParam: (last) => (last.page * 30 < last.total ? last.page + 1 : undefined)
+    getNextPageParam: (last) => (last.page * 30 < last.total ? last.page + 1 : undefined),
+    enabled: online
   });
   const rows = sales.data?.pages.flatMap((p) => p.rows) ?? [];
   const summary = sales.data?.pages[0]?.summary;
@@ -64,7 +67,12 @@ export function BillsScreen({ back }: { back?: boolean }) {
       <ChipRow options={ranges.map((r) => ({ key: r.key, label: r.label }))} value={range} onChange={setRange} />
       {summary ? (
         <View style={{ flexDirection: "row", gap: 10, paddingHorizontal: 16 }}>
-          <StatTile label={staff ? "My sales" : "Sales"} value={formatMoney(summary.sales)} icon="trending-up" hint={`${summary.bills} bills · ${formatQty(summary.items)} items`} />
+          <StatTile
+            label={staff ? "My sales" : "Sales"}
+            value={formatMoney(summary.sales)}
+            icon="trending-up"
+            hint={`${summary.bills} bill${summary.bills === 1 ? "" : "s"} · ${formatQty(summary.items)} item${summary.items === 1 ? "" : "s"}`}
+          />
           <StatTile
             label="Due"
             value={formatMoney(summary.due)}
@@ -92,7 +100,7 @@ export function BillsScreen({ back }: { back?: boolean }) {
         <ListRow
           title={item.number}
           subtitle={[item.customer ?? "Walk-in", item.mobile].filter(Boolean).join(" · ")}
-          meta={[formatRelative(item.at), `${formatQty(item.quantity)} items`, item.by, allStores ? item.store : null].filter(Boolean).join(" · ")}
+          meta={[formatRelative(item.at), `${formatQty(item.quantity)} item${item.quantity === 1 ? "" : "s"}`, item.by, allStores ? item.store : null].filter(Boolean).join(" · ")}
           value={formatMoney(item.amount)}
           right={
             item.badge ? (
@@ -109,22 +117,17 @@ export function BillsScreen({ back }: { back?: boolean }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.bg, paddingTop: back ? insets.top : insets.top }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.bg, paddingTop: insets.top }}>
       <Header
         back={back}
         large={!back}
         title="Bills"
         right={
-          <Row gap={1}>
-            {isOwner(me) ? (
-              <IconButton
-                icon={allStores ? "albums" : "storefront-outline"}
-                label={allStores ? "Showing all stores. Show this store only" : "Showing this store. Show all stores"}
-                onPress={() => setAllStores(!allStores)}
-              />
-            ) : null}
+          isOwner(me) ? (
+            <Chip label={allStores ? "All stores" : "This store"} icon={allStores ? "albums-outline" : "storefront-outline"} selected={!allStores} onPress={() => setAllStores(!allStores)} />
+          ) : (
             <StorePill />
-          </Row>
+          )
         }
       />
       <FlashList
@@ -134,7 +137,15 @@ export function BillsScreen({ back }: { back?: boolean }) {
         ListHeaderComponent={header}
         ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
         ListEmptyComponent={
-          sales.isLoading ? (
+          !online && !rows.length ? (
+            <EmptyState
+              icon="cloud-offline-outline"
+              tone="warning"
+              title="Bill history needs internet"
+              body="Bills you make now are kept on this phone (above) and sync when you're back online."
+              compact
+            />
+          ) : sales.isLoading ? (
             <SkeletonList rows={6} withAvatar={false} />
           ) : sales.isError ? (
             <ErrorState message={errorMessage(sales.error)} onRetry={() => sales.refetch()} />
