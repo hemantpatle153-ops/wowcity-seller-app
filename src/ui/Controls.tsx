@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, Switch, View, type LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { haptic } from "@/lib/haptics";
@@ -47,7 +47,7 @@ export function Chip({ label, selected, onPress, icon, count }: { label: string;
   );
 }
 
-/** Horizontal scrolling single-select chip row. */
+/** Horizontal scrolling single-select chip row; the selected chip is scrolled into view. */
 export function ChipRow<K extends string>({
   options,
   value,
@@ -60,10 +60,41 @@ export function ChipRow<K extends string>({
   padded?: boolean;
 }) {
   const theme = useTheme();
+  const scroll = useRef<ScrollView>(null);
+  const positions = useRef<Record<string, number>>({});
+  const [width, setWidth] = useState(0);
+  const reveal = (key: string, animated: boolean) => {
+    const x = positions.current[key];
+    if (x !== undefined && width) scroll.current?.scrollTo({ x: Math.max(0, x - width / 3), animated: animated && !theme.reduceMotion });
+  };
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: padded ? theme.space[4] : 0 }} style={{ flexGrow: 0 }}>
+    <ScrollView
+      ref={scroll}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
+      contentContainerStyle={{ gap: 8, paddingHorizontal: padded ? theme.space[4] : 0 }}
+      style={{ flexGrow: 0 }}
+    >
       {options.map((option) => (
-        <Chip key={option.key} label={option.label} count={option.count} icon={option.icon} selected={option.key === value} onPress={() => onChange(option.key)} />
+        <View
+          key={option.key}
+          onLayout={(e) => {
+            positions.current[option.key] = e.nativeEvent.layout.x;
+            if (option.key === value) reveal(option.key, false);
+          }}
+        >
+          <Chip
+            label={option.label}
+            count={option.count}
+            icon={option.icon}
+            selected={option.key === value}
+            onPress={() => {
+              onChange(option.key);
+              reveal(option.key, true);
+            }}
+          />
+        </View>
       ))}
     </ScrollView>
   );

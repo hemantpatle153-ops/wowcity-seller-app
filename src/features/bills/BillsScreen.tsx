@@ -13,6 +13,7 @@ import { formatMoney, formatQty, formatRelative } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { Badge, Chip, ChipRow, EmptyState, ErrorState, Header, ListRow, SearchBar, Segmented, SkeletonList, StatTile, Text } from "@/ui";
 import { StorePill } from "@/ui/StorePill";
+import { MyDayCard } from "@/features/home/MyDayCard";
 import { QueuedBills } from "./QueuedBills";
 
 const ranges = [
@@ -54,6 +55,7 @@ export function BillsScreen({ back }: { back?: boolean }) {
   const header = (
     <View style={{ gap: 12, paddingBottom: 8 }}>
       <View style={{ paddingHorizontal: 16, gap: 12 }}>
+        {staff && !back && online ? <MyDayCard /> : null}
         <Segmented
           options={[
             { key: "bills", label: "Bills", icon: "receipt-outline" },
