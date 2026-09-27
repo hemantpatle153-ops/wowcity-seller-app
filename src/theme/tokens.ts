@@ -225,3 +225,6 @@ export const motion = {
   slow: 250,
   spring: { damping: 18, stiffness: 220, mass: 0.9 }
 } as const;
+
+/** Fixed colours for content drawn over camera or photos (same in every mode). */
+export const media = { text: "#FFFFFF", scrim: "rgba(0,0,0,0.55)", frame: "rgba(255,255,255,0.9)", torch: "#FFD54A", torchIcon: "#1C1A17", black: "#000000", shadow: "rgba(0,0,0,0.6)" } as const;

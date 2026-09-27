@@ -13,6 +13,8 @@ export default function AppLayout() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.bg }, animation: theme.reduceMotion ? "none" : "slide_from_right" }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="store-picker" options={{ animation: theme.reduceMotion ? "none" : "fade_from_bottom" }} />
+      <Stack.Screen name="sell/receipt" options={{ animation: theme.reduceMotion ? "none" : "fade_from_bottom", gestureEnabled: false }} />
+      <Stack.Screen name="scan" options={{ presentation: "fullScreenModal", animation: theme.reduceMotion ? "none" : "fade", contentStyle: { backgroundColor: theme.colors.bg } }} />
     </Stack>
   );
 }

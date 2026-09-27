@@ -69,7 +69,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
             setFocused(false);
             onBlur?.(e);
           }}
-          style={[{ flex: 1, color: theme.colors.text, fontSize: t.fontSize, paddingVertical: 10, fontWeight: large ? "600" : "400" }, style]}
+          style={[{ flex: 1, color: theme.colors.text, fontSize: t.fontSize, paddingVertical: 10, fontWeight: large ? "600" : "400", outlineWidth: 0 }, style]}
           {...rest}
         />
         {secureTextEntry && secureToggle ? (
@@ -138,7 +138,7 @@ export function SearchBar({
         returnKeyType="search"
         onSubmitEditing={onSubmitEditing}
         maxFontSizeMultiplier={1.4}
-        style={{ flex: 1, color: theme.colors.text, fontSize: theme.type("body").fontSize, paddingVertical: 10 }}
+        style={{ flex: 1, color: theme.colors.text, fontSize: theme.type("body").fontSize, paddingVertical: 10, outlineWidth: 0 }}
       />
       {value ? <IconButton icon="close-circle" label="Clear search" color="textMuted" size={20} onPress={() => onChangeText("")} /> : <View style={{ width: 8 }} />}
       {right}

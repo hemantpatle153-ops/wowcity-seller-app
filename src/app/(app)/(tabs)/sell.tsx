@@ -1,9 +1,3 @@
-import { Header, Screen, EmptyState } from "@/ui";
+import { SellScreen } from "@/features/sell/SellScreen";
 
-export default function Tab() {
-  return (
-    <Screen header={<Header title="sell" large />}>
-      <EmptyState icon="construct-outline" title="Coming soon" />
-    </Screen>
-  );
-}
+export default SellScreen;

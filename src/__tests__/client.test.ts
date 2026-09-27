@@ -56,7 +56,7 @@ describe("ApiClient", () => {
   it("surfaces error.message from the server", async () => {
     const { client } = setup(() => json(422, { error: { code: "sale_rejected", message: "Add a customer for credit bills." } }));
     await client.setTokens(pair(1));
-    const error = await client.post("/sales", {}).catch((e) => e);
+    const error = (await client.post("/sales", {}).catch((e: unknown) => e)) as ApiError;
     expect(error).toBeInstanceOf(ApiError);
     expect(error.code).toBe("sale_rejected");
     expect(error.message).toBe("Add a customer for credit bills.");
@@ -121,7 +121,7 @@ describe("ApiClient", () => {
       throw new TypeError("Network request failed");
     });
     await client.setTokens(pair(1));
-    const error = await client.get("/me").catch((e) => e);
+    const error = (await client.get("/me").catch((e: unknown) => e)) as ApiError;
     expect(error).toBeInstanceOf(ApiError);
     expect(error.isNetwork).toBe(true);
     expect(tokens.value).toBe("r2");

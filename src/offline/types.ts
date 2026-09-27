@@ -1,4 +1,5 @@
 import type { SaleRequest, SyncCatalogItem, SyncCursor, SyncCustomer } from "@/api/types";
+import type { ReceiptData } from "@/printing/receipt";
 
 export type QueueStatus = "pending" | "syncing" | "failed" | "synced";
 
@@ -18,6 +19,8 @@ export type QueuedBill = {
   invoiceId: string | null;
   billNumber: string | null;
   summary: { total: number; items: number; customer: string | null; kind: "sale" | "return"; estimate: boolean };
+  /** Snapshot for reprinting the provisional receipt. */
+  receipt?: ReceiptData;
 };
 
 export interface OfflineStore {
