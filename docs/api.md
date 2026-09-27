@@ -1,5 +1,7 @@
 # WowCity API v1 (mobile POS)
 
+The buyer app uses a separate public API: see `docs/buyer-api.md`.
+
 The seller mobile app and future apps talk to this server over JSON at `/api/v1`. The web app uses the same business logic, so a bill posted from a phone follows exactly the same rules as one posted at the counter PC.
 
 ## Conventions
@@ -28,6 +30,7 @@ The seller mobile app and future apps talk to this server over JSON at `/api/v1`
 | `POST /auth/signup` | shop details plus `{ email, password }` | `{ shopCode, …tokens }` (201): password sign-up |
 | `POST /auth/refresh` | `{ refreshToken }` | new tokens (the old refresh token stops working) |
 | `POST /auth/logout` | — | `{ signedOut: true }` |
+| `DELETE /account` | `{ confirm: "<shop code>" }` (owner only) | `{ deleted: true }`. Closes the shop: it leaves the marketplace, staff and devices are signed out, the owner's login and contact details are deleted. Bills and ledgers are kept only as tax law requires. Required by the App Store and Play Store |
 
 Codes: 5 sends per email/mobile an hour, 20 per network an hour, and 8 wrong codes lock that email/mobile for 15 minutes. A code lasts 10 minutes. Sign-up errors: `409 already_registered` when the login already has a shop.
 
@@ -55,9 +58,13 @@ A phone is also signed out when:
 | POST | `/sales` | sale.create / sale.return | Sale, estimate or return (payload below) |
 | GET | `/sales?range=today&view=bills\|returns&page=` | sale.* | Staff see only their own bills |
 | GET | `/sales/{invoiceId}` | sale.* | Full invoice for on-screen, thermal or A4 print and sharing |
-| GET | `/stock?q=&store=&status=&page=` | stock.view | Same filters as the web Stock page |
+| GET | `/stock?q=&store=&status=&page=` | stock.view | Same filters as the web Stock page. Each item has `image` (thumbnail URL or null); `unitCost` and `summary.costValue` are null without purchase.view_cost |
 | GET | `/sync/catalog?storeId=&sinceAt=&sinceId=&limit=` | sale.* / stock.view | Offline catalogue for one store: items, barcodes, price, MRP, GST and stock. Changed rows only after the first call |
 | GET | `/sync/customers?sinceAt=&sinceId=&limit=` | sale.create / sale.return | Offline customer list with current balances |
+| GET | `/products/{productId}/images` | stock.view | Photos, cover first |
+| POST | `/products/{productId}/images` | product.images.manage | `{ objectKey, contentType, variantId? }` after uploading: get a URL from `POST /api/r2/product-image-upload` (`{ productId, fileName, contentType, sizeBytes }`), PUT the file to it, then send the returned `objectKey` here. Max 4 photos, 5 MB each |
+| PATCH | `/products/{productId}/images/{imageId}` | product.images.manage | `{ primary: true }` makes it the cover buyers see first |
+| DELETE | `/products/{productId}/images/{imageId}` | product.images.manage | Removes the photo and its file; the next photo becomes the cover |
 | GET | `/reports` | any | Reports this person may open, grouped |
 | GET | `/reports/{slug}?range=&from=&to=&store=&view=&q=` | per report | Stats, notes and tables with totals (up to 5,000 rows per table) |
 | GET | `/api/reports/{slug}/export?…&table=` | per report | CSV download of one table (needs reports.export for staff) |

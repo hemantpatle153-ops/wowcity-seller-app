@@ -48,6 +48,10 @@ _Last updated: 27 Sep 2026 (autonomous build session). Every feature area from t
 - **Builds:** shop builds contain no mock backend or demo sign-ins (metro swaps in a stub); production builds refuse to start without `EXPO_PUBLIC_API_URL` or with mock mode on; iOS privacy manifest; unused Bluetooth permissions removed until the printer module; friendly crash screen with Try again.
 - **Other fixes from review:** debit-note amounts hidden without cost access, empty purchase drafts dated today, stock "Print label" adds the item, +91 mobile paste, old customer states normalised, payments refresh Sell balances, toasts above sheets and reachable with screen readers.
 
+## Backend
+
+The mobile API (`/api/v1`) is merged into `main` of the `wow-city` repo (fast-forward to `34b37f8`; lint, type-check, 92 unit tests and `next build` pass). Deploy `main` following `docs/deploy.md` there (Supabase migrations up to 034, OTP email/SMS, R2 bucket + CORS, `.env.production`), check `GET /api/health`, then set `EXPO_PUBLIC_API_URL=https://<your-domain>/api/v1` in EAS.
+
 ## Blockers / needs the owner
 
 | Blocker | Why | What to do |
