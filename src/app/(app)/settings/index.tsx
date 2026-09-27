@@ -2,6 +2,7 @@ import * as Application from "expo-application";
 import { isOwner } from "@/auth/permissions";
 import { useSession } from "@/auth/session";
 import { MenuSection } from "@/features/more/MenuGrid";
+import { checkForAppUpdate } from "@/lib/updates";
 import { useQueueCount } from "@/offline/useQueue";
 import { usePreferences } from "@/state/preferences";
 import { appearanceModes } from "@/theme/tokens";

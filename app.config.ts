@@ -21,6 +21,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: "wowcityseller",
   userInterfaceStyle: "automatic",
   runtimeVersion: { policy: "appVersion" },
+  // EAS Update: JavaScript-only fixes without a store release (needs EAS_PROJECT_ID from `eas init`).
+  updates: process.env.EAS_PROJECT_ID ? { url: `https://u.expo.dev/${process.env.EAS_PROJECT_ID}`, checkAutomatically: "ON_LOAD", fallbackToCacheTimeout: 0 } : { enabled: false },
   ios: {
     bundleIdentifier: bundleId,
     supportsTablet: true,

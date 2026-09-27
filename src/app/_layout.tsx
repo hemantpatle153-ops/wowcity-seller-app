@@ -8,6 +8,7 @@ import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useSession } from "@/auth/session";
+import { startUpdateChecks } from "@/lib/updates";
 import { initOffline, startQueueAutoSync, syncNow } from "@/offline/useQueue";
 import { startConnectivityMonitor } from "@/state/connectivity";
 import { queryClient } from "@/state/queryClient";
@@ -25,10 +26,12 @@ function Root() {
   useEffect(() => {
     const stopNet = startConnectivityMonitor();
     const stopQueue = startQueueAutoSync(() => useSession.getState().storeId);
+    const stopUpdates = startUpdateChecks();
     void initOffline().finally(() => useSession.getState().bootstrap());
     return () => {
       stopNet();
       stopQueue();
+      stopUpdates();
     };
   }, []);
 
