@@ -139,7 +139,8 @@ export function ReturnStart({ initialBill }: { initialBill?: string }) {
                     discountAmount: 0,
                     availableQty: null,
                     originalItemId: i.originalItemId,
-                    maxQty: i.returnableQty
+                    maxQty: i.returnableQty,
+                    unitRefund: toNumber(i.unitRefund)
                   })),
                   bill.invoice.taxType
                 )

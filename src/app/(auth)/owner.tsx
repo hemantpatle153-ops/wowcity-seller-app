@@ -59,7 +59,7 @@ export default function OwnerSignIn() {
               <Text variant="body" color="textMuted">
                 We sent a 6-digit code by {sent.channel === "sms" ? "SMS" : "email"} to <Text weight="700">{sent.sentTo}</Text>. It works for 10 minutes.
               </Text>
-              <CodeInput value={code} onChange={setCode} error={verify.isError} onComplete={(value) => verify.mutate(value)} label="Sign-in code" />
+              <CodeInput value={code} onChange={setCode} error={verify.isError} onComplete={(value) => !verify.isPending && verify.mutate(value)} label="Sign-in code" />
               {verify.isError ? (
                 <Text variant="small" color="danger" align="center" accessibilityLiveRegion="polite">
                   {errorMessage(verify.error)}
@@ -84,7 +84,7 @@ export default function OwnerSignIn() {
                 icon="person-outline"
                 error={request.isError ? errorMessage(request.error) : null}
                 returnKeyType="send"
-                onSubmitEditing={() => idValid && request.mutate()}
+                onSubmitEditing={() => idValid && !request.isPending && request.mutate()}
                 large
               />
               <Button label="Send code" size="lg" iconRight="arrow-forward" onPress={() => request.mutate()} disabled={!idValid} loading={request.isPending} fullWidth />
@@ -117,7 +117,7 @@ export default function OwnerSignIn() {
               autoComplete="password"
               icon="lock-closed-outline"
               returnKeyType="go"
-              onSubmitEditing={() => passwordLogin.mutate()}
+              onSubmitEditing={() => !passwordLogin.isPending && passwordLogin.mutate()}
               error={passwordLogin.isError ? errorMessage(passwordLogin.error) : null}
               large
             />

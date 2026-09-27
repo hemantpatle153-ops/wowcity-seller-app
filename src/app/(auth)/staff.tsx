@@ -68,7 +68,7 @@ export default function StaffSignIn() {
             autoComplete="password"
             icon="lock-closed-outline"
             returnKeyType="go"
-            onSubmitEditing={() => ready && login.mutate()}
+            onSubmitEditing={() => ready && !login.isPending && login.mutate()}
             error={login.isError ? errorMessage(login.error) : null}
             large
           />

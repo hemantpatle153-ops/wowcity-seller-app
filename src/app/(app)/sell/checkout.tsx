@@ -1,21 +1,21 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { errorMessage } from "@/api";
+import { api, errorMessage } from "@/api";
 import { can } from "@/auth/permissions";
 import { useCurrentStore, useSession } from "@/auth/session";
 import { useCart, type CartPayment, type PayMode } from "@/features/sell/cart";
 import { balanceBadge, CustomerSheet } from "@/features/sell/CustomerSheet";
 import { useLastReceipt } from "@/features/sell/lastReceipt";
-import { saveCurrentBill } from "@/features/sell/save";
+import { saveCurrentBill, type SaveResult } from "@/features/sell/save";
 import { quickCash } from "@/features/sell/tender";
 import { useCartTotals } from "@/features/sell/totals";
 import { formatMoney, formatQty, toNumber } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { printReceipt } from "@/printing/print";
 import { QrCode } from "@/printing/QrCode";
-import { upiUri } from "@/printing/receipt";
+import { receiptFromInvoice, upiUri } from "@/printing/receipt";
 import { usePreferences } from "@/state/preferences";
 import { useConnectivity } from "@/state/connectivity";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -27,6 +27,22 @@ const modes: { key: PayMode | "credit"; label: string; icon: "cash-outline" | "q
   { key: "card", label: "Card", icon: "card-outline" },
   { key: "credit", label: "Credit", icon: "time-outline" }
 ];
+
+/** Print the server's copy of a saved bill (HSN, store address, legal name, final QR); fall back to the local receipt. */
+async function printSaved(result: SaveResult) {
+  try {
+    let receipt = result.receipt;
+    if (result.status === "saved" && "invoiceId" in result.response) {
+      receipt = await api.sales
+        .get(result.invoiceId)
+        .then(receiptFromInvoice)
+        .catch(() => result.receipt);
+    }
+    await printReceipt(receipt);
+  } catch (e) {
+    toast.error(errorMessage(e));
+  }
+}
 
 function TotalRow({ label, value, strong, tone }: { label: string; value: string; strong?: boolean; tone?: "success" | "textMuted" }) {
   return (
@@ -45,7 +61,7 @@ export default function Checkout() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ focus?: string }>();
-  const me = useSession((s) => s.me)!;
+  const me = useSession((s) => s.me);
   const store = useCurrentStore();
   const online = useConnectivity((s) => s.online);
   const cart = useCart();
@@ -67,7 +83,21 @@ export default function Checkout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!cart.lines.length) {
+  // While the cashier hasn't typed their own amount, a single payment follows the total
+  // (bill discount, GST mode or estimate changes), so change due and the UPI QR stay right.
+  const lastNet = useRef(totals.net);
+  useEffect(() => {
+    const previous = lastNet.current;
+    lastNet.current = totals.net;
+    const only = useCart.getState().payments;
+    if (only.length === 1 && Math.abs(toNumber(only[0].amount) - previous) < 0.005 && previous !== totals.net) {
+      useCart.getState().setPayments([{ ...only[0], amount: String(totals.net) }]);
+    }
+  }, [totals.net]);
+
+  const inFlight = useRef(false);
+
+  if (!cart.lines.length || !me) {
     return (
       <Screen header={<Header back title="Checkout" />}>
         <Text color="textMuted">The bill is empty.</Text>
@@ -101,13 +131,15 @@ export default function Checkout() {
   const discountPct = toNumber(cart.extraDiscountPercent);
 
   const save = async (print: boolean) => {
-    if (!store) return;
+    // One save at a time: a quick double tap must never create two bills.
+    if (!store || inFlight.current) return;
     if (needsCustomer) {
       haptic.warning();
       setError(returnMode ? "Add the customer to give a credit note." : "Add the customer to keep the balance as due.");
       setCustomerOpen(true);
       return;
     }
+    inFlight.current = true;
     setSaving(print ? "print" : "save");
     setError(null);
     const change = totals.change;
@@ -115,12 +147,13 @@ export default function Checkout() {
       const result = await saveCurrentBill({ me, store: { id: store.id, name: store.name, state: store.state, city: store.city }, totals, canDiscount, printIntent: print ? "print" : "none" });
       haptic.success();
       useLastReceipt.getState().set(result, change);
-      if (print || autoPrint) printReceipt(result.receipt).catch((e) => toast.error(errorMessage(e)));
+      if (print || autoPrint) void printSaved(result);
       router.replace("/sell/receipt");
     } catch (e) {
       haptic.error();
       setError(errorMessage(e));
     } finally {
+      inFlight.current = false;
       setSaving(null);
     }
   };

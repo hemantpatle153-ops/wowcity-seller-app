@@ -10,7 +10,7 @@ import { printReceipt, shareReceiptPdf, whatsappReceipt } from "@/printing/print
 import { receiptFromInvoice } from "@/printing/receipt";
 import { ReceiptPreview } from "@/printing/ReceiptPreview";
 import { usePreferences } from "@/state/preferences";
-import { Badge, Button, Card, ErrorState, Header, Row, Screen, Segmented, SkeletonCards, Stack, Text, toast } from "@/ui";
+import { Badge, Button, Card, confirm, ErrorState, Header, Row, Screen, Segmented, SkeletonCards, Stack, Text, toast } from "@/ui";
 
 export default function BillDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -67,7 +67,18 @@ export default function BillDetail() {
             label="Return items from this bill"
             icon="return-down-back-outline"
             variant="secondary"
-            onPress={() => {
+            onPress={async () => {
+              const cart = useCart.getState();
+              if (cart.mode === "sale" && cart.lines.length) {
+                const ok = await confirm({
+                  title: "Start a return?",
+                  message: `The bill you're making (${cart.lines.length} item${cart.lines.length === 1 ? "" : "s"}) will be cleared.`,
+                  confirmLabel: "Clear and start return",
+                  cancelLabel: "Keep my bill",
+                  destructive: true
+                });
+                if (!ok) return;
+              }
               useCart.getState().reset("return");
               router.push(`/sell?returnBill=${encodeURIComponent(invoice.billNumber)}`);
             }}

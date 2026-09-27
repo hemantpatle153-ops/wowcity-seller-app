@@ -25,6 +25,8 @@ export type CartLine = {
   /** Returns: the original bill line and how much can still come back. */
   originalItemId?: string;
   maxQty?: number;
+  /** Returns: what the customer paid per unit on the original bill (after all discounts, with GST). */
+  unitRefund?: number;
 };
 
 export type CartCustomer = { id?: string; name: string; mobile: string; state?: string; balance?: number };

@@ -61,7 +61,7 @@ export function CartLineRow({
           onPress={onEdit}
           disabled={!onEdit}
           scaleTo={0.99}
-          accessibilityLabel={`${line.itemName} ${line.detail}, ${line.qty} at ${formatMoney(line.rate)}, total ${formatMoney(net)}`}
+          accessibilityLabel={`${line.itemName} ${line.detail}, ${line.qty} at ${formatMoney(line.unitRefund ?? line.rate)}, total ${formatMoney(net)}`}
           accessibilityHint={onEdit ? "Tap to change price or discount. Swipe left to remove." : "Swipe left to remove."}
           accessibilityActions={[{ name: "delete", label: "Remove" }]}
           onAccessibilityAction={(e) => e.nativeEvent.actionName === "delete" && onRemove()}
@@ -90,7 +90,7 @@ export function CartLineRow({
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <View style={{ flex: 1, flexDirection: "row", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
               <Text variant="small" color="textMuted" tabular>
-                {formatMoney(line.rate)} each
+                {formatMoney(line.unitRefund ?? line.rate)} each
               </Text>
               {line.discountPercent > 0 ? <Badge label={`−${line.discountPercent}%`} tone="success" showIcon={false} /> : null}
               {line.discountAmount > 0 ? <Badge label={`−${formatMoney(line.discountAmount)}`} tone="success" showIcon={false} /> : null}

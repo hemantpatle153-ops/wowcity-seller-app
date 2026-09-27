@@ -53,7 +53,10 @@ export async function saveCurrentBill({ me, store, totals, canDiscount, printInt
   }
   const invoiceId = "invoiceId" in response ? response.invoiceId : response.returnId;
   const number = "billNumber" in response ? response.billNumber : response.returnNumber;
-  const receipt = receiptFromCart(cart, totals, me, store, number, false);
+  const built = receiptFromCart(cart, totals, me, store, number, false);
+  // A return's receipt shows exactly what the server refunded.
+  const refunded = "refundAmount" in response ? Number(response.refundAmount) : null;
+  const receipt = refunded !== null && Number.isFinite(refunded) ? { ...built, totals: { ...built.totals, net: refunded } } : built;
   useCart.getState().reset();
   void queryClient.invalidateQueries({ queryKey: ["sales"] });
   void queryClient.invalidateQueries({ queryKey: ["dashboard"] });

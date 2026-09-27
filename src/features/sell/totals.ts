@@ -10,20 +10,20 @@ export function computeTotals(
   rounding: RoundingMode,
   canDiscount: boolean
 ) {
-  const rows = cart.lines.map((l) => ({
-    qty: l.qty,
-    mrp: l.mrp,
-    rate: l.rate,
-    gstRate: l.gstRate,
-    discountPercent: canDiscount ? l.discountPercent : 0,
-    discountAmount: canDiscount ? l.discountAmount : 0
-  }));
+  // Returns against a bill refund what was actually paid per unit (the server refunds original net x
+  // qty / sold), so preview them as GST-inclusive lines at that price, with no extra rounding.
+  const refundPreview = cart.mode === "return" && cart.lines.length > 0 && cart.lines.every((l) => l.unitRefund !== undefined);
+  const rows = cart.lines.map((l) =>
+    refundPreview
+      ? { qty: l.qty, mrp: l.mrp, rate: l.unitRefund ?? l.rate, gstRate: l.gstRate, discountPercent: 0, discountAmount: 0 }
+      : { qty: l.qty, mrp: l.mrp, rate: l.rate, gstRate: l.gstRate, discountPercent: canDiscount ? l.discountPercent : 0, discountAmount: canDiscount ? l.discountAmount : 0 }
+  );
   const place = supplyPlaceFor(cart.customer?.state, storeState);
   const bill = calculateSaleBill(
     rows,
-    cart.taxType,
+    refundPreview ? "inclusive" : cart.taxType,
     place,
-    rounding,
+    refundPreview ? "none" : rounding,
     canDiscount && cart.mode === "sale" ? cart.extraDiscountPercent || 0 : 0,
     canDiscount && cart.mode === "sale" ? cart.extraDiscountAmount || 0 : 0
   );

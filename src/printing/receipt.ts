@@ -100,7 +100,7 @@ export function receiptFromCart(
       hsn: "",
       qty: l.qty,
       mrp: l.mrp,
-      rate: l.rate,
+      rate: l.unitRefund ?? l.rate,
       discount: Number(totals.lines[i]?.discountAmount ?? 0),
       gstRate: l.gstRate,
       net: Number(totals.lines[i]?.netAmount ?? 0)

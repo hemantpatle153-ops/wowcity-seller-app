@@ -207,7 +207,7 @@ export default function Signup() {
               <Text variant="body" color="textMuted">
                 Sent to {sentTo}. It works for 10 minutes.
               </Text>
-              <CodeInput value={code} onChange={setCode} onComplete={(v) => verify.mutate(v)} error={verify.isError} label="Verification code" />
+              <CodeInput value={code} onChange={setCode} onComplete={(v) => !verify.isPending && verify.mutate(v)} error={verify.isError} label="Verification code" />
               {verify.isError ? (
                 <Text variant="small" color="danger" align="center">
                   {errorMessage(verify.error)}
