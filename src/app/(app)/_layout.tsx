@@ -18,3 +18,5 @@ export default function AppLayout() {
     </Stack>
   );
 }
+
+export { ErrorScreen as ErrorBoundary } from "@/ui/ErrorScreen";

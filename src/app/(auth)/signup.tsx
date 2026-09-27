@@ -164,7 +164,7 @@ export default function Signup() {
           {step === 1 ? (
             <>
               <Text variant="heading">Your shop</Text>
-              <Input label="Shop name" value={shop.shopName} onChangeText={(t) => set({ shopName: t })} icon="storefront-outline" placeholder="e.g. Luzzan Fashions" />
+              <Input label="Shop name" value={shop.shopName} onChangeText={(t) => set({ shopName: t })} icon="storefront-outline" placeholder="e.g. Sharma Garments" />
               <Select label="What do you sell?" value={shop.businessType ?? ""} options={businessTypes.map((b) => ({ value: b, label: b }))} onChange={(v) => set({ businessType: v })} allowCustom />
             </>
           ) : null}

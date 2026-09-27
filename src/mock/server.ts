@@ -113,3 +113,6 @@ export const mockFetch: typeof fetch = (async (input: RequestInfo | URL, init?: 
 
   return toResponse(dispatch(getDb(), { method, url, authorization, bodyText }));
 }) as typeof fetch;
+
+/** Sign-in hint shown on the welcome screen of demo builds only. */
+export const demoCredentials = "Owner: owner@luzzan.in / demo1234 (or code 123456)\nStaff: shop LUZ482 · ravi or meena · PIN 1234";

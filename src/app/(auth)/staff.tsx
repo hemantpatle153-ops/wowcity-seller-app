@@ -32,7 +32,7 @@ export default function StaffSignIn() {
         <Stack gap={4}>
           <Input
             label="Shop code"
-            placeholder="e.g. LUZ482"
+            placeholder="e.g. ABC123"
             value={shopCode}
             onChangeText={(t) => setShopCode(t.toUpperCase())}
             autoCapitalize="characters"

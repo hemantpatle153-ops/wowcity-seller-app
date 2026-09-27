@@ -102,7 +102,8 @@ export class ApiClient {
     const refreshToken = await this.config.tokenStore.getRefreshToken();
     if (!refreshToken) return "ended";
     try {
-      const tokens = await this.send<Tokens>("POST", "/auth/refresh", { body: { refreshToken }, auth: false });
+      // Generous timeout: giving up on a refresh the server already rotated would sign this phone out.
+      const tokens = await this.send<Tokens>("POST", "/auth/refresh", { body: { refreshToken }, auth: false, timeoutMs: 45000 });
       await this.setTokens(tokens);
       return "ok";
     } catch (error) {

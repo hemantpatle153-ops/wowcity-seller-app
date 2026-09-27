@@ -4,6 +4,7 @@ import { View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MOCK_MODE } from "@/api/config";
+import { demoCredentials } from "@/mock/server";
 import { useSession } from "@/auth/session";
 import { mix } from "@/theme/color";
 import { useTheme } from "@/theme/ThemeProvider";
@@ -59,11 +60,11 @@ export default function Welcome() {
               </Text>
             </Card>
           ) : null}
-          {MOCK_MODE ? (
+          {MOCK_MODE && demoCredentials ? (
             <Card style={{ gap: 6 }}>
               <Badge label="Demo mode" tone="info" />
               <Text variant="small" color="textMuted">
-                Owner: owner@luzzan.in / demo1234 (or code 123456){"\n"}Staff: shop LUZ482 · ravi or meena · PIN 1234
+                {demoCredentials}
               </Text>
             </Card>
           ) : null}
