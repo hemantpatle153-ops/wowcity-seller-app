@@ -68,12 +68,7 @@ export function labelSheetHtml(template: LabelTemplate, entries: LabelEntry[], f
   const pages = layoutPages(template, entries);
   const t = labelTypeScale(template.label.height);
   const pageHtml = pages
-    .map(
-      (labels) =>
-        `<section class="page">${labels
-          .map((l) => `<div class="label" style="left:${l.x}mm;top:${l.y}mm">${labelInner(l.item, fields, shop)}</div>`)
-          .join("")}</section>`
-    )
+    .map((labels) => `<section class="page">${labels.map((l) => `<div class="label" style="left:${l.x}mm;top:${l.y}mm">${labelInner(l.item, fields, shop)}</div>`).join("")}</section>`)
     .join("");
   const roll = template.columns === 1 && template.rows === 1;
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">

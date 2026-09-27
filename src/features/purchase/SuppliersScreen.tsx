@@ -37,7 +37,16 @@ export function SuppliersScreen() {
       onPress={() => setPicked(item)}
       scaleTo={0.985}
       accessibilityLabel={`${item.name}${item.active ? "" : ", inactive"}, ${item.bills} bills${item.balance ? `, balance ${formatMoney(item.balance)}` : ""}`}
-      style={{ marginHorizontal: 16, padding: 14, gap: 8, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.card, opacity: item.active ? 1 : 0.75 }}
+      style={{
+        marginHorizontal: 16,
+        padding: 14,
+        gap: 8,
+        backgroundColor: theme.colors.surface,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        borderRadius: theme.radius.card,
+        opacity: item.active ? 1 : 0.75
+      }}
     >
       <Row gap={3} align="flex-start">
         <Avatar name={item.name} tone={item.active ? "accent" : "neutral"} />
@@ -69,7 +78,12 @@ export function SuppliersScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.bg, paddingTop: insets.top }}>
-      <Header back title="Suppliers" subtitle={costVisible && owed > 0 ? `You owe ${formatMoney(owed, { decimals: 0 })} in all` : undefined} right={canEdit ? <IconButton icon="add-circle" color="accent" label="Add supplier" onPress={() => router.push("/suppliers/edit")} /> : undefined} />
+      <Header
+        back
+        title="Suppliers"
+        subtitle={costVisible && owed > 0 ? `You owe ${formatMoney(owed, { decimals: 0 })} in all` : undefined}
+        right={canEdit ? <IconButton icon="add-circle" color="accent" label="Add supplier" onPress={() => router.push("/suppliers/edit")} /> : undefined}
+      />
       <FlashList
         data={suppliers}
         keyExtractor={(s) => s.id}

@@ -10,7 +10,27 @@ import { useSession } from "@/auth/session";
 import { formatMoney, formatMoneyShort, formatNumber } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { useTheme } from "@/theme/ThemeProvider";
-import { AnimatedNumber, Badge, Card, ChipRow, EmptyState, ErrorState, Header, Icon, Row, Screen, SearchBar, Segmented, Skeleton, SkeletonCards, StatTile, Stack, Text, toast, type IconName } from "@/ui";
+import {
+  AnimatedNumber,
+  Badge,
+  Card,
+  ChipRow,
+  EmptyState,
+  ErrorState,
+  Header,
+  Icon,
+  Row,
+  Screen,
+  SearchBar,
+  Segmented,
+  Skeleton,
+  SkeletonCards,
+  StatTile,
+  Stack,
+  Text,
+  toast,
+  type IconName
+} from "@/ui";
 import { BarChart, HorizontalBars } from "@/ui/charts";
 import { useDebounced } from "@/features/dues/useDebounced";
 import { pickReportChart } from "./chart";
@@ -153,7 +173,11 @@ export function ReportViewerScreen({ slug }: { slug: string }) {
       {dated ? (
         <View style={{ marginHorizontal: -theme.space[4] }}>
           <ChipRow
-            options={rangePresets.map((r) => ({ key: r.key, label: r.key === "custom" && range === "custom" && custom ? `${custom.from.slice(5)} → ${custom.to.slice(5)}` : r.label, icon: r.key === "custom" ? ("calendar-outline" as const) : undefined }))}
+            options={rangePresets.map((r) => ({
+              key: r.key,
+              label: r.key === "custom" && range === "custom" && custom ? `${custom.from.slice(5)} → ${custom.to.slice(5)}` : r.label,
+              icon: r.key === "custom" ? ("calendar-outline" as const) : undefined
+            }))}
             value={activeRange ?? "30d"}
             onChange={(key) => {
               if (key === "custom") {
@@ -191,7 +215,9 @@ export function ReportViewerScreen({ slug }: { slug: string }) {
           <Row gap={2} wrap>
             <Icon name={data.period ? "calendar-outline" : "time-outline"} size={16} color="textMuted" />
             <Text variant="small" color="textMuted" style={{ flex: 1 }}>
-              {data.period ? `${data.period.label} · ${formatCell(data.period.from, "date")}${data.period.to !== data.period.from ? ` – ${formatCell(data.period.to, "date")}` : ""}` : "Current position"}
+              {data.period
+                ? `${data.period.label} · ${formatCell(data.period.from, "date")}${data.period.to !== data.period.from ? ` – ${formatCell(data.period.to, "date")}` : ""}`
+                : "Current position"}
             </Text>
             {query.isFetching ? <Badge label="Updating" tone="info" icon="sync-outline" /> : null}
             {query.isError ? <Badge label="Couldn't refresh" tone="warning" /> : null}

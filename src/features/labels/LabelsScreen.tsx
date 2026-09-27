@@ -212,7 +212,13 @@ function PrintTab() {
                         {[variantText(line.item), line.item.barcode].filter(Boolean).join(" · ")}
                       </Text>
                     </View>
-                    <Stepper value={line.copies} min={0} max={2000} label={`Copies of ${line.item.name}`} onChange={(n) => (n <= 0 ? list.remove(line.item.barcodeId) : list.setCopies(line.item.barcodeId, n))} />
+                    <Stepper
+                      value={line.copies}
+                      min={0}
+                      max={2000}
+                      label={`Copies of ${line.item.name}`}
+                      onChange={(n) => (n <= 0 ? list.remove(line.item.barcodeId) : list.setCopies(line.item.barcodeId, n))}
+                    />
                   </View>
                 </Animated.View>
               ))}
@@ -309,7 +315,15 @@ function PrintTab() {
             {template && perPage > 1 ? ` · ${sheets} sheet${sheets === 1 ? "" : "s"}` : ""}
           </Text>
           <Row gap={2}>
-            <Button label={`Print ${labels} label${labels === 1 ? "" : "s"}`} icon="print-outline" size="lg" style={{ flex: 1 }} loading={busy === "print"} disabled={!!busy || !template} onPress={() => print("print")} />
+            <Button
+              label={`Print ${labels} label${labels === 1 ? "" : "s"}`}
+              icon="print-outline"
+              size="lg"
+              style={{ flex: 1 }}
+              loading={busy === "print"}
+              disabled={!!busy || !template}
+              onPress={() => print("print")}
+            />
             {Platform.OS !== "web" ? <IconButton icon="share-outline" label="Share as PDF" variant="soft" onPress={() => print("share")} disabled={!!busy} /> : null}
           </Row>
         </Animated.View>
@@ -342,9 +356,28 @@ function HistoryTab() {
       onPress={() => router.push(`/labels/jobs/${item.id}`)}
       scaleTo={0.985}
       accessibilityLabel={`${item.title}, ${formatRelative(item.at)}, ${item.labels} labels`}
-      style={{ marginHorizontal: 16, padding: 14, flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.card }}
+      style={{
+        marginHorizontal: 16,
+        padding: 14,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        backgroundColor: theme.colors.surface,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        borderRadius: theme.radius.card
+      }}
     >
-      <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center", backgroundColor: item.source === "purchase" ? theme.colors.infoSoft : theme.colors.accentSoft }}>
+      <View
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: item.source === "purchase" ? theme.colors.infoSoft : theme.colors.accentSoft
+        }}
+      >
         <Icon name={item.source === "purchase" ? "cube-outline" : "print-outline"} size={20} color={item.source === "purchase" ? "info" : "accentSoftText"} />
       </View>
       <View style={{ flex: 1, minWidth: 0 }}>

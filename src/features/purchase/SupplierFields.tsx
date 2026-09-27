@@ -30,12 +30,23 @@ export function SupplierFields({ value, onChange, errors }: { value: SupplierFor
   return (
     <Stack gap={3}>
       <Input label="Supplier name" value={value.name} onChangeText={(name) => set({ name })} icon="business-outline" autoCapitalize="words" error={errors.name} maxLength={120} />
-      <Input label="Mobile (optional)" value={value.mobile} onChangeText={(mobile) => set({ mobile: mobile.replace(/[^\d+ ]/g, "") })} keyboardType="phone-pad" icon="call-outline" error={errors.mobile} maxLength={16} />
+      <Input
+        label="Mobile (optional)"
+        value={value.mobile}
+        onChangeText={(mobile) => set({ mobile: mobile.replace(/[^\d+ ]/g, "") })}
+        keyboardType="phone-pad"
+        icon="call-outline"
+        error={errors.mobile}
+        maxLength={16}
+      />
       <Input
         label="GSTIN (optional)"
         value={value.gstin}
         onChangeText={(text) => {
-          const gstin = text.toUpperCase().replace(/[^0-9A-Z]/g, "").slice(0, 15);
+          const gstin = text
+            .toUpperCase()
+            .replace(/[^0-9A-Z]/g, "")
+            .slice(0, 15);
           const code = gstin.length >= 2 ? gstStateCode(gstin.slice(0, 2)) : null;
           const state = !value.state && code ? (indianStates.find((s) => s.code === code)?.name ?? value.state) : value.state;
           set({ gstin, state });
@@ -46,8 +57,25 @@ export function SupplierFields({ value, onChange, errors }: { value: SupplierFor
         error={errors.gstin}
         hint="The state fills in from the GSTIN."
       />
-      <Select label="State" value={value.state} options={indianStates.map((s) => ({ value: s.name, label: s.name, hint: `GST code ${s.code}` }))} onChange={(state) => set({ state })} searchable placeholder="Choose state" error={errors.state} />
-      <Input label="Address (optional)" value={value.address} onChangeText={(address) => set({ address })} multiline icon="location-outline" error={errors.address} maxLength={300} style={{ minHeight: 64, textAlignVertical: "top" }} />
+      <Select
+        label="State"
+        value={value.state}
+        options={indianStates.map((s) => ({ value: s.name, label: s.name, hint: `GST code ${s.code}` }))}
+        onChange={(state) => set({ state })}
+        searchable
+        placeholder="Choose state"
+        error={errors.state}
+      />
+      <Input
+        label="Address (optional)"
+        value={value.address}
+        onChangeText={(address) => set({ address })}
+        multiline
+        icon="location-outline"
+        error={errors.address}
+        maxLength={300}
+        style={{ minHeight: 64, textAlignVertical: "top" }}
+      />
     </Stack>
   );
 }

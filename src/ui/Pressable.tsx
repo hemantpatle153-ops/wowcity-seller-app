@@ -24,7 +24,7 @@ export const PressableScale = forwardRef<View, PressableScaleProps>(function Pre
   const pressed = useSharedValue(0);
   const animated = useAnimatedStyle(() => ({
     transform: [{ scale: 1 - (1 - scaleTo) * pressed.value }],
-    opacity: 1 - pressed.value * 0.08
+    opacity: (disabled ? 0.45 : 1) * (1 - pressed.value * 0.08)
   }));
   return (
     <AnimatedPressable
@@ -44,7 +44,7 @@ export const PressableScale = forwardRef<View, PressableScaleProps>(function Pre
         if (hapticOnPress) haptic.tap();
         onPress?.(event);
       }}
-      style={[style, animated, disabled ? { opacity: 0.5 } : null]}
+      style={[style, animated]}
       {...rest}
     >
       {children}

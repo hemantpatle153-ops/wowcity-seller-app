@@ -118,7 +118,13 @@ export function BarChart({
             {/* Grid lines and axis labels */}
             {ticks.map((t) => (
               <View key={t} pointerEvents="none" style={{ position: "absolute", left: 0, right: 0, top: y(t), flexDirection: "row", alignItems: "center" }}>
-                <Text variant="caption" color="textFaint" tabular numberOfLines={1} style={{ width: axisWidth - 6, textAlign: "right", marginTop: -caption.lineHeight, fontSize: caption.fontSize - 1 }}>
+                <Text
+                  variant="caption"
+                  color="textFaint"
+                  tabular
+                  numberOfLines={1}
+                  style={{ width: axisWidth - 6, textAlign: "right", marginTop: -caption.lineHeight, fontSize: caption.fontSize - 1 }}
+                >
                   {format(t)}
                 </Text>
                 <View style={{ flex: 1, height: t === 0 ? 1.5 : 1, marginLeft: 6, backgroundColor: t === 0 ? theme.colors.borderStrong : theme.colors.border, opacity: t === 0 ? 1 : 0.7 }} />

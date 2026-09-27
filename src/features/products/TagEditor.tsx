@@ -33,7 +33,10 @@ export function TagEditor({
   const full = value.length >= max;
 
   const add = (raw: string) => {
-    const parts = raw.split(",").map((p) => p.trim()).filter(Boolean);
+    const parts = raw
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
     if (!parts.length) return;
     if (full) {
       haptic.warning();

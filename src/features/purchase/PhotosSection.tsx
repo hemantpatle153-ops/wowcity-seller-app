@@ -34,7 +34,15 @@ function Thumb({ item, photo, index }: { item: ItemDraft; photo: PhotoDraft; ind
         accessibilityLabel={
           photo.status === "failed" ? `Photo ${index + 1} failed to upload. Tap to try again` : primary ? `Photo ${index + 1}, cover photo` : `Photo ${index + 1}. Tap to make it the cover photo`
         }
-        style={{ width: size, height: size, borderRadius: theme.radius.control, overflow: "hidden", backgroundColor: theme.colors.surfaceSunken, borderWidth: primary ? 2 : 1, borderColor: primary ? theme.colors.accent : theme.colors.border }}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: theme.radius.control,
+          overflow: "hidden",
+          backgroundColor: theme.colors.surfaceSunken,
+          borderWidth: primary ? 2 : 1,
+          borderColor: primary ? theme.colors.accent : theme.colors.border
+        }}
       >
         <Image source={{ uri: photo.uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" transition={theme.reduceMotion ? 0 : 150} />
         {photo.status !== "done" ? (
@@ -63,7 +71,19 @@ function Thumb({ item, photo, index }: { item: ItemDraft; photo: PhotoDraft; ind
         onPress={remove}
         accessibilityLabel={`Remove photo ${index + 1}`}
         hitSlop={8}
-        style={{ position: "absolute", top: -8, right: -8, width: 28, height: 28, borderRadius: 14, backgroundColor: theme.colors.surfaceRaised, borderWidth: 1, borderColor: theme.colors.border, alignItems: "center", justifyContent: "center" }}
+        style={{
+          position: "absolute",
+          top: -8,
+          right: -8,
+          width: 28,
+          height: 28,
+          borderRadius: 14,
+          backgroundColor: theme.colors.surfaceRaised,
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
       >
         <Icon name="close" size={16} color="text" />
       </PressableScale>

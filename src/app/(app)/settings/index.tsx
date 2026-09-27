@@ -35,7 +35,8 @@ export default function Settings() {
             icon: "cloud-done-outline",
             href: "/settings/offline",
             tone: queued ? "warning" : "accent"
-          }
+          },
+          { label: "Check for updates", hint: "Small fixes install without the store", icon: "arrow-down-circle-outline", onPress: () => void checkForAppUpdate({ announceNone: true }) }
         ]}
       />
       <MenuSection

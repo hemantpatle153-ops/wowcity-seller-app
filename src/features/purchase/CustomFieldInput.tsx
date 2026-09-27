@@ -18,7 +18,9 @@ export function CustomFieldInput({ field, value, onChange, error }: { field: Cus
   switch (field.field_type) {
     case "select":
     case "dropdown":
-      return <Select label={label} value={value} options={field.options_json.map((o) => ({ value: o, label: o }))} onChange={onChange} error={error} placeholder={`Choose ${field.name.toLowerCase()}`} />;
+      return (
+        <Select label={label} value={value} options={field.options_json.map((o) => ({ value: o, label: o }))} onChange={onChange} error={error} placeholder={`Choose ${field.name.toLowerCase()}`} />
+      );
     case "multi_select": {
       const selected = splitMulti(value);
       return (
@@ -29,7 +31,15 @@ export function CustomFieldInput({ field, value, onChange, error }: { field: Cus
           <Row gap={2} wrap>
             {field.options_json.map((option) => {
               const on = selected.includes(option);
-              return <Chip key={option} label={option} icon={on ? "checkmark" : undefined} selected={on} onPress={() => onChange((on ? selected.filter((s) => s !== option) : [...selected, option]).join(", "))} />;
+              return (
+                <Chip
+                  key={option}
+                  label={option}
+                  icon={on ? "checkmark" : undefined}
+                  selected={on}
+                  onPress={() => onChange((on ? selected.filter((s) => s !== option) : [...selected, option]).join(", "))}
+                />
+              );
             })}
           </Row>
           {error ? (

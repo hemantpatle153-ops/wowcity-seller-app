@@ -9,26 +9,7 @@ import type { PermissionGroup, RolePreset, WorkerGrantablePermission } from "@/a
 import { haptic } from "@/lib/haptics";
 import { useTheme } from "@/theme/ThemeProvider";
 import { TOUCH } from "@/theme/tokens";
-import {
-  Button,
-  Card,
-  EmptyState,
-  Header,
-  Icon,
-  IconButton,
-  IconCircle,
-  PressableScale,
-  Row,
-  Screen,
-  SectionTitle,
-  Sheet,
-  Stack,
-  Text,
-  toast,
-  ToggleRow,
-  type IconName,
-  type Tone
-} from "@/ui";
+import { Button, Card, EmptyState, Header, Icon, IconButton, IconCircle, PressableScale, Row, Screen, SectionTitle, Sheet, Stack, Text, toast, ToggleRow, type IconName, type Tone } from "@/ui";
 import { useIsOwner } from "./hooks";
 import { formatClock } from "./shifts";
 import { impliedBy, matchPreset, normalizePermissions, roleIcons, togglePermission, type RoleKey } from "./roles";
@@ -56,7 +37,9 @@ export function StickyFooter({ children, error, note }: { children: ReactNode; e
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <View style={{ padding: theme.space[4], paddingBottom: Math.max(insets.bottom, 12), gap: theme.space[2], backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
+    <View
+      style={{ padding: theme.space[4], paddingBottom: Math.max(insets.bottom, 12), gap: theme.space[2], backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}
+    >
       {error ? (
         <Animated.View entering={theme.reduceMotion ? undefined : FadeIn.duration(160)} style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
           <Icon name="alert-circle" color="danger" size={18} />
@@ -143,7 +126,7 @@ export function ActionTile({ icon, label, tone = "accent", onPress, hint }: { ic
       }}
     >
       <IconCircle icon={icon} tone={tone} size={40} />
-      <Text variant="small" weight="700" align="center" numberOfLines={2} color={tone === "danger" ? "danger" : "text"}>
+      <Text variant="small" weight="700" align="center" numberOfLines={3} color={tone === "danger" ? "danger" : "text"}>
         {label}
       </Text>
     </PressableScale>
@@ -218,7 +201,17 @@ export function ChoiceCard({
 }
 
 /** Role presets as big cards, plus "Custom". */
-export function RolePicker({ presets, permissions, onChange, onCustom }: { presets: RolePreset[]; permissions: string[]; onChange: (permissions: WorkerGrantablePermission[]) => void; onCustom: () => void }) {
+export function RolePicker({
+  presets,
+  permissions,
+  onChange,
+  onCustom
+}: {
+  presets: RolePreset[];
+  permissions: string[];
+  onChange: (permissions: WorkerGrantablePermission[]) => void;
+  onCustom: () => void;
+}) {
   const current = matchPreset(permissions, presets);
   const [customPicked, setCustomPicked] = useState(false);
   const selected: RoleKey = customPicked ? "custom" : current;
@@ -295,21 +288,23 @@ export function PermissionEditor({ groups, permissions, onChange }: { groups: Pe
 }
 
 /** Multi-select list of stores with an "All" shortcut. */
-export function StorePicker({ stores, value, onChange, error }: { stores: { id: string; name: string; city?: string | null }[]; value: string[]; onChange: (ids: string[]) => void; error?: string | null }) {
+export function StorePicker({
+  stores,
+  value,
+  onChange,
+  error
+}: {
+  stores: { id: string; name: string; city?: string | null }[];
+  value: string[];
+  onChange: (ids: string[]) => void;
+  error?: string | null;
+}) {
   const theme = useTheme();
   const all = stores.length > 0 && stores.every((s) => value.includes(s.id));
   return (
     <View style={{ gap: theme.space[2] }}>
       <Card padded={false} style={{ overflow: "hidden" }}>
-        {stores.length > 1 ? (
-          <StoreRow
-            label="All stores"
-            hint={`${stores.length} open stores`}
-            checked={all}
-            onPress={() => onChange(all ? [] : stores.map((s) => s.id))}
-            icon="storefront"
-          />
-        ) : null}
+        {stores.length > 1 ? <StoreRow label="All stores" hint={`${stores.length} open stores`} checked={all} onPress={() => onChange(all ? [] : stores.map((s) => s.id))} icon="storefront" /> : null}
         {stores.map((store, i) => (
           <View key={store.id} style={i > 0 || stores.length > 1 ? { borderTopWidth: 1, borderColor: theme.colors.border } : undefined}>
             <StoreRow
@@ -525,7 +520,15 @@ export function TimePickerSheet({ visible, title, value, onClose, onPick }: { vi
       </View>
       <SectionTitle title="Hour" />
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, justifyContent: "space-between" }} accessibilityRole="radiogroup">
-        {HOURS.map((h) => cell(String(h).padStart(2, "0"), h === 0 ? "12 am" : h < 12 ? `${h} am` : h === 12 ? "12 pm" : `${h - 12} pm`, h === hour, () => setHour(h), `${formatClock(`${String(h).padStart(2, "0")}:00`)} hour`))}
+        {HOURS.map((h) =>
+          cell(
+            String(h).padStart(2, "0"),
+            h === 0 ? "12 am" : h < 12 ? `${h} am` : h === 12 ? "12 pm" : `${h - 12} pm`,
+            h === hour,
+            () => setHour(h),
+            `${formatClock(`${String(h).padStart(2, "0")}:00`)} hour`
+          )
+        )}
       </View>
       <SectionTitle title="Minutes" />
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, justifyContent: "space-between" }} accessibilityRole="radiogroup">

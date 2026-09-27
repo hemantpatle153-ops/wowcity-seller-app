@@ -6,7 +6,6 @@ export type ReportChart =
   | { kind: "bars"; title: string; format: "money" | "qty"; data: { label: string; fullLabel: string; value: number }[] }
   | { kind: "hbars"; title: string; format: "money" | "qty"; data: { label: string; value: number; detail?: string }[] };
 
-
 function pickValueColumn(columns: ReportColumn[]): ReportColumn | null {
   const money = columns.filter((c) => c.format === "money");
   const byName = MAIN_FIGURE_KEYS.map((k) => money.find((c) => c.key === k)).find(Boolean);

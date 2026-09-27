@@ -42,7 +42,12 @@ export function JobDetailScreen({ id }: { id: string }) {
     if (!template || !items.length) return;
     setBusy(true);
     try {
-      await printLabelSheet(template, items.map((i) => ({ item: i, copies: i.copies })), fields, me?.shopName ?? "");
+      await printLabelSheet(
+        template,
+        items.map((i) => ({ item: i, copies: i.copies })),
+        fields,
+        me?.shopName ?? ""
+      );
       haptic.success();
       record.mutate();
     } catch (e) {
@@ -53,7 +58,10 @@ export function JobDetailScreen({ id }: { id: string }) {
   };
 
   const edit = () => {
-    usePrintList.getState().load(items.map(({ copies, ...item }) => ({ item, copies })), id);
+    usePrintList.getState().load(
+      items.map(({ copies, ...item }) => ({ item, copies })),
+      id
+    );
     router.push(`/labels?job=${id}`);
   };
 
@@ -65,7 +73,17 @@ export function JobDetailScreen({ id }: { id: string }) {
       footerSpace={canPrint && items.length ? (theme.fontScale > 1.1 ? 150 : 90) : 0}
       footer={
         canPrint && items.length ? (
-          <View style={{ padding: 16, paddingBottom: Math.max(insets.bottom, 12), flexDirection: theme.fontScale > 1.1 ? "column-reverse" : "row", gap: 10, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
+          <View
+            style={{
+              padding: 16,
+              paddingBottom: Math.max(insets.bottom, 12),
+              flexDirection: theme.fontScale > 1.1 ? "column-reverse" : "row",
+              gap: 10,
+              backgroundColor: theme.colors.surface,
+              borderTopWidth: 1,
+              borderColor: theme.colors.border
+            }}
+          >
             <Button label="Edit list" icon="create-outline" variant="secondary" size="lg" onPress={edit} style={theme.fontScale > 1.1 ? undefined : { flex: 1 }} />
             <Button label="Reprint" icon="print-outline" size="lg" onPress={reprint} loading={busy} disabled={!template} style={theme.fontScale > 1.1 ? undefined : { flex: 1.4 }} />
           </View>

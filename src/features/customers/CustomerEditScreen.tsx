@@ -82,7 +82,16 @@ function EditForm({ customer }: { customer: CustomerDetailResponse["customer"] }
                 </Text>
               </Row>
             ) : null}
-            <Button label={dirty ? "Save changes" : "No changes yet"} icon="checkmark" size="lg" variant={dirty ? "primary" : "secondary"} onPress={save} loading={mutation.isPending} disabled={!dirty} fullWidth />
+            <Button
+              label={dirty ? "Save changes" : "No changes yet"}
+              icon="checkmark"
+              size="lg"
+              variant={dirty ? "primary" : "secondary"}
+              onPress={save}
+              loading={mutation.isPending}
+              disabled={!dirty}
+              fullWidth
+            />
           </View>
         }
       >
@@ -108,7 +117,14 @@ function EditForm({ customer }: { customer: CustomerDetailResponse["customer"] }
           <Input
             label="GSTIN (for B2B bills)"
             value={form.gstin}
-            onChangeText={(t) => set({ gstin: t.toUpperCase().replace(/[^0-9A-Z]/g, "").slice(0, 15) })}
+            onChangeText={(t) =>
+              set({
+                gstin: t
+                  .toUpperCase()
+                  .replace(/[^0-9A-Z]/g, "")
+                  .slice(0, 15)
+              })
+            }
             error={errors.gstin}
             autoCapitalize="characters"
             autoCorrect={false}

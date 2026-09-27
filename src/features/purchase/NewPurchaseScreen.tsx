@@ -202,7 +202,11 @@ export function NewPurchaseScreen() {
     }
     const failed = state.items.reduce((n, i) => n + i.photos.filter((p) => p.status === "failed").length, 0);
     if (failed) {
-      const ok = await confirm({ title: `${failed} photo${failed === 1 ? "" : "s"} didn't upload`, message: "Save the purchase without them? You can add photos later from Online listing.", confirmLabel: "Save without them" });
+      const ok = await confirm({
+        title: `${failed} photo${failed === 1 ? "" : "s"} didn't upload`,
+        message: "Save the purchase without them? You can add photos later from Online listing.",
+        confirmLabel: "Save without them"
+      });
       if (!ok) return;
     }
     save.mutate();
@@ -242,9 +246,13 @@ export function NewPurchaseScreen() {
   const options = (
     <Sheet visible={optionsOpen} onClose={() => setOptionsOpen(false)} title="Purchases">
       <View style={{ marginHorizontal: -theme.space[4] }}>
-        {canView ? <ListRow title="Purchase history" subtitle="Bills from suppliers, returns" icon="receipt-outline" chevron onPress={() => (setOptionsOpen(false), router.push("/purchases"))} /> : null}
+        {canView ? (
+          <ListRow title="Purchase history" subtitle="Bills from suppliers, returns" icon="receipt-outline" chevron onPress={() => (setOptionsOpen(false), router.push("/purchases"))} />
+        ) : null}
         {canView ? <ListRow title="Suppliers" icon="business-outline" chevron onPress={() => (setOptionsOpen(false), router.push("/suppliers"))} /> : null}
-        {can(me, "barcode.print", "barcode.view") ? <ListRow title="Barcode labels" subtitle="Print or reprint labels" icon="barcode-outline" chevron onPress={() => (setOptionsOpen(false), router.push("/labels"))} /> : null}
+        {can(me, "barcode.print", "barcode.view") ? (
+          <ListRow title="Barcode labels" subtitle="Print or reprint labels" icon="barcode-outline" chevron onPress={() => (setOptionsOpen(false), router.push("/labels"))} />
+        ) : null}
         {draft.items.length > 1 ? <ListRow title="Collapse all items" icon="contract-outline" onPress={() => (setOptionsOpen(false), usePurchaseDraft.getState().setAllCollapsed(true))} /> : null}
         {hasContent ? <ListRow title="Discard draft" subtitle="Start this purchase again" icon="trash-outline" destructive onPress={discard} /> : null}
       </View>
@@ -255,7 +263,13 @@ export function NewPurchaseScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: theme.colors.bg }}>
         {header}
-        <EmptyState icon="lock-closed-outline" title="Purchases are view-only for you" body="Ask the owner for permission to add purchases." action={canView ? "See purchase history" : undefined} onAction={() => router.push("/purchases")} />
+        <EmptyState
+          icon="lock-closed-outline"
+          title="Purchases are view-only for you"
+          body="Ask the owner for permission to add purchases."
+          action={canView ? "See purchase history" : undefined}
+          onAction={() => router.push("/purchases")}
+        />
         {options}
       </View>
     );
@@ -301,7 +315,13 @@ export function NewPurchaseScreen() {
             accessibilityLabel={draft.supplier ? `Supplier ${draft.supplier.name}. Change` : "Choose supplier"}
             style={{ flexDirection: "row", alignItems: "center", gap: 12, minHeight: 56 }}
           >
-            {draft.supplier ? <Avatar name={draft.supplier.name} size={44} /> : <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.accentSoft, alignItems: "center", justifyContent: "center" }}><Icon name="business-outline" color="accentSoftText" /></View>}
+            {draft.supplier ? (
+              <Avatar name={draft.supplier.name} size={44} />
+            ) : (
+              <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: theme.colors.accentSoft, alignItems: "center", justifyContent: "center" }}>
+                <Icon name="business-outline" color="accentSoftText" />
+              </View>
+            )}
             <View style={{ flex: 1, minWidth: 0 }}>
               <Text variant="caption" color="textMuted" weight="700" uppercase>
                 Supplier
@@ -368,7 +388,15 @@ export function NewPurchaseScreen() {
               </Row>
             </View>
             <View style={{ flexGrow: 1, flexBasis: 150 }}>
-              <Input label="Invoice no." value={draft.invoice} onChangeText={(invoice) => draft.set({ invoice: invoice.slice(0, 40) })} placeholder="e.g. RT-118" accessibilityLabel="Supplier invoice number" autoCapitalize="characters" icon="document-text-outline" />
+              <Input
+                label="Invoice no."
+                value={draft.invoice}
+                onChangeText={(invoice) => draft.set({ invoice: invoice.slice(0, 40) })}
+                placeholder="e.g. RT-118"
+                accessibilityLabel="Supplier invoice number"
+                autoCapitalize="characters"
+                icon="document-text-outline"
+              />
             </View>
           </View>
         </Card>
@@ -389,7 +417,17 @@ export function NewPurchaseScreen() {
               hapticOnPress
               scaleTo={0.96}
               accessibilityLabel="Scan existing barcode with the camera"
-              style={{ flex: 1, minHeight: 64, borderRadius: theme.radius.card, backgroundColor: theme.colors.accent, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, paddingHorizontal: 12 }}
+              style={{
+                flex: 1,
+                minHeight: 64,
+                borderRadius: theme.radius.card,
+                backgroundColor: theme.colors.accent,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                paddingHorizontal: 12
+              }}
             >
               {looking ? <Badge label="Looking up…" tone="neutral" icon="search" /> : <Icon name="scan" size={26} color="accentText" />}
               {!looking ? (
@@ -405,7 +443,19 @@ export function NewPurchaseScreen() {
               }}
               scaleTo={0.96}
               accessibilityLabel="Add new product"
-              style={{ flex: 1, minHeight: 64, borderRadius: theme.radius.card, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.borderStrong, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, paddingHorizontal: 12 }}
+              style={{
+                flex: 1,
+                minHeight: 64,
+                borderRadius: theme.radius.card,
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.borderStrong,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+                paddingHorizontal: 12
+              }}
             >
               <Icon name="add-circle-outline" size={26} color="accent" />
               <Text variant="bodyStrong" numberOfLines={2} style={{ flexShrink: 1 }}>

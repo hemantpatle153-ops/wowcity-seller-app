@@ -130,9 +130,19 @@ export function DeleteAccountScreen() {
           <Card style={{ gap: theme.space[4] }}>
             <Consequence icon="storefront-outline" title="Your shop closes" body="All stores stop billing and disappear from WowCity for buyers." />
             <Consequence icon="people-outline" title="Everyone is signed out" body="You and all your staff are signed out on every phone and can't sign in again." />
-            <Consequence icon="document-lock-outline" title="Data is kept only as the law requires" body="Bills and GST records are kept for the period Indian tax law requires, then deleted. Nothing else is kept." />
+            <Consequence
+              icon="document-lock-outline"
+              title="Data is kept only as the law requires"
+              body="Bills and GST records are kept for the period Indian tax law requires, then deleted. Nothing else is kept."
+            />
             <Consequence icon="close-circle-outline" title="It can't be undone" body="You'd need to sign up again and start from scratch." />
-            {queued ? <Consequence icon="cloud-offline-outline" title={`${queued} bill${queued === 1 ? "" : "s"} not synced`} body="Bills waiting on this phone will be lost. Go online and let them sync first." /> : null}
+            {queued ? (
+              <Consequence
+                icon="cloud-offline-outline"
+                title={`${queued} bill${queued === 1 ? "" : "s"} not synced`}
+                body="Bills waiting on this phone will be lost. Go online and let them sync first."
+              />
+            ) : null}
           </Card>
         </Animated.View>
 

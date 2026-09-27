@@ -24,7 +24,21 @@ function priceRange(p: ProductListItem) {
   return `${formatMoney(p.minPrice)}–${formatMoney(p.maxPrice, { symbol: false })}`;
 }
 
-function SummaryTile({ label, value, icon, tone, selected, onPress }: { label: string; value: number; icon: "globe" | "list" | "image-outline" | "alert-circle-outline"; tone: "success" | "info" | "warning" | "accent"; selected: boolean; onPress: () => void }) {
+function SummaryTile({
+  label,
+  value,
+  icon,
+  tone,
+  selected,
+  onPress
+}: {
+  label: string;
+  value: number;
+  icon: "globe" | "list" | "image-outline" | "alert-circle-outline";
+  tone: "success" | "info" | "warning" | "accent";
+  selected: boolean;
+  onPress: () => void;
+}) {
   const theme = useTheme();
   return (
     <PressableScale
@@ -63,7 +77,16 @@ function ProductRow({ item, onPress }: { item: ProductListItem; onPress: () => v
     <PressableScale
       onPress={onPress}
       scaleTo={0.985}
-      accessibilityLabel={[item.name, item.brand, priceRange(item), `${formatQty(item.stock)} in stock`, item.live ? `live in ${item.live} stores` : item.listed ? `listed in ${item.listed} stores, not live` : "not listed", !item.image ? "no photo" : null].filter(Boolean).join(", ")}
+      accessibilityLabel={[
+        item.name,
+        item.brand,
+        priceRange(item),
+        `${formatQty(item.stock)} in stock`,
+        item.live ? `live in ${item.live} stores` : item.listed ? `listed in ${item.listed} stores, not live` : "not listed",
+        !item.image ? "no photo" : null
+      ]
+        .filter(Boolean)
+        .join(", ")}
       accessibilityHint="Opens the online listing"
       style={{
         flexDirection: "row",
@@ -139,7 +162,14 @@ export function ProductsScreen() {
           <SummaryTile label="Live on WowCity" value={s.live} icon="globe" tone="success" selected={filter === "live"} onPress={() => toggle("live")} />
           <SummaryTile label="Listed" value={s.listed} icon="list" tone="info" selected={filter === "listed"} onPress={() => toggle("listed")} />
           <SummaryTile label="Need a photo" value={s.noPhoto} icon="image-outline" tone="warning" selected={filter === "nophoto"} onPress={() => toggle("nophoto")} />
-          <SummaryTile label={`Not listed · ${s.unlistedInStock} in stock`} value={s.products - s.listed} icon="alert-circle-outline" tone="accent" selected={filter === "unlisted"} onPress={() => toggle("unlisted")} />
+          <SummaryTile
+            label={`Not listed · ${s.unlistedInStock} in stock`}
+            value={s.products - s.listed}
+            icon="alert-circle-outline"
+            tone="accent"
+            selected={filter === "unlisted"}
+            onPress={() => toggle("unlisted")}
+          />
         </Animated.View>
       ) : products.isLoading ? (
         <View style={{ flexDirection: "row", gap: 8, paddingHorizontal: theme.space[4] }}>

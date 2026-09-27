@@ -12,7 +12,28 @@ import { useSession } from "@/auth/session";
 import { formatMoney, formatPercent, formatQty, formatRelative } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Badge, Button, Card, Chip, Divider, EmptyState, ErrorState, Header, Icon, IconButton, IconCircle, PressableScale, Row, Screen, SectionTitle, Skeleton, SkeletonCards, Stack, Text, toast } from "@/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Chip,
+  Divider,
+  EmptyState,
+  ErrorState,
+  Header,
+  Icon,
+  IconButton,
+  IconCircle,
+  PressableScale,
+  Row,
+  Screen,
+  SectionTitle,
+  Skeleton,
+  SkeletonCards,
+  Stack,
+  Text,
+  toast
+} from "@/ui";
 import { useEditableCustomFields, useStockItem } from "./hooks";
 import { AdjustSheet, TransferSheet } from "./StockActionSheets";
 import { customValueText, movementMeta, shortStoreName, stockTone, variantLine } from "./stockLogic";
@@ -38,7 +59,15 @@ function Gallery({ images, width }: { images: StockItemDetail["images"]; width: 
   }
   return (
     <View style={{ gap: 8 }}>
-      <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScroll={onScroll} scrollEventThrottle={32} style={{ width, borderRadius: theme.radius.card }} accessibilityLabel={`${images.length} photos`}>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        scrollEventThrottle={32}
+        style={{ width, borderRadius: theme.radius.card }}
+        accessibilityLabel={`${images.length} photos`}
+      >
         {images.map((image, i) => (
           <View key={image.id} style={frame} accessibilityLabel={`Photo ${i + 1} of ${images.length}`}>
             <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center", gap: 6 }}>
@@ -149,7 +178,11 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
   if (item.isError || !item.data) {
     return (
       <Screen header={<Header back title="Item" />}>
-        {item.isError ? <ErrorState message={errorMessage(item.error)} onRetry={() => item.refetch()} /> : <EmptyState icon="cube-outline" title="Item not found" action="Back to stock" onAction={() => router.back()} />}
+        {item.isError ? (
+          <ErrorState message={errorMessage(item.error)} onRetry={() => item.refetch()} />
+        ) : (
+          <EmptyState icon="cube-outline" title="Item not found" action="Back to stock" onAction={() => router.back()} />
+        )}
       </Screen>
     );
   }
@@ -178,7 +211,17 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
         footerSpace={footerButtons.length ? 88 : 0}
         footer={
           footerButtons.length ? (
-            <View style={{ flexDirection: "row", gap: 8, padding: theme.space[4], paddingBottom: Math.max(insets.bottom, 12), backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 8,
+                padding: theme.space[4],
+                paddingBottom: Math.max(insets.bottom, 12),
+                backgroundColor: theme.colors.surface,
+                borderTopWidth: 1,
+                borderColor: theme.colors.border
+              }}
+            >
               {owner ? <Button label="Adjust" icon="construct-outline" variant="secondary" accessibilityLabel="Adjust stock" size="lg" onPress={() => open("adjust")} style={{ flex: 1 }} /> : null}
               {canEdit ? <Button label="Edit item" icon="create-outline" size="lg" onPress={() => router.push(`/stock/${d.variantId}/edit`)} style={{ flex: 1 }} /> : null}
             </View>
@@ -203,7 +246,10 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
             {off > 0 ? (
               <>
                 <Text variant="body" color="textFaint" tabular style={{ marginBottom: 4 }}>
-                  MRP <Text variant="body" color="textFaint" tabular style={{ textDecorationLine: "line-through" }}>{formatMoney(d.mrp)}</Text>
+                  MRP{" "}
+                  <Text variant="body" color="textFaint" tabular style={{ textDecorationLine: "line-through" }}>
+                    {formatMoney(d.mrp)}
+                  </Text>
                 </Text>
                 <View style={{ marginBottom: 6 }}>
                   <Badge label={`${off}% off`} tone="success" icon="pricetag" />
@@ -254,7 +300,9 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
                       </Text>
                     ) : null}
                   </View>
-                  <View><Badge label={s.available <= 0 ? `${formatQty(s.available)} · Out` : `${formatQty(s.available)} pcs`} tone={stockTone(s.available)} showIcon={s.available <= 5} /></View>
+                  <View>
+                    <Badge label={s.available <= 0 ? `${formatQty(s.available)} · Out` : `${formatQty(s.available)} pcs`} tone={stockTone(s.available)} showIcon={s.available <= 5} />
+                  </View>
                 </Row>
               </View>
             ))}
@@ -284,7 +332,12 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
           <Card style={{ paddingVertical: 4 }}>
             {d.barcodes.length ? (
               d.barcodes.map((b) => (
-                <InfoRow key={b.id} label="Barcode" value={b.barcode} right={<IconButton icon="copy-outline" label={`Copy barcode ${b.barcode}`} color="accent" size={20} onPress={() => void copy(b.barcode)} />} />
+                <InfoRow
+                  key={b.id}
+                  label="Barcode"
+                  value={b.barcode}
+                  right={<IconButton icon="copy-outline" label={`Copy barcode ${b.barcode}`} color="accent" size={20} onPress={() => void copy(b.barcode)} />}
+                />
               ))
             ) : (
               <InfoRow label="Barcode" value="None yet" />
@@ -369,9 +422,7 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
       {owner ? (
         <>
           <AdjustSheet key={`adjust-${nonce}`} visible={sheet === "adjust"} onClose={() => setSheet(null)} item={d} defaultStoreId={storeId} />
-          {canTransfer ? (
-            <TransferSheet key={`transfer-${nonce}`} visible={sheet === "transfer"} onClose={() => setSheet(null)} item={d} defaultStoreId={storeId} />
-          ) : null}
+          {canTransfer ? <TransferSheet key={`transfer-${nonce}`} visible={sheet === "transfer"} onClose={() => setSheet(null)} item={d} defaultStoreId={storeId} /> : null}
         </>
       ) : null}
     </>

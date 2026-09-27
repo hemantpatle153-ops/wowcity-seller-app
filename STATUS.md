@@ -1,6 +1,6 @@
 # WowCity Seller — status
 
-_Last updated: 27 Sep 2026 (autonomous build session)._
+_Last updated: 27 Sep 2026 (autonomous build session). Every feature area from the brief is built and runs end to end against the mock backend; `npm run check` is clean (177 tests), `expo-doctor` 21/21, screenshots of every area in `docs/screenshots/`._
 
 ## Done
 
@@ -14,15 +14,22 @@ _Last updated: 27 Sep 2026 (autonomous build session)._
 | Offline | SQLite catalogue per store + customers, synced with `/sync/*` cursors; bill queue with idempotency keys, posted with `offline: true` when back online (auto on reconnect and every 30 s), temporary `OFF-XXXX-DDMM` reference on offline receipts, retry / discard UI, provisional reprint. |
 | Receipts | On-screen preview, 58/80 mm thermal HTML and A4 GST invoice (UPI QR), print via the system dialog, PDF share, WhatsApp text. ESC/POS encoder (`src/printing/printers/escpos.ts`) behind a printer abstraction ready for Bluetooth. Printer settings with test print. |
 | Bills | Bills/returns history (ranges, search, summaries, infinite scroll; staff see their own), bill detail with reprint/share/WhatsApp and "return items". |
+| Purchase | New purchase as item cards: supplier search/add/free text, store, GST mode, date, invoice no.; scan to restock or create a product with that barcode; duplicate / another size; photos up to 4 (presigned upload); online listing fields; custom columns; totals, bill discount, TCS, payments; persisted draft; idempotent save; label printing. Purchase list/detail, owner return to supplier (debit note), suppliers CRUD with GSTIN/state checks. |
+| Labels | Search items, copies, label templates and fields, live preview with a Code128 barcode, A4/roll printing via the system dialog, print history and reprint. |
+| Stock | Paged list with search, camera scan, status chips, store switch, sort and facet filters, summary (cost only with permission); item detail with photos, per-store stock, siblings, movements; owner adjust and transfer; full product edit; WowCity online listing editor with buyer preview; custom columns (add, reorder, archive). |
+| Money | Dues (customers/suppliers, filters, statements with running balance, record payment, add due, WhatsApp reminder), customers (segments, profiles, edit). |
+| Reports | Every report from `/reports`: ranges, views, search, stat tiles, auto chart, cards/table view, totals, CSV share, PDF export. Owner Home dashboard with animated numbers, 14-day trend, payment mix, dues, stock alerts, top items, team, profit, recent bills; staff "My day" on the Bills tab. Themed chart kit. |
+| Admin | Staff list, add-staff wizard (shares sign-in details), detail with PIN reset / sign out everywhere / disable, access (role presets + permissions + stores), working hours, emergency lock-all; signed-in phones; stores (add/edit, close temporarily or merge, reopen); settings: business profile, tax & rounding, invoice & UPI/bank (live QR), change password; delete account (type the shop code; friendly "email support" fallback while the backend returns 404). |
 | Mock mode | `EXPO_PUBLIC_MOCK=1`: an in-app backend answers every endpoint with a realistic seeded shop, including sales, stock, purchases, dues, reports, staff. Demo sign-in: owner `owner@luzzan.in` / `demo1234` (or code `123456`); staff shop `LUZ482`, `ravi` (cashier) or `meena` (manager), PIN `1234`. Settings → Offline & sync has a "Simulate no internet" switch in demo builds. |
 | Quality | `npm run check` = `tsc --noEmit` + ESLint (React Compiler rules) + Jest (API client/refresh, sale maths, cart/payload, offline queue/sync, theme contrast, receipts/ESC-POS, mock backend). Web export + Playwright screenshots in `docs/screenshots/`. |
 
-## In progress (this session)
+## Next
 
-- Purchase entry (item cards, scan/restock/new product, photos up to 4, listing fields), purchase list/detail, returns to supplier, suppliers, barcode labels.
-- Stock list/filters, item detail, adjust, transfer, edit product, online listing, custom columns.
-- Home dashboard with animated numbers and charts, dues and statements, record payment, customers, reports with charts and CSV.
-- Staff (create, access, shifts, PIN reset, disable, sign out, lockdown), devices, stores, shop settings, delete account.
+- Hardware testing on real phones (camera scanning speed, SQLite with a large catalogue, print dialog on Android/iOS).
+- Bluetooth ESC/POS transport in a development build (see blockers).
+- Calendar picker for custom report dates (dates are typed as YYYY-MM-DD today).
+- "Use my location" for store coordinates (needs `expo-location`).
+- Stock list thumbnails (the API returns an image key, not a URL).
 
 ## Blockers / needs the owner
 
@@ -32,6 +39,7 @@ _Last updated: 27 Sep 2026 (autonomous build session)._
 | Bluetooth printing | Needs a native BLE/SPP module in a development build and a real printer to test | Everything above the transport is ready (ESC/POS encoding for 58/80 mm incl. QR, settings, test print). Add e.g. `react-native-ble-plx`, implement `BluetoothTransport` in `src/printing/printers/bluetooth.ts`, test on hardware. Until then receipts print through the system dialog/PDF. |
 | `DELETE /api/v1/account` | Backend endpoint not built yet | App calls it with `{ confirm: <shop code> }` and shows a friendly "email support" message on 404. |
 | API gaps noticed | From reading the backend | No v1 endpoint to add photos to an existing product outside a purchase; `/stock` returns `unitCost` to staff without cost permission (app hides it); `POST /suppliers` and `POST /stores` don't return the new id. |
+| Backend behaviours to review | Found while building | Saving a product edit as staff without cost permission clears the internal note (full replace); a cancelled label print is still recorded as a print job (the app records it after the print dialog closes). |
 | Privacy policy URL, reviewer login | Store listing | Publish e.g. `https://luzzan.com/privacy`; keep a demo shop with a password login for App Review. |
 | Maps | Store location | No Google Maps key is needed yet (stores take a Google Maps link and optional lat/long). |
 

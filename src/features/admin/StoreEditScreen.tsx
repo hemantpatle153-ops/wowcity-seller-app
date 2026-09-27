@@ -114,11 +114,25 @@ function StoreForm({ store }: { store: StoreRow | null }) {
       >
         <FormSection title="Store">
           <Input label="Store name" value={form.name} onChangeText={(name) => set({ name })} placeholder="e.g. Luzzan — MG Road" error={show("name")} maxLength={120} autoCapitalize="words" />
-          <Input label="Phone (optional)" value={form.contactPhone} onChangeText={(contactPhone) => set({ contactPhone })} keyboardType="phone-pad" error={show("contactPhone", form.contactPhone.length >= 10)} maxLength={16} />
+          <Input
+            label="Phone (optional)"
+            value={form.contactPhone}
+            onChangeText={(contactPhone) => set({ contactPhone })}
+            keyboardType="phone-pad"
+            error={show("contactPhone", form.contactPhone.length >= 10)}
+            maxLength={16}
+          />
         </FormSection>
 
         <FormSection title="Address" hint="Printed on bills from this store.">
-          <Input label="Address line 1" value={form.addressLine1} onChangeText={(addressLine1) => set({ addressLine1 })} placeholder="Shop number, building, street" error={show("addressLine1")} maxLength={200} />
+          <Input
+            label="Address line 1"
+            value={form.addressLine1}
+            onChangeText={(addressLine1) => set({ addressLine1 })}
+            placeholder="Shop number, building, street"
+            error={show("addressLine1")}
+            maxLength={200}
+          />
           <Input label="Address line 2 (optional)" value={form.addressLine2} onChangeText={(addressLine2) => set({ addressLine2 })} placeholder="Area, landmark" maxLength={200} />
           <Row gap={3} align="flex-start">
             <Input label="City" value={form.city} onChangeText={(city) => set({ city })} error={show("city")} maxLength={80} containerStyle={{ flex: 1.4 }} autoCapitalize="words" />
@@ -132,7 +146,16 @@ function StoreForm({ store }: { store: StoreRow | null }) {
               containerStyle={{ flex: 1 }}
             />
           </Row>
-          <Select label="State" value={form.state} onChange={(state) => set({ state })} placeholder="Choose the state" searchable sheetTitle="State" options={indianStates.map((s) => ({ value: s.name, label: s.name, hint: `GST code ${s.code}` }))} error={show("state")} />
+          <Select
+            label="State"
+            value={form.state}
+            onChange={(state) => set({ state })}
+            placeholder="Choose the state"
+            searchable
+            sheetTitle="State"
+            options={indianStates.map((s) => ({ value: s.name, label: s.name, hint: `GST code ${s.code}` }))}
+            error={show("state")}
+          />
         </FormSection>
 
         <FormSection title="GST">
@@ -189,9 +212,27 @@ function StoreForm({ store }: { store: StoreRow | null }) {
         </FormSection>
 
         <FormSection title="On WowCity">
-          <ToggleRow icon="globe-outline" label="Show this store to buyers" hint="Buyers nearby can find it and see listed stock." value={form.isDiscoverable} onChange={(isDiscoverable) => set({ isDiscoverable })} />
-          <ToggleRow icon="location-outline" label="Show the address" hint="Otherwise only the area and city are shown." value={form.publicAddressEnabled} onChange={(publicAddressEnabled) => set({ publicAddressEnabled })} />
-          <ToggleRow icon="call-outline" label="Show the phone number" hint="Let buyers call the store." value={form.publicContactEnabled} onChange={(publicContactEnabled) => set({ publicContactEnabled })} />
+          <ToggleRow
+            icon="globe-outline"
+            label="Show this store to buyers"
+            hint="Buyers nearby can find it and see listed stock."
+            value={form.isDiscoverable}
+            onChange={(isDiscoverable) => set({ isDiscoverable })}
+          />
+          <ToggleRow
+            icon="location-outline"
+            label="Show the address"
+            hint="Otherwise only the area and city are shown."
+            value={form.publicAddressEnabled}
+            onChange={(publicAddressEnabled) => set({ publicAddressEnabled })}
+          />
+          <ToggleRow
+            icon="call-outline"
+            label="Show the phone number"
+            hint="Let buyers call the store."
+            value={form.publicContactEnabled}
+            onChange={(publicContactEnabled) => set({ publicContactEnabled })}
+          />
         </FormSection>
         {!store ? (
           <Callout icon="receipt-outline" tone="info">

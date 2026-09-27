@@ -182,7 +182,10 @@ export function tableHtml(input: { title: string; shopName?: string; periodLabel
     ? `<tfoot><tr>${cols.map((c, i) => `<td style="text-align:${align(c)}">${escapeHtml(i === 0 && (table.totals?.[c.key] === undefined || table.totals?.[c.key] === null) ? "Total" : exportCell(table.totals?.[c.key], cellFormat(table.totals!, c)))}</td>`).join("")}</tr></tfoot>`
     : "";
   const stats = (input.stats ?? []).map((s) => `<div class="stat"><span>${escapeHtml(s.label)}</span><b>${escapeHtml(formatStat(s))}</b></div>`).join("");
-  const heading = [input.shopName, input.title, table.title].filter(Boolean).map((t) => escapeHtml(String(t))).join(" · ");
+  const heading = [input.shopName, input.title, table.title]
+    .filter(Boolean)
+    .map((t) => escapeHtml(String(t)))
+    .join(" · ");
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
 body{font-family:-apple-system,Roboto,Helvetica,Arial,sans-serif;color:#1C1A17;margin:24px;font-size:11px}
 h1{font-size:16px;margin:0 0 4px}p{margin:0 0 12px;color:#5E5850}

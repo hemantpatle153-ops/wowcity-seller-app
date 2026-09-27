@@ -36,7 +36,13 @@ export function EntrySheet({
   const qc = useQueryClient();
   const today = isoDay();
   const [requestId] = useState(uuid);
-  const [draft, setDraft] = useState<EntryDraft>({ amount: kind === "payment" && balance > 0 ? String(Math.round(balance * 100) / 100) : "", date: today, reference: "", note: "", mode: kind === "payment" ? "cash" : null });
+  const [draft, setDraft] = useState<EntryDraft>({
+    amount: kind === "payment" && balance > 0 ? String(Math.round(balance * 100) / 100) : "",
+    date: today,
+    reference: "",
+    note: "",
+    mode: kind === "payment" ? "cash" : null
+  });
   const [errors, setErrors] = useState<EntryErrors>({});
   const [dateMode, setDateMode] = useState<"today" | "yesterday" | "other">("today");
   const [serverError, setServerError] = useState<string | null>(null);
@@ -81,12 +87,7 @@ export function EntrySheet({
   const amount = parseAmount(draft.amount);
   const verb = kind === "due" ? "Add due" : "Save payment";
   const title = kind === "due" ? `Add due for ${partyName}` : party === "customer" ? `Payment from ${partyName}` : `Payment to ${partyName}`;
-  const subtitle =
-    balance > 0
-      ? `${party === "customer" ? "Owes" : "You owe"} ${formatMoney(balance)}`
-      : balance < 0
-        ? `Advance ${formatMoney(-balance)}`
-        : "Nothing outstanding";
+  const subtitle = balance > 0 ? `${party === "customer" ? "Owes" : "You owe"} ${formatMoney(balance)}` : balance < 0 ? `Advance ${formatMoney(-balance)}` : "Nothing outstanding";
 
   return (
     <Sheet
@@ -195,7 +196,15 @@ export function EntrySheet({
 
       <View style={{ gap: 12 }}>
         {kind === "payment" ? (
-          <Input label="Reference (optional)" value={draft.reference} onChangeText={(t) => set({ reference: t })} placeholder="UPI ref, cheque no." maxLength={60} error={errors.reference} autoCapitalize="characters" />
+          <Input
+            label="Reference (optional)"
+            value={draft.reference}
+            onChangeText={(t) => set({ reference: t })}
+            placeholder="UPI ref, cheque no."
+            maxLength={60}
+            error={errors.reference}
+            autoCapitalize="characters"
+          />
         ) : null}
         <Input
           label={kind === "due" ? "Reason (shows on the statement)" : "Note (optional)"}

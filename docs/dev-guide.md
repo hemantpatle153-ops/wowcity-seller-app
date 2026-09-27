@@ -27,6 +27,7 @@ src/
 - **Type:** `<Text variant="caption|small|body|bodyStrong|title|heading|display|hero">`. Money and quantities use `tabular`.
 - **Touch targets:** 48 dp minimum (`Button`, `IconButton`, `ListRow`, `Chip` already are).
 - **Accessibility:** every pressable has an `accessibilityLabel`; status is never colour-only (use `Badge` with text/icon).
+- **React Compiler:** it memoises component bodies, so never write `thing!.id` for a value that can be null during render; guard with an early return instead.
 - **Motion:** Reanimated only; skip or shorten animations when `theme.reduceMotion`. Shared values: use `.set()` / `.get()` (React Compiler friendly).
 - **Haptics:** `haptic.tap/select/success/warning/error` from `@/lib/haptics` (respects the setting).
 - **Server data:** TanStack Query. Query keys start with the area: `["sales", ...]`, `["stock", ...]`, `["purchases", ...]`, `["dues", ...]`, `["customers", ...]`, `["reports", ...]`, `["staff", ...]`, `["stores", ...]`, `["settings", ...]`, `["dashboard", ...]`. Invalidate the area after a mutation.

@@ -26,7 +26,11 @@ function CardHeader({ title, action, onAction, right }: { title: string; action?
       </Text>
       {right}
       {action ? (
-        <PressableScale onPress={onAction} accessibilityLabel={action} style={{ minHeight: 44, minWidth: 44, marginVertical: -8, marginRight: -6, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", gap: 2 }}>
+        <PressableScale
+          onPress={onAction}
+          accessibilityLabel={action}
+          style={{ minHeight: 44, minWidth: 44, marginVertical: -8, marginRight: -6, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", gap: 2 }}
+        >
           <Text variant="small" weight="700" color="accent">
             {action}
           </Text>
@@ -40,7 +44,9 @@ function CardHeader({ title, action, onAction, right }: { title: string; action?
 export function ChangeBadge({ change }: { change: number | null }) {
   if (change === null) return <Badge label="No sales yesterday to compare" tone="neutral" showIcon={false} />;
   const up = change >= 0;
-  const pct = `${Math.abs(change).toFixed(Math.abs(change) >= 100 ? 0 : 1).replace(/\.0$/, "")}%`;
+  const pct = `${Math.abs(change)
+    .toFixed(Math.abs(change) >= 100 ? 0 : 1)
+    .replace(/\.0$/, "")}%`;
   return <Badge label={`${up ? "▲" : "▼"} ${pct} ${up ? "more" : "less"} than yesterday`} tone={up ? "success" : "danger"} showIcon={false} />;
 }
 
@@ -180,7 +186,21 @@ export function PaymentMixCard({ mix }: { mix: OwnerDashboard["paymentMix"] }) {
   );
 }
 
-function DueColumn({ title, amount, parties, top, party, tone }: { title: string; amount: number; parties: number; top: { id: string; name: string; amount: number }[]; party: "customer" | "supplier"; tone: Tone }) {
+function DueColumn({
+  title,
+  amount,
+  parties,
+  top,
+  party,
+  tone
+}: {
+  title: string;
+  amount: number;
+  parties: number;
+  top: { id: string; name: string; amount: number }[];
+  party: "customer" | "supplier";
+  tone: Tone;
+}) {
   return (
     <View style={{ flex: 1, minWidth: 260, gap: 6 }}>
       <Text variant="small" color="textMuted">
@@ -274,7 +294,9 @@ export function TopItemsCard({ items }: { items: OwnerDashboard["topItems"] }) {
       {items.length ? (
         <HorizontalBars
           title="Top items in the last 7 days"
-          data={[...items].sort((a, b) => b.amount - a.amount).map((i) => ({ key: i.variantId, label: i.name, detail: `${i.detail} · ${formatNumber(i.quantity)} sold`, value: i.amount, onPress: () => openPath(`/stock/${i.variantId}`) }))}
+          data={[...items]
+            .sort((a, b) => b.amount - a.amount)
+            .map((i) => ({ key: i.variantId, label: i.name, detail: `${i.detail} · ${formatNumber(i.quantity)} sold`, value: i.amount, onPress: () => openPath(`/stock/${i.variantId}`) }))}
         />
       ) : (
         <Text variant="small" color="textMuted">
@@ -289,10 +311,7 @@ export function TeamCard({ team }: { team: OwnerDashboard["team"] }) {
   const sellers = team.today.filter((m) => m.amount > 0 || m.bills > 0);
   return (
     <Card style={{ gap: 12 }}>
-      <CardHeader
-        title="Team today"
-        right={<Badge label={`${team.active} of ${team.total} active`} tone={team.active ? "success" : "neutral"} icon="people-outline" />}
-      />
+      <CardHeader title="Team today" right={<Badge label={`${team.active} of ${team.total} active`} tone={team.active ? "success" : "neutral"} icon="people-outline" />} />
       {sellers.length ? (
         <HorizontalBars
           title="Sales by team member today"
@@ -362,7 +381,11 @@ export function ReturnsPurchasesRow({ returns, purchases }: { returns: OwnerDash
         icon="cube-outline"
         tone="info"
         value={formatMoney(purchases.amount, { decimals: 0 })}
-        hint={purchases.count ? `${purchases.count} bill${purchases.count === 1 ? "" : "s"} · ${formatNumber(purchases.quantity)} pcs${purchases.due > 0 ? ` · ${formatMoney(purchases.due, { decimals: 0 })} unpaid` : ""}` : "No purchases"}
+        hint={
+          purchases.count
+            ? `${purchases.count} bill${purchases.count === 1 ? "" : "s"} · ${formatNumber(purchases.quantity)} pcs${purchases.due > 0 ? ` · ${formatMoney(purchases.due, { decimals: 0 })} unpaid` : ""}`
+            : "No purchases"
+        }
         onPress={() => openPath("/purchases")}
       />
     </Row>
@@ -473,4 +496,3 @@ export function ActivityCard({ activity }: { activity: OwnerDashboard["activity"
     </Card>
   );
 }
-

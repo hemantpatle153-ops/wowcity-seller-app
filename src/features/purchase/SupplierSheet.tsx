@@ -33,10 +33,7 @@ export function SupplierSheet({
   const [form, setForm] = useState<SupplierForm>(emptySupplierForm);
   const [tried, setTried] = useState(false);
   const term = q.trim().toLowerCase();
-  const filtered = useMemo(
-    () => (term ? suppliers.filter((s) => [s.name, s.mobile, s.gstin].some((v) => (v ?? "").toLowerCase().includes(term))) : suppliers).slice(0, 80),
-    [suppliers, term]
-  );
+  const filtered = useMemo(() => (term ? suppliers.filter((s) => [s.name, s.mobile, s.gstin].some((v) => (v ?? "").toLowerCase().includes(term))) : suppliers).slice(0, 80), [suppliers, term]);
   const exact = suppliers.some((s) => s.name.toLowerCase() === term);
   const errors = supplierFormErrors(form);
 

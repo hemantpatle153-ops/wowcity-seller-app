@@ -140,13 +140,7 @@ export function StockScreen() {
         <Animated.View layout={theme.reduceMotion ? undefined : LinearTransition} entering={theme.reduceMotion ? undefined : FadeIn} exiting={theme.reduceMotion ? undefined : FadeOut}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: theme.space[4], alignItems: "center" }}>
             {chips.map((chip) => (
-              <Chip
-                key={chip.key}
-                label={chip.label}
-                icon="close"
-                selected
-                onPress={() => setFilters((f) => (chip.key === "sort" ? { ...f, sort: "name" } : { ...f, [chip.key]: null }))}
-              />
+              <Chip key={chip.key} label={chip.label} icon="close" selected onPress={() => setFilters((f) => (chip.key === "sort" ? { ...f, sort: "name" } : { ...f, [chip.key]: null }))} />
             ))}
             <Button label="Clear" variant="ghost" size="sm" onPress={() => setFilters((f) => clearFacets(f))} />
           </ScrollView>
@@ -287,15 +281,7 @@ export function StockScreen() {
         }
       />
 
-      <StockFilterSheet
-        visible={filterOpen}
-        onClose={() => setFilterOpen(false)}
-        filters={filters}
-        onChange={setFilters}
-        facets={first?.facets}
-        total={first?.total}
-        loading={stock.isFetching}
-      />
+      <StockFilterSheet visible={filterOpen} onClose={() => setFilterOpen(false)} filters={filters} onChange={setFilters} facets={first?.facets} total={first?.total} loading={stock.isFetching} />
 
       <Sheet visible={storeOpen} onClose={() => setStoreOpen(false)} title="Show stock for" subtitle="Quantities and totals follow this choice">
         <View style={{ marginHorizontal: -theme.space[4] }}>

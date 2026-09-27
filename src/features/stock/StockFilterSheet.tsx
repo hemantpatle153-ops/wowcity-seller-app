@@ -54,12 +54,7 @@ export function StockFilterSheet({
       footer={
         <View style={{ flexDirection: "row", gap: 8 }}>
           <Button label="Clear" variant="secondary" size="lg" icon="close-circle-outline" onPress={() => onChange(clearFacets(filters))} disabled={!active} style={{ flex: 1 }} />
-          <Button
-            label={loading || total === undefined ? "Show items" : `Show ${total} item${total === 1 ? "" : "s"}`}
-            size="lg"
-            onPress={onClose}
-            style={{ flex: 1.6 }}
-          />
+          <Button label={loading || total === undefined ? "Show items" : `Show ${total} item${total === 1 ? "" : "s"}`} size="lg" onPress={onClose} style={{ flex: 1.6 }} />
         </View>
       }
     >
@@ -99,13 +94,7 @@ export function StockFilterSheet({
       </Stack>
       {facets ? (
         facetDefs.map((def) => (
-          <FacetSection
-            key={def.key}
-            label={def.label}
-            values={facets[def.facet]}
-            selected={filters[def.key]}
-            onPick={(value) => onChange({ ...filters, [def.key as FacetKey]: value })}
-          />
+          <FacetSection key={def.key} label={def.label} values={facets[def.facet]} selected={filters[def.key]} onPick={(value) => onChange({ ...filters, [def.key as FacetKey]: value })} />
         ))
       ) : (
         <Text variant="small" color="textMuted">

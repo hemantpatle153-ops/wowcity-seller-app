@@ -79,7 +79,9 @@ export const StockRow = memo(function StockRow({
               </Text>
             ) : null}
           </View>
-          <View><Badge label={status === "out" ? (item.qty < 0 ? `${qty} · Out` : "Out") : status === "low" ? `${qty} · Low` : `${qty} pcs`} tone={stockTone(item.qty)} showIcon={status !== "in"} /></View>
+          <View>
+            <Badge label={status === "out" ? (item.qty < 0 ? `${qty} · Out` : "Out") : status === "low" ? `${qty} · Low` : `${qty} pcs`} tone={stockTone(item.qty)} showIcon={status !== "in"} />
+          </View>
         </View>
       </View>
       {perStore.length > 1 ? (

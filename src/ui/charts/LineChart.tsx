@@ -104,7 +104,13 @@ export function LineChart({
             {ticks.map((t) => (
               <View key={t} pointerEvents="none" style={{ position: "absolute", left: 0, right: 0, top: yOf(t), flexDirection: "row", alignItems: "center" }}>
                 {hideAxis ? null : (
-                  <Text variant="caption" color="textFaint" tabular numberOfLines={1} style={{ width: axisWidth - 6, textAlign: "right", marginTop: -caption.lineHeight, fontSize: caption.fontSize - 1 }}>
+                  <Text
+                    variant="caption"
+                    color="textFaint"
+                    tabular
+                    numberOfLines={1}
+                    style={{ width: axisWidth - 6, textAlign: "right", marginTop: -caption.lineHeight, fontSize: caption.fontSize - 1 }}
+                  >
                     {format(t)}
                   </Text>
                 )}

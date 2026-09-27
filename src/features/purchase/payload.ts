@@ -72,7 +72,9 @@ export function hasErrors(errors: ItemErrors) {
 
 /** First message to show for a card (in field order). */
 export function firstError(errors: ItemErrors): string | null {
-  return errors.itemName ?? errors.qty ?? errors.gst ?? errors.hsnCode ?? errors.disc1Percent ?? errors.saleRate ?? (errors.custom ? Object.values(errors.custom)[0] : undefined) ?? errors.photos ?? null;
+  return (
+    errors.itemName ?? errors.qty ?? errors.gst ?? errors.hsnCode ?? errors.disc1Percent ?? errors.saleRate ?? (errors.custom ? Object.values(errors.custom)[0] : undefined) ?? errors.photos ?? null
+  );
 }
 
 export type DraftValidation = { form: string | null; items: Record<string, ItemErrors>; firstInvalid: string | null };

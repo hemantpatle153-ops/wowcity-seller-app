@@ -40,7 +40,16 @@ function BuyerPreview({ draft, listing }: { draft: ListingDraft; listing: Produc
   return (
     <View
       accessibilityLabel={`Buyer preview: ${[p.title ?? "no name", p.brand, p.price !== null ? formatMoney(p.price) : "price hidden", p.inStock ? "in stock" : "out of stock"].filter(Boolean).join(", ")}`}
-      style={{ flexDirection: "row", gap: 12, padding: 12, borderRadius: theme.radius.card, backgroundColor: theme.colors.surfaceRaised, borderWidth: 1, borderColor: theme.colors.border, opacity: draft.enabled ? 1 : 0.6 }}
+      style={{
+        flexDirection: "row",
+        gap: 12,
+        padding: 12,
+        borderRadius: theme.radius.card,
+        backgroundColor: theme.colors.surfaceRaised,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        opacity: draft.enabled ? 1 : 0.6
+      }}
     >
       <Thumb url={p.image} size={92} icon={p.image ? "shirt-outline" : "camera-outline"} />
       <View style={{ flex: 1, gap: 3, minWidth: 0 }}>
@@ -191,7 +200,21 @@ function ListingEditor({ listing, canPublish }: { listing: ProductListingRespons
 
   return (
     <Screen
-      header={<Header back onBack={() => void leave()} title="Online listing" subtitle={listing.product.name} right={dirty ? <View><Badge label="Unsaved" tone="warning" icon="ellipse" /></View> : undefined} />}
+      header={
+        <Header
+          back
+          onBack={() => void leave()}
+          title="Online listing"
+          subtitle={listing.product.name}
+          right={
+            dirty ? (
+              <View>
+                <Badge label="Unsaved" tone="warning" icon="ellipse" />
+              </View>
+            ) : undefined
+          }
+        />
+      }
       footerSpace={canPublish ? 100 : 0}
       footer={
         canPublish ? (
@@ -294,7 +317,17 @@ function ListingEditor({ listing, canPublish }: { listing: ProductListingRespons
               <View
                 key={img.id}
                 accessibilityLabel={`Photo ${i + 1}${i === 0 ? ", cover" : ""}`}
-                style={{ width: 96, height: 120, borderRadius: theme.radius.control, overflow: "hidden", backgroundColor: theme.colors.surfaceSunken, borderWidth: 1, borderColor: theme.colors.border, alignItems: "center", justifyContent: "center" }}
+                style={{
+                  width: 96,
+                  height: 120,
+                  borderRadius: theme.radius.control,
+                  overflow: "hidden",
+                  backgroundColor: theme.colors.surfaceSunken,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
               >
                 <Icon name="image-outline" size={28} color="textFaint" />
                 {img.url ? <Image source={{ uri: img.url }} style={{ position: "absolute", width: 96, height: 120 }} contentFit="cover" /> : null}
@@ -339,7 +372,9 @@ function ListingEditor({ listing, canPublish }: { listing: ProductListingRespons
                       <Text variant="small" color="textMuted" style={{ flex: 1 }} numberOfLines={1}>
                         {shortStoreName(s.name)} · {formatQty(v.stock[s.id] ?? 0)} pcs
                       </Text>
-                      <View><Badge label={meta.label} tone={meta.tone} icon={meta.icon} /></View>
+                      <View>
+                        <Badge label={meta.label} tone={meta.tone} icon={meta.icon} />
+                      </View>
                     </Row>
                   );
                 })}

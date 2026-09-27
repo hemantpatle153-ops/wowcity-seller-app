@@ -25,7 +25,25 @@ function SettingsLoader({ title, children }: { title: string; children: (data: S
   );
 }
 
-function FormScreen({ title, subtitle, dirty, invalid, saving, onSave, touched, children }: { title: string; subtitle?: string; dirty: boolean; invalid: boolean; saving: boolean; onSave: () => void; touched: boolean; children: ReactNode }) {
+function FormScreen({
+  title,
+  subtitle,
+  dirty,
+  invalid,
+  saving,
+  onSave,
+  touched,
+  children
+}: {
+  title: string;
+  subtitle?: string;
+  dirty: boolean;
+  invalid: boolean;
+  saving: boolean;
+  onSave: () => void;
+  touched: boolean;
+  children: ReactNode;
+}) {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <Screen
@@ -74,7 +92,10 @@ function ProfileForm({ data }: { data: SettingsResponse }) {
     phone: phoneError(form.phone)
   };
   const invalid = Object.values(errors).some(Boolean);
-  const save = useSettingsSave(() => api.settings.profile({ displayName: form.displayName.trim(), businessType: form.businessType.trim(), ownerName: form.ownerName.trim(), phone: form.phone.trim() }), guard.allowLeave);
+  const save = useSettingsSave(
+    () => api.settings.profile({ displayName: form.displayName.trim(), businessType: form.businessType.trim(), ownerName: form.ownerName.trim(), phone: form.phone.trim() }),
+    guard.allowLeave
+  );
   const show = (k: keyof typeof errors) => (touched ? errors[k] : null);
   return (
     <FormScreen
@@ -95,7 +116,15 @@ function ProfileForm({ data }: { data: SettingsResponse }) {
         </Text>
       </Card>
       <FormSection title="Shop">
-        <Input label="Shop name" value={form.displayName} onChangeText={(displayName) => setForm({ ...form, displayName })} error={show("displayName")} maxLength={80} autoCapitalize="words" hint="Shown on bills and on WowCity." />
+        <Input
+          label="Shop name"
+          value={form.displayName}
+          onChangeText={(displayName) => setForm({ ...form, displayName })}
+          error={show("displayName")}
+          maxLength={80}
+          autoCapitalize="words"
+          hint="Shown on bills and on WowCity."
+        />
         <Stack gap={2}>
           <Input label="Type of business" value={form.businessType} onChangeText={(businessType) => setForm({ ...form, businessType })} error={show("businessType")} maxLength={60} />
           <Row gap={2} wrap>
@@ -107,7 +136,14 @@ function ProfileForm({ data }: { data: SettingsResponse }) {
       </FormSection>
       <FormSection title="Owner">
         <Input label="Owner name" value={form.ownerName} onChangeText={(ownerName) => setForm({ ...form, ownerName })} error={show("ownerName")} maxLength={80} autoCapitalize="words" />
-        <Input label="Phone" value={form.phone} onChangeText={(phone) => setForm({ ...form, phone })} keyboardType="phone-pad" error={touched || form.phone.length >= 10 ? errors.phone : null} maxLength={16} />
+        <Input
+          label="Phone"
+          value={form.phone}
+          onChangeText={(phone) => setForm({ ...form, phone })}
+          keyboardType="phone-pad"
+          error={touched || form.phone.length >= 10 ? errors.phone : null}
+          maxLength={16}
+        />
         <Input label="Email" value={data.profile.email} editable={false} icon="mail-outline" hint="Your sign-in email can't be changed here." />
       </FormSection>
     </FormScreen>
@@ -166,7 +202,14 @@ function TaxForm({ data }: { data: SettingsResponse }) {
           hint={gstinState && !errors.gstin ? `Registered in ${gstinState}` : "15 characters, starts with your state code."}
         />
         {gstinState && form.state !== gstinState ? (
-          <Button label={`Set state to ${gstinState}`} icon="swap-horizontal-outline" variant="soft" size="sm" style={{ alignSelf: "flex-start" }} onPress={() => setForm({ ...form, state: gstinState })} />
+          <Button
+            label={`Set state to ${gstinState}`}
+            icon="swap-horizontal-outline"
+            variant="soft"
+            size="sm"
+            style={{ alignSelf: "flex-start" }}
+            onPress={() => setForm({ ...form, state: gstinState })}
+          />
         ) : null}
         <Select
           label="State"
@@ -295,7 +338,15 @@ function InvoiceForm({ data }: { data: SettingsResponse }) {
           error={touched || form.upiId.includes("@") ? errors.upiId : null}
           right={form.upiId && !errors.upiId ? <Icon name="checkmark-circle" color="success" accessibilityLabel="UPI ID looks right" /> : undefined}
         />
-        <Input label="Payee name" value={form.payeeName} onChangeText={(payeeName) => set({ payeeName })} maxLength={60} placeholder={data.profile.displayName} hint="Shown in the customer's UPI app." error={errors.payeeName} />
+        <Input
+          label="Payee name"
+          value={form.payeeName}
+          onChangeText={(payeeName) => set({ payeeName })}
+          maxLength={60}
+          placeholder={data.profile.displayName}
+          hint="Shown in the customer's UPI app."
+          error={errors.payeeName}
+        />
         <ToggleRow icon="qr-code-outline" label="Print a UPI QR on bills" hint="Customers scan it to pay the exact bill amount." value={form.showUpiQr} onChange={(showUpiQr) => set({ showUpiQr })} />
         {form.showUpiQr && !form.upiId.trim() ? (
           <Text variant="small" color="textMuted">

@@ -49,7 +49,21 @@ export function QtyButton({ icon, label, onPress, disabled, size = 40 }: { icon:
   );
 }
 
-function Expander({ title, hint, open, onToggle, icon, children }: { title: string; hint?: string; open: boolean; onToggle: () => void; icon: "pricetags-outline" | "images-outline" | "list-outline"; children: ReactNode }) {
+function Expander({
+  title,
+  hint,
+  open,
+  onToggle,
+  icon,
+  children
+}: {
+  title: string;
+  hint?: string;
+  open: boolean;
+  onToggle: () => void;
+  icon: "pricetags-outline" | "images-outline" | "list-outline";
+  children: ReactNode;
+}) {
   const theme = useTheme();
   return (
     <View style={{ borderRadius: theme.radius.control, backgroundColor: theme.colors.surfaceSunken, borderWidth: 1, borderColor: theme.colors.border, overflow: "hidden" }}>
@@ -267,11 +281,7 @@ export function ItemCard({
           ) : null}
 
           {restock && !detailsOpen ? (
-            <PressableScale
-              onPress={() => setDetailsOpen(true)}
-              accessibilityLabel="Show product details"
-              style={{ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 40 }}
-            >
+            <PressableScale onPress={() => setDetailsOpen(true)} accessibilityLabel="Show product details" style={{ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 40 }}>
               <Text variant="small" color="accent" weight="700">
                 Product details
               </Text>
@@ -295,7 +305,15 @@ export function ItemCard({
                   <Select label="Brand" value={item.brand} options={options(setup.suggestions.brands)} onChange={(brand) => update({ brand })} allowCustom placeholder="Brand" disabled={restock} />
                 </Cell>
                 <Cell>
-                  <Select label="Category" value={item.category} options={options(setup.suggestions.categories)} onChange={(category) => update({ category })} allowCustom placeholder="Category" disabled={restock} />
+                  <Select
+                    label="Category"
+                    value={item.category}
+                    options={options(setup.suggestions.categories)}
+                    onChange={(category) => update({ category })}
+                    allowCustom
+                    placeholder="Category"
+                    disabled={restock}
+                  />
                 </Cell>
               </Pair>
               <Pair>
@@ -303,10 +321,26 @@ export function ItemCard({
                   <Select label="Size" value={item.size} options={options(setup.suggestions.sizes)} onChange={(size) => update({ size })} allowCustom placeholder="Size" disabled={restock} />
                 </Cell>
                 <Cell>
-                  <Select label="Colour" value={item.colour} options={options(setup.suggestions.colours)} onChange={(colour) => update({ colour })} allowCustom placeholder="Colour" disabled={restock} />
+                  <Select
+                    label="Colour"
+                    value={item.colour}
+                    options={options(setup.suggestions.colours)}
+                    onChange={(colour) => update({ colour })}
+                    allowCustom
+                    placeholder="Colour"
+                    disabled={restock}
+                  />
                 </Cell>
               </Pair>
-              <Select label="Style" value={item.style} options={options(setup.suggestions.styles)} onChange={(style) => update({ style })} allowCustom placeholder="Style (optional)" disabled={restock} />
+              <Select
+                label="Style"
+                value={item.style}
+                options={options(setup.suggestions.styles)}
+                onChange={(style) => update({ style })}
+                allowCustom
+                placeholder="Style (optional)"
+                disabled={restock}
+              />
             </>
           )}
 
@@ -357,7 +391,12 @@ export function ItemCard({
           </Row>
           <Pair>
             <Cell>
-              <MoneyInput label="Purchase rate" value={item.purchaseRate} onChangeText={(purchaseRate) => update({ purchaseRate })} hint={mode === "inclusive" ? "Per piece, GST included" : "Per piece, before GST"} />
+              <MoneyInput
+                label="Purchase rate"
+                value={item.purchaseRate}
+                onChangeText={(purchaseRate) => update({ purchaseRate })}
+                hint={mode === "inclusive" ? "Per piece, GST included" : "Per piece, before GST"}
+              />
             </Cell>
             <Cell>
               <MoneyInput label="MRP" value={item.mrp} onChangeText={(mrp) => update({ mrp })} places={2} />
@@ -370,11 +409,7 @@ export function ItemCard({
             places={2}
             error={errors?.saleRate}
             hint={margin !== null ? `Margin ${margin}% on the landed cost of ${formatMoney(unitCost, { decimals: 2 })}` : "What you sell it for. Can't be more than MRP."}
-            right={
-              num(item.mrp) > 0 && item.saleRate !== item.mrp ? (
-                <Chip label="= MRP" onPress={() => update({ saleRate: item.mrp })} />
-              ) : undefined
-            }
+            right={num(item.mrp) > 0 && item.saleRate !== item.mrp ? <Chip label="= MRP" onPress={() => update({ saleRate: item.mrp })} /> : undefined}
           />
           {calc && calc.total > 0 ? (
             <Animated.View entering={theme.reduceMotion ? undefined : FadeIn} style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
@@ -439,7 +474,12 @@ export function ItemCard({
 
           <Expander
             title="Photos & online listing"
-            hint={[item.photos.length ? `${item.photos.length} photo${item.photos.length === 1 ? "" : "s"}` : "No photos", setup.canPublish ? (item.publicEnabled ? "Shown on WowCity" : "Not listed") : null].filter(Boolean).join(" · ")}
+            hint={[
+              item.photos.length ? `${item.photos.length} photo${item.photos.length === 1 ? "" : "s"}` : "No photos",
+              setup.canPublish ? (item.publicEnabled ? "Shown on WowCity" : "Not listed") : null
+            ]
+              .filter(Boolean)
+              .join(" · ")}
             open={listingOpen || !!errors?.photos}
             onToggle={() => setListingOpen(!listingOpen)}
             icon="images-outline"

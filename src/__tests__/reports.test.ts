@@ -150,7 +150,7 @@ describe("exports", () => {
       totals: { name: "Total", balance: 1500 }
     };
     const html = tableHtml({ title: "Customer dues", periodLabel: "Today", table, stats: [{ label: "Owing", value: 2, format: "qty" }] });
-    expect(html).toContain("<th style=\"text-align:right\">Balance</th>");
+    expect(html).toContain('<th style="text-align:right">Balance</th>');
     expect(html).toContain("A &lt;script&gt;");
     expect(html).toContain("₹1,500");
     expect(html).toContain('class="em"');

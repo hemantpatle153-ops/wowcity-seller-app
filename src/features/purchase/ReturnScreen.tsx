@@ -131,9 +131,7 @@ export function ReturnScreen({ id }: { id: string }) {
                       {[item.detail, item.barcode].filter(Boolean).join(" · ")}
                     </Text>
                   </View>
-                  {max > 0 ? (
-                    <Chip label={`All ${formatQty(max)}`} selected={value === max} onPress={() => setQty({ ...qty, [item.id]: value === max ? 0 : max })} />
-                  ) : null}
+                  {max > 0 ? <Chip label={`All ${formatQty(max)}`} selected={value === max} onPress={() => setQty({ ...qty, [item.id]: value === max ? 0 : max })} /> : null}
                 </Row>
                 <Row gap={3} justify="space-between" wrap>
                   <Row gap={2} wrap style={{ flexShrink: 1 }}>

@@ -5,7 +5,6 @@ import type { CustomFieldGridColumn, PurchaseSetupResponse } from "@/api/types";
 
 jest.mock("@react-native-async-storage/async-storage", () => jest.requireActual("@react-native-async-storage/async-storage/jest/async-storage-mock"));
 
-
 const setup: Pick<PurchaseSetupResponse, "customFields" | "gstSlabs" | "publicFieldDefaults" | "canPublish"> = {
   gstSlabs: [
     { code: "GST0", label: "0%", rate: 0, is_special: false },

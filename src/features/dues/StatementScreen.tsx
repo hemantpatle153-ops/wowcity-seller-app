@@ -10,7 +10,27 @@ import { useSession } from "@/auth/session";
 import { formatDate, formatMoney, formatTime, maskMobile } from "@/lib/format";
 import { haptic } from "@/lib/haptics";
 import { useTheme } from "@/theme/ThemeProvider";
-import { AnimatedNumber, Avatar, Button, Card, Divider, EmptyState, ErrorState, Header, Icon, IconButton, PressableScale, Row, Screen, SectionTitle, Skeleton, SkeletonList, Stack, Text, toast } from "@/ui";
+import {
+  AnimatedNumber,
+  Avatar,
+  Button,
+  Card,
+  Divider,
+  EmptyState,
+  ErrorState,
+  Header,
+  Icon,
+  IconButton,
+  PressableScale,
+  Row,
+  Screen,
+  SectionTitle,
+  Skeleton,
+  SkeletonList,
+  Stack,
+  Text,
+  toast
+} from "@/ui";
 import { invoiceIdFromHref } from "@/features/reports/links";
 import { openPath } from "@/features/reports/navigate";
 import { EntrySheet } from "./EntrySheet";
@@ -151,7 +171,18 @@ export function StatementScreen({ party, id }: { party: Party; id: string }) {
 
   const footer =
     data && canRecord ? (
-      <View style={{ padding: 16, paddingBottom: Math.max(insets.bottom, 12), gap: 8, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border, flexDirection: "row", flexWrap: "wrap" }}>
+      <View
+        style={{
+          padding: 16,
+          paddingBottom: Math.max(insets.bottom, 12),
+          gap: 8,
+          backgroundColor: theme.colors.surface,
+          borderTopWidth: 1,
+          borderColor: theme.colors.border,
+          flexDirection: "row",
+          flexWrap: "wrap"
+        }}
+      >
         {owner ? (
           <Button
             label="Add due"
@@ -230,15 +261,12 @@ export function StatementScreen({ party, id }: { party: Party; id: string }) {
                   />
                 ) : null}
               </View>
-
             </Row>
           </Card>
 
           <BalanceHero data={data} party={party} />
 
-          {reminderUrl ? (
-            <Button label="Send WhatsApp reminder" icon="logo-whatsapp" variant="soft" onPress={() => openUrl(reminderUrl, "WhatsApp isn't available.")} fullWidth />
-          ) : null}
+          {reminderUrl ? <Button label="Send WhatsApp reminder" icon="logo-whatsapp" variant="soft" onPress={() => openUrl(reminderUrl, "WhatsApp isn't available.")} fullWidth /> : null}
 
           <Stack gap={1}>
             <Row justify="space-between">
@@ -251,7 +279,12 @@ export function StatementScreen({ party, id }: { party: Party; id: string }) {
               {entries.length ? (
                 entries.map((e, i) => <EntryRow key={e.id} entry={e} party={party} last={i === entries.length - 1} />)
               ) : (
-                <EmptyState icon="document-text-outline" title="No entries yet" body={canRecord ? "Record a payment or add a due to start the statement." : "Bills on credit will show up here."} compact />
+                <EmptyState
+                  icon="document-text-outline"
+                  title="No entries yet"
+                  body={canRecord ? "Record a payment or add a due to start the statement." : "Bills on credit will show up here."}
+                  compact
+                />
               )}
               {entries.length ? (
                 <>

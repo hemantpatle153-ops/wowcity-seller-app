@@ -96,7 +96,11 @@ export function MyDayCard({ title = "My day" }: { title?: string }) {
           </Text>
         </View>
         <View style={{ width: 110 }}>
-          <Sparkline values={trend.map((p) => p.amount)} height={34} accessibilityLabel={`Last 7 days: ${trend.map((p) => `${shortDay(p.date)} ${formatMoney(p.amount, { decimals: 0 })}`).join(", ")}`} />
+          <Sparkline
+            values={trend.map((p) => p.amount)}
+            height={34}
+            accessibilityLabel={`Last 7 days: ${trend.map((p) => `${shortDay(p.date)} ${formatMoney(p.amount, { decimals: 0 })}`).join(", ")}`}
+          />
         </View>
       </Row>
       <View>

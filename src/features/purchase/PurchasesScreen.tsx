@@ -82,7 +82,15 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
   const query = useDeferredValue(q.trim());
   const suppliers = useSuppliers("");
   const stores = me?.stores ?? [];
-  const filters = { range, from: range === "custom" ? custom.from : undefined, to: range === "custom" ? custom.to : undefined, status: status === "all" ? undefined : status, store: store || undefined, supplier: supplier || undefined, q: query || undefined };
+  const filters = {
+    range,
+    from: range === "custom" ? custom.from : undefined,
+    to: range === "custom" ? custom.to : undefined,
+    status: status === "all" ? undefined : status,
+    store: store || undefined,
+    supplier: supplier || undefined,
+    q: query || undefined
+  };
   const list = useInfiniteQuery({
     queryKey: ["purchases", "list", filters],
     initialPageParam: 1,
@@ -101,7 +109,11 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
         <SearchBar value={q} onChangeText={setQ} placeholder="Supplier or invoice number" />
       </View>
       <ChipRow
-        options={ranges.map((r) => ({ key: r.key, label: r.key === "custom" && range === "custom" ? `${formatDate(custom.from)} – ${formatDate(custom.to)}` : r.label, icon: r.key === "custom" ? ("calendar-outline" as const) : undefined }))}
+        options={ranges.map((r) => ({
+          key: r.key,
+          label: r.key === "custom" && range === "custom" ? `${formatDate(custom.from)} – ${formatDate(custom.to)}` : r.label,
+          icon: r.key === "custom" ? ("calendar-outline" as const) : undefined
+        }))}
         value={range}
         onChange={(key) => {
           if (key === "custom") {
@@ -112,7 +124,13 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
       />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 16, alignItems: "center" }} style={{ flexGrow: 0 }}>
         {statuses.map((s) => (
-          <Chip key={s.key} label={s.label} selected={status === s.key} onPress={() => setStatus(s.key)} icon={s.key === "due" ? "time-outline" : s.key === "paid" ? "checkmark-circle-outline" : undefined} />
+          <Chip
+            key={s.key}
+            label={s.label}
+            selected={status === s.key}
+            onPress={() => setStatus(s.key)}
+            icon={s.key === "due" ? "time-outline" : s.key === "paid" ? "checkmark-circle-outline" : undefined}
+          />
         ))}
         <View style={{ width: 1, height: 24, backgroundColor: theme.colors.border, marginHorizontal: 4 }} />
         {stores.length > 1 ? (
@@ -120,7 +138,14 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
             <SelectPill label="Store" value={store} allLabel="All stores" options={stores.map((s) => ({ value: s.id, label: s.name }))} onChange={setStore} />
           </View>
         ) : null}
-        <SelectPill label="Supplier" value={supplier} allLabel="All" options={(suppliers.data?.suppliers ?? []).map((s) => ({ value: s.id, label: s.name }))} onChange={setSupplier} currentLabel={supplierName} />
+        <SelectPill
+          label="Supplier"
+          value={supplier}
+          allLabel="All"
+          options={(suppliers.data?.suppliers ?? []).map((s) => ({ value: s.id, label: s.name }))}
+          onChange={setSupplier}
+          currentLabel={supplierName}
+        />
       </ScrollView>
       {summary ? (
         <View style={{ marginHorizontal: 16, padding: 14, gap: 8, borderRadius: theme.radius.card, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border }}>
@@ -245,7 +270,13 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
           />
         }
       >
-        <Input label="From" value={draftRange.from} onChangeText={(t) => setDraftRange({ ...draftRange, from: t.replace(/[^0-9-]/g, "").slice(0, 10) })} placeholder="YYYY-MM-DD" icon="calendar-outline" />
+        <Input
+          label="From"
+          value={draftRange.from}
+          onChangeText={(t) => setDraftRange({ ...draftRange, from: t.replace(/[^0-9-]/g, "").slice(0, 10) })}
+          placeholder="YYYY-MM-DD"
+          icon="calendar-outline"
+        />
         <Input
           label="To"
           value={draftRange.to}
@@ -260,7 +291,21 @@ export function PurchasesScreen({ initialSupplier = "" }: { initialSupplier?: st
 }
 
 /** A filter pill that opens a searchable list; the first option clears the filter. */
-function SelectPill({ label, value, allLabel, options, onChange, currentLabel }: { label: string; value: string; allLabel: string; options: { value: string; label: string }[]; onChange: (v: string) => void; currentLabel?: string }) {
+function SelectPill({
+  label,
+  value,
+  allLabel,
+  options,
+  onChange,
+  currentLabel
+}: {
+  label: string;
+  value: string;
+  allLabel: string;
+  options: { value: string; label: string }[];
+  onChange: (v: string) => void;
+  currentLabel?: string;
+}) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");

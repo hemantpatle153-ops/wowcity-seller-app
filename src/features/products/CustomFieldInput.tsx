@@ -21,9 +21,7 @@ export function CustomFieldInput({ field, value, onChange, error }: { field: Edi
       return (
         <View style={{ gap: 6 }}>
           <Select label={label} value={value} placeholder="Not set" options={options.map((o) => ({ value: o, label: o }))} onChange={onChange} error={error} sheetTitle={field.name} />
-          {value ? (
-            <Button label={`Clear ${field.name.toLowerCase()}`} variant="ghost" size="sm" icon="close-circle-outline" onPress={() => onChange("")} style={{ alignSelf: "flex-start" }} />
-          ) : null}
+          {value ? <Button label={`Clear ${field.name.toLowerCase()}`} variant="ghost" size="sm" icon="close-circle-outline" onPress={() => onChange("")} style={{ alignSelf: "flex-start" }} /> : null}
         </View>
       );
     }
@@ -62,7 +60,17 @@ export function CustomFieldInput({ field, value, onChange, error }: { field: Edi
         />
       );
     case "date":
-      return <Input label={label} value={value} onChangeText={(t) => onChange(t.replace(/[^0-9-]/g, "").slice(0, 10))} placeholder="YYYY-MM-DD" keyboardType="numbers-and-punctuation" error={error} icon="calendar-outline" />;
+      return (
+        <Input
+          label={label}
+          value={value}
+          onChangeText={(t) => onChange(t.replace(/[^0-9-]/g, "").slice(0, 10))}
+          placeholder="YYYY-MM-DD"
+          keyboardType="numbers-and-punctuation"
+          error={error}
+          icon="calendar-outline"
+        />
+      );
     case "url":
       return <Input label={label} value={value} onChangeText={onChange} placeholder="https://" keyboardType="url" autoCapitalize="none" autoCorrect={false} error={error} icon="link-outline" />;
     case "color":

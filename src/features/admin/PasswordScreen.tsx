@@ -29,7 +29,11 @@ function StrengthMeter({ value }: { value: string }) {
       </View>
       <Text variant="small" weight="700" color={tone}>
         {label}
-        {score < 3 ? <Text variant="small" color="textMuted">{"  "}Try 12+ characters with a number and a symbol.</Text> : null}
+        {score < 3 ? (
+          <Text variant="small" color="textMuted">
+            {"  "}Try 12+ characters with a number and a symbol.
+          </Text>
+        ) : null}
       </Text>
     </View>
   );
@@ -86,10 +90,31 @@ export function PasswordScreen() {
           After the change, every phone signed in as the owner (including this one) is signed out. Staff are not affected.
         </Callout>
         <FormSection title="Current password">
-          <Input label="Current password" value={current} onChangeText={setCurrent} secureTextEntry secureToggle autoCapitalize="none" autoCorrect={false} autoComplete="current-password" error={touched ? errors.current : null} />
+          <Input
+            label="Current password"
+            value={current}
+            onChangeText={setCurrent}
+            secureTextEntry
+            secureToggle
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="current-password"
+            error={touched ? errors.current : null}
+          />
         </FormSection>
         <FormSection title="New password">
-          <Input label="New password" value={next} onChangeText={setNext} secureTextEntry secureToggle autoCapitalize="none" autoCorrect={false} autoComplete="new-password" maxLength={72} error={touched ? errors.next : null} />
+          <Input
+            label="New password"
+            value={next}
+            onChangeText={setNext}
+            secureTextEntry
+            secureToggle
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="new-password"
+            maxLength={72}
+            error={touched ? errors.next : null}
+          />
           <StrengthMeter value={next} />
           <Input
             label="Confirm new password"

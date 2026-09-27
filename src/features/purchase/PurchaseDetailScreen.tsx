@@ -73,11 +73,37 @@ export function PurchaseDetailScreen({ id }: { id: string }) {
       footerSpace={hasFooter ? (theme.fontScale > 1.1 && canReturn && printable ? 150 : 80) : 0}
       footer={
         hasFooter ? (
-          <View style={{ padding: 16, paddingBottom: Math.max(insets.bottom, 12), flexDirection: theme.fontScale > 1.1 ? "column" : "row", gap: 10, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
+          <View
+            style={{
+              padding: 16,
+              paddingBottom: Math.max(insets.bottom, 12),
+              flexDirection: theme.fontScale > 1.1 ? "column" : "row",
+              gap: 10,
+              backgroundColor: theme.colors.surface,
+              borderTopWidth: 1,
+              borderColor: theme.colors.border
+            }}
+          >
             {printable ? (
-              <Button label="Print labels" icon="barcode-outline" variant={canReturn ? "secondary" : "primary"} size="lg" style={theme.fontScale > 1.1 ? undefined : { flex: 1 }} onPress={() => router.push(`/labels?job=${data.labelJobId}`)} />
+              <Button
+                label="Print labels"
+                icon="barcode-outline"
+                variant={canReturn ? "secondary" : "primary"}
+                size="lg"
+                style={theme.fontScale > 1.1 ? undefined : { flex: 1 }}
+                onPress={() => router.push(`/labels?job=${data.labelJobId}`)}
+              />
             ) : null}
-            {canReturn ? <Button label="Return" accessibilityLabel="Return to supplier" icon="return-up-back-outline" size="lg" style={theme.fontScale > 1.1 ? undefined : { flex: 1 }} onPress={() => router.push(`/purchases/${data.id}/return`)} /> : null}
+            {canReturn ? (
+              <Button
+                label="Return"
+                accessibilityLabel="Return to supplier"
+                icon="return-up-back-outline"
+                size="lg"
+                style={theme.fontScale > 1.1 ? undefined : { flex: 1 }}
+                onPress={() => router.push(`/purchases/${data.id}/return`)}
+              />
+            ) : null}
           </View>
         ) : undefined
       }
@@ -137,9 +163,7 @@ export function PurchaseDetailScreen({ id }: { id: string }) {
               </Text>
             </View>
           </Row>
-          {can(me, "reports.due") ? (
-            <Button label="Supplier statement" icon="document-text-outline" variant="soft" onPress={() => router.push(`/dues/supplier/${data.supplier!.id}`)} />
-          ) : null}
+          {can(me, "reports.due") ? <Button label="Supplier statement" icon="document-text-outline" variant="soft" onPress={() => router.push(`/dues/supplier/${data.supplier!.id}`)} /> : null}
         </Card>
       ) : (
         <Card>

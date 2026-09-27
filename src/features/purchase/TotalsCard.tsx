@@ -135,7 +135,12 @@ export function PaymentsCard({ total }: { total: number }) {
             </Row>
             <MoneyInput label="Amount" value={p.amount} onChangeText={(amount) => setPayment(p.key, { amount })} places={2} />
             {p.mode !== "cash" ? (
-              <Input label="Reference (UTR, cheque no.)" value={p.referenceNo} onChangeText={(referenceNo) => setPayment(p.key, { referenceNo: referenceNo.slice(0, 60) })} autoCapitalize="characters" />
+              <Input
+                label="Reference (UTR, cheque no.)"
+                value={p.referenceNo}
+                onChangeText={(referenceNo) => setPayment(p.key, { referenceNo: referenceNo.slice(0, 60) })}
+                autoCapitalize="characters"
+              />
             ) : null}
           </Animated.View>
         ))}
@@ -153,7 +158,13 @@ export function PaymentsCard({ total }: { total: number }) {
         </Row>
         <Row justify="space-between">
           <Text variant="title">Due to supplier</Text>
-          {over > 0 ? <Badge label={`Paid ${m(over)} more than the bill`} tone="warning" /> : due > 0 ? <Badge label={m(due)} tone="warning" icon="time-outline" /> : <Badge label="Fully paid" tone="success" />}
+          {over > 0 ? (
+            <Badge label={`Paid ${m(over)} more than the bill`} tone="warning" />
+          ) : due > 0 ? (
+            <Badge label={m(due)} tone="warning" icon="time-outline" />
+          ) : (
+            <Badge label="Fully paid" tone="success" />
+          )}
         </Row>
       </Card>
     </Stack>

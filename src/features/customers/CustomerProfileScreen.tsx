@@ -24,7 +24,19 @@ async function open(url: string | null, failure: string) {
 function Stat({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
   const theme = useTheme();
   return (
-    <View style={{ flexGrow: 1, flexBasis: "45%", minWidth: 140, padding: theme.space[3], borderRadius: theme.radius.card, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, gap: 2 }}>
+    <View
+      style={{
+        flexGrow: 1,
+        flexBasis: "45%",
+        minWidth: 140,
+        padding: theme.space[3],
+        borderRadius: theme.radius.card,
+        backgroundColor: theme.colors.surface,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        gap: 2
+      }}
+    >
       <Text variant="caption" color="textMuted">
         {label}
       </Text>
@@ -74,7 +86,14 @@ function Profile({ data }: { data: CustomerDetailResponse }) {
         <Row gap={2} wrap>
           <Button label="Call" icon="call-outline" variant="soft" size="sm" disabled={!tel} onPress={() => open(tel, "Can't start a call on this device.")} style={{ flexGrow: 1 }} />
           <Button label="WhatsApp" icon="logo-whatsapp" variant="soft" size="sm" disabled={!wa} onPress={() => open(wa, "WhatsApp isn't available.")} style={{ flexGrow: 1 }} />
-          <Button label="Statement" icon="document-text-outline" variant="soft" size="sm" onPress={() => router.push({ pathname: "/dues/[party]/[id]", params: { party: "customer", id: c.id } })} style={{ flexGrow: 1 }} />
+          <Button
+            label="Statement"
+            icon="document-text-outline"
+            variant="soft"
+            size="sm"
+            onPress={() => router.push({ pathname: "/dues/[party]/[id]", params: { party: "customer", id: c.id } })}
+            style={{ flexGrow: 1 }}
+          />
         </Row>
       </Card>
 

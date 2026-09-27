@@ -32,7 +32,11 @@ function money(value: number | null | undefined) {
 /** Custom value JSON → the string the form edits (and the API accepts). */
 export function customValueToInput(value: unknown, type: CustomFieldType): string {
   if (value === null || value === undefined) return "";
-  if (Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean).join(", ");
+  if (Array.isArray(value))
+    return value
+      .map((v) => String(v).trim())
+      .filter(Boolean)
+      .join(", ");
   if (type === "boolean") return value === true || value === "true" ? "true" : value === false || value === "false" ? "false" : "";
   return String(value);
 }
@@ -107,11 +111,7 @@ export function normaliseTags(tags: string[], max = 25) {
  * Full PATCH body: every built-in field is sent (omitted ones would be cleared), tags as a
  * comma-separated string, and custom_<fieldId> for each known column ("" deletes the value).
  */
-export function buildVariantPatch(
-  form: VariantForm,
-  fields: EditableCustomField[],
-  options: { canPublish: boolean; canSeeInternal: boolean }
-): ProductVariantUpdateBody {
+export function buildVariantPatch(form: VariantForm, fields: EditableCustomField[], options: { canPublish: boolean; canSeeInternal: boolean }): ProductVariantUpdateBody {
   const body: ProductVariantUpdateBody = {
     productName: form.productName.trim(),
     mrp: form.mrp.trim(),

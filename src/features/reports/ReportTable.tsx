@@ -104,7 +104,16 @@ function TotalsCard({ table, columns }: { table: ReportTableOut; columns: Report
   const cols = columns.filter((c) => isNumericFormat(c.format) && totals[c.key] !== undefined && totals[c.key] !== null);
   if (!cols.length) return null;
   return (
-    <View style={{ paddingHorizontal: theme.space[4], paddingVertical: 12, backgroundColor: theme.colors.surfaceSunken, borderBottomLeftRadius: theme.radius.card, borderBottomRightRadius: theme.radius.card, gap: 6 }}>
+    <View
+      style={{
+        paddingHorizontal: theme.space[4],
+        paddingVertical: 12,
+        backgroundColor: theme.colors.surfaceSunken,
+        borderBottomLeftRadius: theme.radius.card,
+        borderBottomRightRadius: theme.radius.card,
+        gap: 6
+      }}
+    >
       <Text variant="small" weight="800" uppercase color="textMuted">
         Total
       </Text>
@@ -133,7 +142,16 @@ function GridTable({ table, rows }: { table: ReportTableOut; rows: ReportRow[] }
     const href = kind === "row" ? rowHref(row, cols) : null;
     const strong = kind === "total" || !!row.emphasis;
     const content = (
-      <View style={{ flexDirection: "row", minHeight: 44, alignItems: "center", backgroundColor: kind === "total" ? theme.colors.surfaceSunken : i % 2 ? theme.colors.bg : "transparent", borderBottomWidth: 1, borderColor: theme.colors.border }}>
+      <View
+        style={{
+          flexDirection: "row",
+          minHeight: 44,
+          alignItems: "center",
+          backgroundColor: kind === "total" ? theme.colors.surfaceSunken : i % 2 ? theme.colors.bg : "transparent",
+          borderBottomWidth: 1,
+          borderColor: theme.colors.border
+        }}
+      >
         {cols.map((c, ci) => {
           const empty = kind === "total" && ci === 0 && (row[c.key] === undefined || row[c.key] === null);
           return (
@@ -178,19 +196,7 @@ function GridTable({ table, rows }: { table: ReportTableOut; rows: ReportRow[] }
 }
 
 /** One report table: mobile cards (hideOnMobile columns hidden) or a scrollable grid. */
-export function ReportTable({
-  table,
-  mode,
-  onCsv,
-  onPdf,
-  exporting
-}: {
-  table: ReportTableOut;
-  mode: "cards" | "table";
-  onCsv?: () => void;
-  onPdf?: () => void;
-  exporting?: "csv" | "pdf" | null;
-}) {
+export function ReportTable({ table, mode, onCsv, onPdf, exporting }: { table: ReportTableOut; mode: "cards" | "table"; onCsv?: () => void; onPdf?: () => void; exporting?: "csv" | "pdf" | null }) {
   const theme = useTheme();
   const [shown, setShown] = useState(PAGE);
   const columns = visibleColumns(table.columns, mode === "cards");
@@ -247,7 +253,11 @@ export function ReportTable({
         </View>
       ) : null}
       {(onCsv || onPdf) && table.rows.length ? (
-        <Row gap={2} wrap style={{ paddingHorizontal: theme.space[3], paddingBottom: theme.space[3], paddingTop: more > 0 ? 0 : theme.space[3], borderTopWidth: more > 0 ? 0 : 1, borderColor: theme.colors.border }}>
+        <Row
+          gap={2}
+          wrap
+          style={{ paddingHorizontal: theme.space[3], paddingBottom: theme.space[3], paddingTop: more > 0 ? 0 : theme.space[3], borderTopWidth: more > 0 ? 0 : 1, borderColor: theme.colors.border }}
+        >
           {onCsv ? <Button label="Share CSV" icon="download-outline" variant="secondary" size="sm" onPress={onCsv} loading={exporting === "csv"} disabled={!!exporting} style={{ flex: 1 }} /> : null}
           {onPdf ? <Button label="Export PDF" icon="document-outline" variant="secondary" size="sm" onPress={onPdf} loading={exporting === "pdf"} disabled={!!exporting} style={{ flex: 1 }} /> : null}
         </Row>

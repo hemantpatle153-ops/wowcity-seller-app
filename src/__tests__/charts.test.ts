@@ -1,4 +1,19 @@
-import { arcPath, areaPath, bandScale, describeSeries, donutSegments, labelIndexes, linearScale, linePath, nearestIndex, niceStep, niceTicks, percentages, smoothPath, toPoints } from "@/ui/charts/scale";
+import {
+  arcPath,
+  areaPath,
+  bandScale,
+  describeSeries,
+  donutSegments,
+  labelIndexes,
+  linearScale,
+  linePath,
+  nearestIndex,
+  niceStep,
+  niceTicks,
+  percentages,
+  smoothPath,
+  toPoints
+} from "@/ui/charts/scale";
 
 describe("niceStep / niceTicks", () => {
   it("rounds steps to 1, 2, 2.5, 5 × 10^n", () => {

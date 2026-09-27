@@ -33,7 +33,17 @@ function SummaryTiles({ s }: { s: CustomersResponse["summary"] }) {
       key={label}
       accessible
       accessibilityLabel={`${label}: ${value}. ${hint}`}
-      style={{ flexGrow: 1, flexBasis: "45%", minWidth: 140, padding: theme.space[3], borderRadius: theme.radius.card, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, gap: 2 }}
+      style={{
+        flexGrow: 1,
+        flexBasis: "45%",
+        minWidth: 140,
+        padding: theme.space[3],
+        borderRadius: theme.radius.card,
+        backgroundColor: theme.colors.surface,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        gap: 2
+      }}
     >
       <Text variant="caption" color="textMuted" numberOfLines={1}>
         {label}
@@ -70,7 +80,11 @@ function CustomerListRow({ row }: { row: CustomerRow }) {
           <Text variant="bodyStrong" tabular>
             {formatMoney(row.spent, { decimals: 0 })}
           </Text>
-          {row.balance > 0 ? <Badge label={`Owes ${formatMoney(row.balance, { decimals: 0 })}`} tone="warning" showIcon={false} /> : row.balance < 0 ? <Badge label="Advance" tone="info" showIcon={false} /> : null}
+          {row.balance > 0 ? (
+            <Badge label={`Owes ${formatMoney(row.balance, { decimals: 0 })}`} tone="warning" showIcon={false} />
+          ) : row.balance < 0 ? (
+            <Badge label="Advance" tone="info" showIcon={false} />
+          ) : null}
         </View>
       }
       chevron
@@ -131,7 +145,8 @@ export function CustomersScreen() {
     if (query.isLoading) return <SkeletonList rows={8} />;
     if (query.isError) return <ErrorState message={errorMessage(query.error)} onRetry={() => query.refetch()} />;
     if (search) return <EmptyState icon="search-outline" title="No match" body={`No customer matches “${search}”.`} action="Clear search" onAction={() => setQ("")} compact />;
-    if (segment !== "all") return <EmptyState icon="people-outline" title="Nobody here yet" body="No customer fits this group right now." action="Show all customers" onAction={() => setSegment("all")} compact />;
+    if (segment !== "all")
+      return <EmptyState icon="people-outline" title="Nobody here yet" body="No customer fits this group right now." action="Show all customers" onAction={() => setSegment("all")} compact />;
     return <EmptyState icon="people-outline" title="No customers yet" body="Add a customer's mobile to a bill and they show up here." action="New bill" onAction={() => router.push("/sell")} />;
   };
 

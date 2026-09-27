@@ -55,7 +55,12 @@ export function Donut({
   };
 
   return (
-    <View accessible accessibilityRole="image" accessibilityLabel={`${title ? `${title}. ` : ""}Total ${format(total)}. ${summary}`} style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 16 }}>
+    <View
+      accessible
+      accessibilityRole="image"
+      accessibilityLabel={`${title ? `${title}. ` : ""}Total ${format(total)}. ${summary}`}
+      style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 16 }}
+    >
       <View style={{ width: size, height: size, alignSelf: "center" }}>
         <Animated.View style={[{ width: size, height: size }, intro]}>
           <Svg width={size} height={size}>

@@ -100,7 +100,11 @@ export function DevicesScreen() {
   };
 
   return (
-    <Screen header={<Header back title="Signed-in phones" subtitle={query.data ? `${devices.length} phone${devices.length === 1 ? "" : "s"}` : undefined} />} onRefresh={() => query.refetch()} refreshing={query.isRefetching}>
+    <Screen
+      header={<Header back title="Signed-in phones" subtitle={query.data ? `${devices.length} phone${devices.length === 1 ? "" : "s"}` : undefined} />}
+      onRefresh={() => query.refetch()}
+      refreshing={query.isRefetching}
+    >
       {query.isPending ? (
         <SkeletonList rows={3} />
       ) : query.isError ? (

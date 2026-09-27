@@ -156,7 +156,14 @@ export function StaffListScreen() {
   const sorted = [...staff].sort((a, b) => Number(a.status === "disabled") - Number(b.status === "disabled") || a.displayName.localeCompare(b.displayName));
   return (
     <Screen
-      header={<Header back title="Staff" subtitle={query.data ? `${staff.length} ${staff.length === 1 ? "person" : "people"} · ${active} can sign in now` : undefined} right={<IconButton icon="person-add-outline" label="Add staff" onPress={addStaff} />} />}
+      header={
+        <Header
+          back
+          title="Staff"
+          subtitle={query.data ? `${staff.length} ${staff.length === 1 ? "person" : "people"} · ${active} can sign in now` : undefined}
+          right={<IconButton icon="person-add-outline" label="Add staff" onPress={addStaff} />}
+        />
+      }
       onRefresh={() => query.refetch()}
       refreshing={query.isRefetching}
       footerSpace={staff.length ? 96 : 0}
@@ -173,7 +180,13 @@ export function StaffListScreen() {
       ) : query.isError ? (
         <ErrorState message={errorMessage(query.error)} onRetry={() => query.refetch()} />
       ) : !staff.length ? (
-        <EmptyState icon="people-outline" title="No staff yet" body="Add your cashier or manager. They sign in with the shop code, a username and their own PIN." action="Add staff" onAction={addStaff} />
+        <EmptyState
+          icon="people-outline"
+          title="No staff yet"
+          body="Add your cashier or manager. They sign in with the shop code, a username and their own PIN."
+          action="Add staff"
+          onAction={addStaff}
+        />
       ) : (
         <>
           <LockdownCard locked={locked} count={staff.filter((s) => s.status !== "disabled").length} />

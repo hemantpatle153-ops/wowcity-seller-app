@@ -132,4 +132,3 @@ export function platformIcon(platform: string | null) {
   if (p.includes("web")) return "globe-outline" as const;
   return "phone-portrait-outline" as const;
 }
-

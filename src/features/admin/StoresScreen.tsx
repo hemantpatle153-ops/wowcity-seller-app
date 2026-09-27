@@ -20,7 +20,7 @@ function Stat({ label, value }: { label: string; value: string }) {
       <Text variant="bodyStrong" tabular numberOfLines={1}>
         {value}
       </Text>
-      <Text variant="caption" color="textMuted" numberOfLines={1}>
+      <Text variant="caption" color="textMuted" numberOfLines={2}>
         {label}
       </Text>
     </View>
@@ -53,7 +53,17 @@ function StoreCard({ store, index, onClose, onReopen }: { store: StoreRow; index
           {store.invoice_prefix ? <Badge label={`Bill prefix ${store.invoice_prefix}`} tone="neutral" icon="receipt-outline" /> : null}
         </Row>
         {store.stats ? (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", rowGap: theme.space[3], columnGap: theme.space[3], padding: theme.space[3], borderRadius: theme.radius.control, backgroundColor: theme.colors.surfaceSunken }}>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              rowGap: theme.space[3],
+              columnGap: theme.space[3],
+              padding: theme.space[3],
+              borderRadius: theme.radius.control,
+              backgroundColor: theme.colors.surfaceSunken
+            }}
+          >
             <Stat label="Sales today" value={formatMoneyShort(store.stats.salesToday)} />
             <Stat label="Bills today" value={formatNumber(store.stats.billsToday)} />
             <Stat label="Units in stock" value={formatNumber(store.stats.units)} />
@@ -137,7 +147,13 @@ function CloseSheet({ store, stores, visible, onClose }: { store: StoreRow | nul
                 <Text variant="body" color="textMuted">
                   Shutting it for good? Move every item’s stock to another store in one step.
                 </Text>
-                <Select label="Move stock to" value={target} onChange={setTarget} placeholder="Choose a store" options={targets.map((t) => ({ value: t.id, label: t.name, hint: t.city ?? undefined, icon: "storefront-outline" as const }))} />
+                <Select
+                  label="Move stock to"
+                  value={target}
+                  onChange={setTarget}
+                  placeholder="Choose a store"
+                  options={targets.map((t) => ({ value: t.id, label: t.name, hint: t.city ?? undefined, icon: "storefront-outline" as const }))}
+                />
               </>
             )}
           </Animated.View>

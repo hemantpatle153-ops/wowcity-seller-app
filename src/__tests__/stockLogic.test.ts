@@ -17,7 +17,17 @@ import {
 
 describe("stock filters → GET /stock query", () => {
   it("leaves defaults out", () => {
-    expect(stockQuery(defaultStockFilters)).toEqual({ q: undefined, store: undefined, status: undefined, sort: undefined, brand: undefined, size: undefined, colour: undefined, category: undefined, page: 1 });
+    expect(stockQuery(defaultStockFilters)).toEqual({
+      q: undefined,
+      store: undefined,
+      status: undefined,
+      sort: undefined,
+      brand: undefined,
+      size: undefined,
+      colour: undefined,
+      category: undefined,
+      page: 1
+    });
   });
 
   it("maps every filter and trims/slices the search", () => {

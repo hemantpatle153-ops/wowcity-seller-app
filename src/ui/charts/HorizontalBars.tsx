@@ -63,7 +63,13 @@ export function HorizontalBars({
           </>
         );
         return d.onPress ? (
-          <PressableScale key={d.key ?? `${d.label}-${i}`} onPress={d.onPress} scaleTo={0.98} accessibilityLabel={`${d.label}: ${format(d.value)}${d.detail ? `, ${d.detail}` : ""}`} style={{ gap: 6, minHeight: 44, justifyContent: "center" }}>
+          <PressableScale
+            key={d.key ?? `${d.label}-${i}`}
+            onPress={d.onPress}
+            scaleTo={0.98}
+            accessibilityLabel={`${d.label}: ${format(d.value)}${d.detail ? `, ${d.detail}` : ""}`}
+            style={{ gap: 6, minHeight: 44, justifyContent: "center" }}
+          >
             {body}
           </PressableScale>
         ) : (

@@ -10,7 +10,30 @@ import { useSession } from "@/auth/session";
 import { useCustomFields } from "@/features/stock/hooks";
 import { haptic } from "@/lib/haptics";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Badge, Button, Card, confirm, Divider, EmptyState, ErrorState, Header, Icon, IconButton, IconCircle, Input, PressableScale, Row, Screen, SectionTitle, Select, Sheet, SkeletonList, Text, toast, ToggleRow } from "@/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  confirm,
+  Divider,
+  EmptyState,
+  ErrorState,
+  Header,
+  Icon,
+  IconButton,
+  IconCircle,
+  Input,
+  PressableScale,
+  Row,
+  Screen,
+  SectionTitle,
+  Select,
+  Sheet,
+  SkeletonList,
+  Text,
+  toast,
+  ToggleRow
+} from "@/ui";
 import { buildFieldBody, draftFromField, emptyFieldDraft, fieldDraftError, fieldTypeMeta, fieldTypes, looksPrivate, needsOptions, sortFields, type CustomFieldDraft } from "./listingLogic";
 import { TagEditor } from "./TagEditor";
 
@@ -70,12 +93,7 @@ function FieldSheet({ visible, onClose, field, onArchive }: { visible: boolean; 
       }
     >
       <Input label="Name" value={draft.name} onChangeText={(t) => update({ name: t.slice(0, 48) })} placeholder="e.g. Fabric, Fit, Season" hint={`${draft.name.length}/48`} autoCapitalize="words" />
-      <Select
-        label="Type"
-        value={draft.fieldType}
-        onChange={(fieldType) => update({ fieldType })}
-        options={fieldTypes.map((t) => ({ value: t.value, label: t.label, hint: t.hint, icon: t.icon }))}
-      />
+      <Select label="Type" value={draft.fieldType} onChange={(fieldType) => update({ fieldType })} options={fieldTypes.map((t) => ({ value: t.value, label: t.label, hint: t.hint, icon: t.icon }))} />
       {typeMeta.hint ? (
         <Text variant="caption" color="textMuted" style={{ marginTop: -6 }}>
           {typeMeta.hint}
@@ -130,7 +148,12 @@ function FieldRow({
   ].filter((f) => f !== null);
   return (
     <View style={{ flexDirection: "row", alignItems: "center", paddingLeft: theme.space[4], paddingRight: theme.space[1], gap: 4 }}>
-      <PressableScale onPress={onEdit} scaleTo={0.985} accessibilityLabel={`${field.name}, ${meta.label}. Edit`} style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 12, minHeight: 64 }}>
+      <PressableScale
+        onPress={onEdit}
+        scaleTo={0.985}
+        accessibilityLabel={`${field.name}, ${meta.label}. Edit`}
+        style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 12, minHeight: 64 }}
+      >
         <IconCircle icon={meta.icon} size={38} />
         <View style={{ flex: 1, gap: 4, minWidth: 0 }}>
           <Text variant="body" weight="600" numberOfLines={1}>
@@ -279,7 +302,13 @@ export function CustomFieldsScreen() {
                 ))}
               </Card>
             ) : (
-              <EmptyState icon="list-outline" title="No custom columns" body="Add columns like Fabric, Fit or Season to record more about each item." action="Add a column" onAction={() => startEdit(null)} />
+              <EmptyState
+                icon="list-outline"
+                title="No custom columns"
+                body="Add columns like Fabric, Fit or Season to record more about each item."
+                action="Add a column"
+                onAction={() => startEdit(null)}
+              />
             )}
             {archived.length ? (
               <View style={{ gap: 4 }}>

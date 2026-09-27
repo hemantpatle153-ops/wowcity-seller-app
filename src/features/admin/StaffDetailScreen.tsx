@@ -207,7 +207,12 @@ function Detail({ data }: { data: StaffDetailResponse }) {
     if (ok) setStatus.mutate(!disabled);
   };
   const askRevoke = async (device: DeviceRow) => {
-    const ok = await confirm({ title: `Sign out ${device.name || "this phone"}?`, message: `${member.displayName} will need their PIN to sign in on it again.`, confirmLabel: "Sign out", destructive: true });
+    const ok = await confirm({
+      title: `Sign out ${device.name || "this phone"}?`,
+      message: `${member.displayName} will need their PIN to sign in on it again.`,
+      confirmLabel: "Sign out",
+      destructive: true
+    });
     if (ok) {
       setRevoking(device.id);
       revoke.mutate(device.id, { onError: () => setRevoking(null) });
@@ -305,7 +310,13 @@ function Detail({ data }: { data: StaffDetailResponse }) {
             onPress={() => router.push({ pathname: "/staff/[id]/access", params: { id: member.id } })}
           />
           <Divider inset={66} />
-          <ListRow icon="time-outline" title="Working hours" subtitle={shiftSummary(member.shifts)} chevron onPress={() => router.push({ pathname: "/staff/[id]/shifts", params: { id: member.id } })} />
+          <ListRow
+            icon="time-outline"
+            title="Working hours"
+            subtitle={shiftSummary(member.shifts)}
+            chevron
+            onPress={() => router.push({ pathname: "/staff/[id]/shifts", params: { id: member.id } })}
+          />
         </Card>
       </Animated.View>
 
@@ -403,7 +414,11 @@ function Detail({ data }: { data: StaffDetailResponse }) {
 export function StaffDetailScreen({ id }: { id: string }) {
   const query = useStaffDetail(id);
   return (
-    <Screen header={<Header back title={query.data?.member.displayName ?? "Staff"} subtitle={query.data ? `@${query.data.member.username}` : undefined} />} onRefresh={() => query.refetch()} refreshing={query.isRefetching}>
+    <Screen
+      header={<Header back title={query.data?.member.displayName ?? "Staff"} subtitle={query.data ? `@${query.data.member.username}` : undefined} />}
+      onRefresh={() => query.refetch()}
+      refreshing={query.isRefetching}
+    >
       {query.isPending ? <Loading /> : query.isError ? <ErrorState message={errorMessage(query.error)} onRetry={() => query.refetch()} /> : <Detail data={query.data} />}
     </Screen>
   );

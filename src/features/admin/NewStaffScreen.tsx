@@ -77,17 +77,14 @@ function Wizard({ groups, presets, taken }: { groups: PermissionGroup[]; presets
   const dirty = !created && (!!name || !!mobile || !!pin);
   const guard = useUnsavedGuard(dirty);
 
-  const create = useAdminMutation(
-    (body: StaffCreateBody) => api.staff.create(body),
-    {
-      invalidate: [adminKeys.staff, adminKeys.stores],
-      toast: false,
-      onSuccess: (result, body) => {
-        guard.allowLeave();
-        setCreated({ id: result.workerId, username: body.username, pin: body.password, name: body.displayName });
-      }
+  const create = useAdminMutation((body: StaffCreateBody) => api.staff.create(body), {
+    invalidate: [adminKeys.staff, adminKeys.stores],
+    toast: false,
+    onSuccess: (result, body) => {
+      guard.allowLeave();
+      setCreated({ id: result.workerId, username: body.username, pin: body.password, name: body.displayName });
     }
-  );
+  });
 
   const go = (next: number) => {
     setDirection(next > step ? 1 : -1);

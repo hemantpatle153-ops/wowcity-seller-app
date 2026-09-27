@@ -101,7 +101,21 @@ function EditForm({
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <Screen
-        header={<Header back onBack={() => void leave()} title="Edit item" subtitle={detail.name} right={dirty ? <View><Badge label="Unsaved" tone="warning" icon="ellipse" /></View> : undefined} />}
+        header={
+          <Header
+            back
+            onBack={() => void leave()}
+            title="Edit item"
+            subtitle={detail.name}
+            right={
+              dirty ? (
+                <View>
+                  <Badge label="Unsaved" tone="warning" icon="ellipse" />
+                </View>
+              ) : undefined
+            }
+          />
+        }
         footerSpace={100}
         footer={
           <View style={{ padding: theme.space[4], paddingBottom: Math.max(insets.bottom, 12), gap: 8, backgroundColor: theme.colors.surface, borderTopWidth: 1, borderColor: theme.colors.border }}>
@@ -141,7 +155,15 @@ function EditForm({
         <Section title="Price" index={2}>
           <Row gap={3} align="flex-start">
             <Input label="MRP *" prefix="₹" value={form.mrp} onChangeText={(t) => set("mrp", cleanDecimal(t))} keyboardType="decimal-pad" error={errors.mrp} containerStyle={{ flex: 1 }} />
-            <Input label="Selling price *" prefix="₹" value={form.saleRate} onChangeText={(t) => set("saleRate", cleanDecimal(t))} keyboardType="decimal-pad" error={errors.saleRate} containerStyle={{ flex: 1 }} />
+            <Input
+              label="Selling price *"
+              prefix="₹"
+              value={form.saleRate}
+              onChangeText={(t) => set("saleRate", cleanDecimal(t))}
+              keyboardType="decimal-pad"
+              error={errors.saleRate}
+              containerStyle={{ flex: 1 }}
+            />
           </Row>
           {off > 0 ? <Badge label={`${off}% off MRP · customer saves ${formatMoney(mrp - rate)}`} tone="success" icon="pricetag" /> : null}
         </Section>
