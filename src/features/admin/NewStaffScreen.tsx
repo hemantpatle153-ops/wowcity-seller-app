@@ -127,7 +127,7 @@ function Wizard({ groups, presets, taken }: { groups: PermissionGroup[]; presets
         }
         footerSpace={110}
         footer={
-          <StickyFooter error={create.isError ? errorMessage(create.error) : null}>
+          <StickyFooter error={create.isError ? errorMessage(create.error) : show(step) ? (stepErrors[step].find(Boolean) ?? null) : null}>
             <Row gap={2}>
               {step > 0 ? <Button label="Back" variant="secondary" size="lg" onPress={() => go(step - 1)} style={{ flex: 1 }} /> : null}
               <Button

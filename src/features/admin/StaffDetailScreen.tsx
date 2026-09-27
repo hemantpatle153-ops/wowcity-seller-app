@@ -105,7 +105,7 @@ function ResetPinSheet({ member, visible, onClose, onDone }: { member: StaffMemb
       }
     >
       <Callout icon="log-out-outline" tone="warning">
-        They'll be signed out on every phone and must sign in again with the new PIN.
+        They’ll be signed out on every phone and must sign in again with the new PIN.
       </Callout>
       <Input
         label="New PIN or password"
@@ -123,7 +123,11 @@ function ResetPinSheet({ member, visible, onClose, onDone }: { member: StaffMemb
         error={touched ? error : null}
         maxLength={72}
       />
-      <Button label="Generate a PIN" icon="sparkles-outline" variant="soft" onPress={() => {
+      <Button
+        label="Generate a PIN"
+        icon="sparkles-outline"
+        variant="soft"
+        onPress={() => {
           setPin(generatePin());
           setGenerated(true);
         }}

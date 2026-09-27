@@ -39,23 +39,20 @@ function StaffCard({ member, presets, index }: { member: StaffMember; presets: R
           </View>
           <Icon name="chevron-forward" size={18} color="textFaint" />
         </Row>
-        <Row gap={2} wrap>
-          <Row gap={1}>
+        <View style={{ gap: 4 }}>
+          <Row gap={2}>
             <Icon name={roleIcons[role]} size={16} color="textMuted" />
-            <Text variant="small" weight="600">
+            <Text variant="small" weight="600" style={{ flex: 1 }}>
               {roleLabel(member.permissions, presets)}
             </Text>
           </Row>
-          <Text variant="small" color="textFaint">
-            ·
-          </Text>
-          <Row gap={1} style={{ flexShrink: 1 }}>
+          <Row gap={2} align="flex-start">
             <Icon name="storefront-outline" size={16} color="textMuted" />
-            <Text variant="small" color="textMuted" numberOfLines={1} style={{ flexShrink: 1 }}>
+            <Text variant="small" color="textMuted" numberOfLines={2} style={{ flex: 1 }}>
               {stores}
             </Text>
           </Row>
-        </Row>
+        </View>
         <View style={{ flexDirection: "row", borderRadius: theme.radius.control, backgroundColor: theme.colors.surfaceSunken, padding: theme.space[3], gap: theme.space[3] }}>
           <View style={{ flex: 1 }}>
             <Text variant="caption" color="textMuted">
@@ -122,7 +119,7 @@ function LockdownCard({ locked, count }: { locked: number; count: number }) {
           <View style={{ flex: 1, gap: 2 }}>
             <Text variant="bodyStrong">Staff are locked out</Text>
             <Text variant="small">
-              {locked} of {count} can't sign in because of the emergency lock.
+              {locked} of {count} can’t sign in because of the emergency lock.
             </Text>
           </View>
         </Row>
@@ -179,7 +176,7 @@ export function StaffListScreen() {
         <>
           <LockdownCard locked={locked} count={staff.filter((s) => s.status !== "disabled").length} />
           <Row gap={3}>
-            <StatTile label="Staff sales today" value={formatMoney(todaySales, { decimals: 0 })} icon="trending-up-outline" tone="success" />
+            <StatTile label="Sales today" value={formatMoney(todaySales, { decimals: 0 })} icon="trending-up-outline" tone="success" />
             <StatTile label="Can sign in now" value={`${active} of ${staff.length}`} icon="people-outline" tone="info" />
           </Row>
           <Stack gap={3}>

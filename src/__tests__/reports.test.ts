@@ -216,6 +216,29 @@ describe("report charts", () => {
     expect(chart?.data[1].label).toBe("27 Sep");
   });
 
+  it("ranks names for undated reports even with a date column", () => {
+    const chart = pickReportChart(
+      {
+        key: "dues",
+        columns: [
+          { key: "name", label: "Customer" },
+          { key: "balance", label: "Balance", format: "money", total: true },
+          { key: "since", label: "Since", format: "date" }
+        ],
+        rows: [
+          { name: "A", balance: 100, since: "2026-09-01" },
+          { name: "B", balance: 300, since: "2026-09-02" }
+        ],
+        truncated: false,
+        totals: null
+      },
+      { dated: false }
+    );
+    expect(chart?.kind).toBe("hbars");
+    expect(chart?.title).toBe("Top by balance");
+    expect(chart?.data.map((d) => d.label)).toEqual(["B", "A"]);
+  });
+
   it("ranks names when there is no date", () => {
     const chart = pickReportChart({
       key: "staff",

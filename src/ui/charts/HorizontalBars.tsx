@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
 import { formatMoney } from "@/lib/format";
+import { alpha } from "@/theme/color";
 import { useTheme } from "@/theme/ThemeProvider";
 import { PressableScale } from "../Pressable";
 import { Text } from "../Text";
@@ -57,7 +58,7 @@ export function HorizontalBars({
               </Text>
             </View>
             <View style={{ height: barHeight, borderRadius: 999, backgroundColor: theme.colors.surfaceSunken, overflow: "hidden" }}>
-              <Fill progress={progress} fraction={fraction} index={i} color={i === 0 ? color : theme.colors.chart[(colorIndex + 5) % theme.colors.chart.length]} />
+              <Fill progress={progress} fraction={fraction} index={i} color={i === 0 ? color : alpha(color, theme.scheme === "dark" ? 0.6 : 0.5)} />
             </View>
           </>
         );

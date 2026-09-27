@@ -152,18 +152,16 @@ export function HomeScreen() {
       refreshing={pulling}
       header={
         <View style={{ paddingHorizontal: theme.space[4], paddingTop: theme.space[2], paddingBottom: theme.space[2], gap: 2 }}>
-          <Row gap={2} align="flex-start">
-            <View style={{ flex: 1 }}>
-              <Text variant="small" color="textMuted" numberOfLines={1}>
-                {greeting()}
-                {firstName ? `, ${firstName}` : ""}
-              </Text>
-              <Text variant="heading" numberOfLines={1} accessibilityRole="header">
-                {me?.shopName ?? "Home"}
-              </Text>
-            </View>
+          <Row gap={2}>
+            <Text variant="small" color="textMuted" numberOfLines={1} style={{ flex: 1 }}>
+              {greeting()}
+              {firstName ? `, ${firstName}` : ""}
+            </Text>
             <StorePill />
           </Row>
+          <Text variant="heading" numberOfLines={1} accessibilityRole="header">
+            {me?.shopName ?? "Home"}
+          </Text>
         </View>
       }
     >

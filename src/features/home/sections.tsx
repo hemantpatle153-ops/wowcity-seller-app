@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import type { DashboardBill, OwnerDashboard, StockAlert } from "@/api/types";
+import { can } from "@/auth/permissions";
+import { useSession } from "@/auth/session";
 import { formatMoney, formatNumber, formatRelative, formatTime } from "@/lib/format";
 import { useTheme } from "@/theme/ThemeProvider";
 import { AnimatedNumber, Avatar, Badge, Card, Divider, Icon, IconCircle, ListRow, PressableScale, Row, StatTile, Text, type IconName, type Tone } from "@/ui";
@@ -24,7 +26,7 @@ function CardHeader({ title, action, onAction, right }: { title: string; action?
       </Text>
       {right}
       {action ? (
-        <PressableScale onPress={onAction} accessibilityLabel={action} style={{ minHeight: 44, minWidth: 44, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", gap: 2 }}>
+        <PressableScale onPress={onAction} accessibilityLabel={action} style={{ minHeight: 44, minWidth: 44, marginVertical: -8, marginRight: -6, paddingHorizontal: 6, flexDirection: "row", alignItems: "center", gap: 2 }}>
           <Text variant="small" weight="700" color="accent">
             {action}
           </Text>
@@ -97,18 +99,22 @@ export function HeroCard({ data }: { data: OwnerDashboard }) {
   );
 }
 
-const quickActions: { label: string; icon: IconName; path: string; tone: Tone }[] = [
-  { label: "New bill", icon: "cart-outline", path: "/sell", tone: "accent" },
-  { label: "Purchase", icon: "cube-outline", path: "/purchase", tone: "info" },
-  { label: "Scan stock", icon: "barcode-outline", path: "/stock", tone: "success" },
-  { label: "Record payment", icon: "wallet-outline", path: "/dues", tone: "warning" }
+const quickActions: { label: string; icon: IconName; path: string; tone: Tone; perms: string[] }[] = [
+  { label: "New bill", icon: "cart-outline", path: "/sell", tone: "accent", perms: ["sale.create"] },
+  { label: "Purchase", icon: "cube-outline", path: "/purchase", tone: "info", perms: ["purchase.create"] },
+  { label: "Scan stock", icon: "barcode-outline", path: "/stock", tone: "success", perms: ["stock.view"] },
+  { label: "Record payment", icon: "wallet-outline", path: "/dues", tone: "warning", perms: ["reports.due"] }
 ];
 
+/** Big shortcuts in the thumb zone; each one only when the person may use it. */
 export function QuickActions() {
   const theme = useTheme();
+  const me = useSession((s) => s.me);
+  const actions = quickActions.filter((a) => can(me, ...a.perms));
+  if (!actions.length) return null;
   return (
     <Row gap={2} align="stretch" wrap>
-      {quickActions.map((a) => (
+      {actions.map((a) => (
         <PressableScale
           key={a.label}
           onPress={() => openPath(a.path)}
@@ -176,7 +182,7 @@ export function PaymentMixCard({ mix }: { mix: OwnerDashboard["paymentMix"] }) {
 
 function DueColumn({ title, amount, parties, top, party, tone }: { title: string; amount: number; parties: number; top: { id: string; name: string; amount: number }[]; party: "customer" | "supplier"; tone: Tone }) {
   return (
-    <View style={{ flex: 1, minWidth: 150, gap: 6 }}>
+    <View style={{ flex: 1, minWidth: 260, gap: 6 }}>
       <Text variant="small" color="textMuted">
         {title}
       </Text>
@@ -268,7 +274,7 @@ export function TopItemsCard({ items }: { items: OwnerDashboard["topItems"] }) {
       {items.length ? (
         <HorizontalBars
           title="Top items in the last 7 days"
-          data={items.map((i) => ({ key: i.variantId, label: i.name, detail: `${i.detail} · ${formatNumber(i.quantity)} sold`, value: i.amount, onPress: () => openPath(`/stock/${i.variantId}`) }))}
+          data={[...items].sort((a, b) => b.amount - a.amount).map((i) => ({ key: i.variantId, label: i.name, detail: `${i.detail} · ${formatNumber(i.quantity)} sold`, value: i.amount, onPress: () => openPath(`/stock/${i.variantId}`) }))}
         />
       ) : (
         <Text variant="small" color="textMuted">
@@ -382,7 +388,7 @@ export function ListingsCard({ listings }: { listings: OwnerDashboard["listings"
         </View>
         <Icon name="chevron-forward" color="textFaint" />
       </Row>
-      <Row gap={3} wrap>
+      <Row gap={3} wrap align="flex-start">
         {cells.map((c) => (
           <View key={c.label} style={{ flex: 1, minWidth: 70 }}>
             <Text variant="heading" tabular color={c.tone ?? "text"}>

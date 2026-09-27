@@ -191,7 +191,11 @@ export function ChoiceCard({
         backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface
       }}
     >
-      {icon ? <IconCircle icon={icon} tone={selected ? "accent" : "neutral"} size={44} /> : null}
+      {icon ? (
+        <View style={{ width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: selected ? theme.colors.surface : theme.colors.surfaceSunken }}>
+          <Icon name={icon} size={22} color={selected ? "accent" : "textMuted"} />
+        </View>
+      ) : null}
       <View style={{ flex: 1, gap: 2 }}>
         <Text variant="bodyStrong" color={selected ? "accentSoftText" : "text"}>
           {title}

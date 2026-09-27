@@ -40,18 +40,6 @@ function Bar({
   return <Animated.View style={[{ position: "absolute", width, left: "50%", marginLeft: -width / 2, backgroundColor: color, borderRadius: Math.min(6, width / 3) }, style]} />;
 }
 
-/** Centre labels under their bar, but keep the first and last inside the chart. */
-function edgeAlign(i: number, n: number) {
-  if (n > 1 && i === 0) return "flex-start" as const;
-  if (n > 1 && i === n - 1) return "flex-end" as const;
-  return "center" as const;
-}
-function edgeText(i: number, n: number) {
-  if (n > 1 && i === 0) return "left" as const;
-  if (n > 1 && i === n - 1) return "right" as const;
-  return "center" as const;
-}
-
 /**
  * Vertical bar chart. Tap a bar to see its value in the callout above the chart.
  * Value labels are shown on bars when there is room (and always for the selected bar).
@@ -94,8 +82,9 @@ export function BarChart({
   const plotWidth = Math.max(0, width - axisWidth);
   const step = data.length ? plotWidth / data.length : 0;
   const barWidth = Math.max(4, Math.min(40, step * 0.62));
-  const roomForValues = showValues === "all" || (showValues === "auto" && step >= caption.fontSize * 3.4);
-  const xLabels = new Set(labelIndexes(data.length, Math.max(2, Math.floor(plotWidth / (caption.fontSize * 4.6)))));
+  const roomForValues = showValues === "all" || (showValues === "auto" && step >= caption.fontSize * 4.4);
+  const maxIndex = values.reduce((best, v, i) => (v > values[best] ? i : best), 0);
+  const xLabels = labelIndexes(data.length, Math.max(2, Math.floor(plotWidth / (caption.fontSize * 5.6))));
   const base = theme.colors.chart[colorIndex % theme.colors.chart.length];
   const summary = describeSeries(
     data.map((d) => ({ label: d.fullLabel ?? d.label, value: d.value })),
@@ -107,7 +96,7 @@ export function BarChart({
 
   return (
     <View accessible accessibilityRole="image" accessibilityLabel={`${title ? `${title}. ` : ""}${summary}`} style={{ gap: 6 }}>
-      <View style={{ minHeight: caption.lineHeight * 2 + 4, justifyContent: "center" }}>
+      <View style={{ minHeight: caption.lineHeight + 8, justifyContent: "center" }}>
         {current ? (
           <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
             <Text variant="small" color="textMuted" numberOfLines={1}>
@@ -142,7 +131,7 @@ export function BarChart({
               const isSelected = selected === i;
               const dim = selected !== null ? !isSelected : highlightLast ? i !== data.length - 1 : false;
               const color = dim ? alpha(base, selected !== null ? 0.35 : 0.55) : base;
-              const showValue = (roomForValues || isSelected) && value !== 0;
+              const showValue = value !== 0 && (roomForValues || isSelected || (showValues === "auto" && selected === null && (i === maxIndex || (highlightLast && i === data.length - 1))));
               const top = value >= 0 ? zeroY - length - labelSpace : zeroY + length;
               return (
                 <Pressable
@@ -173,22 +162,27 @@ export function BarChart({
           </>
         ) : null}
       </View>
-      <View style={{ flexDirection: "row", paddingLeft: axisWidth }}>
-        {data.map((d, i) => (
-          <View key={`${d.label}-${i}`} style={{ flex: 1, alignItems: edgeAlign(i, data.length), overflow: "visible" }}>
-            {xLabels.has(i) ? (
-              <Text
-                variant="caption"
-                color={selected === i ? "text" : "textMuted"}
-                weight={selected === i ? "700" : "500"}
-                numberOfLines={1}
-                style={{ width: 80, textAlign: edgeText(i, data.length), marginHorizontal: data.length > 1 && (i === 0 || i === data.length - 1) ? -4 : 0 }}
-              >
-                {d.label}
-              </Text>
-            ) : null}
-          </View>
-        ))}
+      <View style={{ height: caption.lineHeight, marginLeft: axisWidth }}>
+        {width > 0
+          ? xLabels.map((i) => {
+              const w = 64;
+              const center = step * i + step / 2;
+              const left = Math.min(Math.max(0, center - w / 2), plotWidth - w);
+              const align = left <= 0 ? "left" : left >= plotWidth - w ? "right" : "center";
+              return (
+                <Text
+                  key={i}
+                  variant="caption"
+                  color={selected === i ? "text" : "textMuted"}
+                  weight={selected === i ? "700" : "500"}
+                  numberOfLines={1}
+                  style={{ position: "absolute", left, width: w, textAlign: align }}
+                >
+                  {data[i].label}
+                </Text>
+              );
+            })
+          : null}
       </View>
     </View>
   );

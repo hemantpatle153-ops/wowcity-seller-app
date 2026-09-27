@@ -138,7 +138,7 @@ export function columnWidth(format: CellFormat | undefined): number {
     case "date":
       return 104;
     case "datetime":
-      return 148;
+      return 180;
     case "mono":
       return 128;
     case "badge":

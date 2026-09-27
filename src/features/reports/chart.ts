@@ -19,17 +19,18 @@ function pickValueColumn(columns: ReportColumn[]): ReportColumn | null {
 
 /**
  * A simple chart for a report when one makes sense (kept generic and safe):
- * - rows with a date column → value per day as vertical bars (2..62 days);
+ * - rows with a date column (dated reports) → value per day as vertical bars (2..62 days);
  * - rows with a name column → top 8 names as horizontal bars (only when all values are ≥ 0
  *   and the table is not a statement-style summary with emphasised rows).
  * Returns null when nothing sensible can be drawn.
  */
-export function pickReportChart(table: ReportTableOut | undefined): ReportChart | null {
+export function pickReportChart(table: ReportTableOut | undefined, options: { dated?: boolean } = {}): ReportChart | null {
   if (!table || table.rows.length < 2) return null;
   const valueCol = pickValueColumn(table.columns);
   if (!valueCol) return null;
   const format = valueCol.format === "qty" ? "qty" : "money";
-  const dateCol = table.columns.find((c) => c.format === "date" || c.format === "datetime");
+  // Undated reports (dues, stock) are "as of now": their dates are ages, so rank names instead.
+  const dateCol = options.dated === false ? undefined : table.columns.find((c) => c.format === "date" || c.format === "datetime");
 
   if (dateCol) {
     const sums = new Map<string, number>();

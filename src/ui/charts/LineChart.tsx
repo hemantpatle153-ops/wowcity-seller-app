@@ -82,7 +82,7 @@ export function LineChart({
 
   return (
     <View accessible accessibilityRole="image" accessibilityLabel={`${title ? `${title}. ` : ""}${summary}`} style={{ gap: 6 }}>
-      <View style={{ minHeight: caption.lineHeight * 2 + 4, justifyContent: "center" }}>
+      <View style={{ minHeight: caption.lineHeight + 8, justifyContent: "center" }}>
         {current ? (
           <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
             <Text variant="small" color="textMuted">

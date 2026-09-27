@@ -167,7 +167,7 @@ function ShiftsForm({ member }: { member: StaffMember }) {
             </Card>
           </Stack>
           <Callout icon="information-circle-outline" tone="info">
-            Times are Indian Standard Time. When a shift ends they're signed out and can't sign in until the next one starts.
+            Times are Indian Standard Time. When a shift ends they’re signed out and can’t sign in until the next one starts.
           </Callout>
         </Animated.View>
       ) : (

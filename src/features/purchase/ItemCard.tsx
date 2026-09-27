@@ -29,6 +29,26 @@ export function MoneyInput(props: Omit<InputProps, "onChangeText"> & { onChangeT
   return <Input prefix="₹" keyboardType="decimal-pad" inputMode="decimal" placeholder="0" {...rest} onChangeText={(t) => onChangeText(typingDecimal(t, places))} />;
 }
 
+/** Compact − / + inside the quantity field (the whole row stays a 48 dp target). */
+function QtyButton({ icon, label, onPress, disabled }: { icon: "add" | "remove"; label: string; onPress: () => void; disabled?: boolean }) {
+  const theme = useTheme();
+  return (
+    <PressableScale
+      onPress={() => {
+        haptic.select();
+        onPress();
+      }}
+      disabled={disabled}
+      accessibilityLabel={label}
+      hitSlop={6}
+      scaleTo={0.88}
+      style={{ width: 40, height: 36, borderRadius: theme.radius.control - 2, alignItems: "center", justifyContent: "center", backgroundColor: theme.colors.surfaceSunken }}
+    >
+      <Icon name={icon} size={20} color="text" />
+    </PressableScale>
+  );
+}
+
 function Expander({ title, hint, open, onToggle, icon, children }: { title: string; hint?: string; open: boolean; onToggle: () => void; icon: "pricetags-outline" | "images-outline" | "list-outline"; children: ReactNode }) {
   const theme = useTheme();
   return (
@@ -297,7 +317,7 @@ export function ItemCard({
                 value={item.hsnCode}
                 onChangeText={(t) => update({ hsnCode: t.replace(/\D/g, "").slice(0, 8) })}
                 keyboardType="number-pad"
-                placeholder="6204"
+                placeholder="4–8 digits"
                 error={errors?.hsnCode}
               />
             </Cell>
@@ -327,28 +347,9 @@ export function ItemCard({
                 error={errors?.qty}
                 style={{ fontVariant: ["tabular-nums"], fontWeight: "700" }}
                 right={
-                  <Row gap={0}>
-                    <IconButton
-                      icon="remove"
-                      label="One less"
-                      size={20}
-                      variant="soft"
-                      disabled={qty <= 1}
-                      onPress={() => {
-                        haptic.select();
-                        update({ qty: String(Math.max(1, Math.round((qty - 1) * 1000) / 1000)) });
-                      }}
-                    />
-                    <IconButton
-                      icon="add"
-                      label="One more"
-                      size={20}
-                      variant="soft"
-                      onPress={() => {
-                        haptic.select();
-                        update({ qty: String(Math.round((qty + 1) * 1000) / 1000) });
-                      }}
-                    />
+                  <Row gap={1}>
+                    <QtyButton icon="remove" label="One less" disabled={qty <= 1} onPress={() => update({ qty: String(Math.max(1, Math.round((qty - 1) * 1000) / 1000)) })} />
+                    <QtyButton icon="add" label="One more" onPress={() => update({ qty: String(Math.round((qty + 1) * 1000) / 1000) })} />
                   </Row>
                 }
               />

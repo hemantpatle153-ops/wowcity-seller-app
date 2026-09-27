@@ -84,7 +84,8 @@ function CloseSheet({ store, stores, visible, onClose }: { store: StoreRow | nul
   const [mode, setMode] = useState<"temporary" | "merge">("temporary");
   const [target, setTarget] = useState<string>("");
   const targets = stores.filter((s) => s.is_active && s.id !== store?.id);
-  const close = useAdminMutation(() => api.stores.close(store!.id, mode === "merge" ? { mode, targetStoreId: target } : { mode }), {
+  const storeId = store?.id ?? "";
+  const close = useAdminMutation(() => api.stores.close(storeId, mode === "merge" ? { mode, targetStoreId: target } : { mode }), {
     invalidate: [adminKeys.stores, adminKeys.staff],
     refreshMe: true,
     onSuccess: onClose
@@ -129,12 +130,12 @@ function CloseSheet({ store, stores, visible, onClose }: { store: StoreRow | nul
           <Animated.View key={mode} entering={theme.reduceMotion ? undefined : FadeIn.duration(180)} style={{ gap: theme.space[3] }}>
             {mode === "temporary" ? (
               <Text variant="body" color="textMuted">
-                For renovations or a season break. Stock stays in this store, staff can't bill here, and buyers won't see it.
+                For renovations or a season break. Stock stays in this store, staff can’t bill here, and buyers won’t see it.
               </Text>
             ) : (
               <>
                 <Text variant="body" color="textMuted">
-                  Shutting it for good? Move every item's stock to another store in one step.
+                  Shutting it for good? Move every item’s stock to another store in one step.
                 </Text>
                 <Select label="Move stock to" value={target} onChange={setTarget} placeholder="Choose a store" options={targets.map((t) => ({ value: t.id, label: t.name, hint: t.city ?? undefined, icon: "storefront-outline" as const }))} />
               </>
@@ -151,7 +152,8 @@ function CloseSheet({ store, stores, visible, onClose }: { store: StoreRow | nul
 
 function ReopenSheet({ store, visible, onClose }: { store: StoreRow | null; visible: boolean; onClose: () => void }) {
   const [recall, setRecall] = useState(false);
-  const reopen = useAdminMutation(() => api.stores.reopen(store!.id, { recallInventory: recall }), { invalidate: [adminKeys.stores, adminKeys.staff], refreshMe: true, onSuccess: onClose });
+  const storeId = store?.id ?? "";
+  const reopen = useAdminMutation(() => api.stores.reopen(storeId, { recallInventory: recall }), { invalidate: [adminKeys.stores, adminKeys.staff], refreshMe: true, onSuccess: onClose });
   return (
     <Sheet
       visible={visible}
@@ -160,7 +162,7 @@ function ReopenSheet({ store, visible, onClose }: { store: StoreRow | null; visi
       footer={<Button label="Reopen store" icon="lock-open-outline" variant="success" size="lg" fullWidth loading={reopen.isPending} onPress={() => reopen.mutate(undefined)} />}
     >
       <Text variant="body" color="textMuted">
-        Staff assigned to it can bill here again and, if it's discoverable, buyers see it on WowCity.
+        Staff assigned to it can bill here again and, if it’s discoverable, buyers see it on WowCity.
       </Text>
       <Card>
         <ToggleRow label="Bring back moved stock" hint="If you merged this store, move that stock back here." value={recall} onChange={setRecall} icon="return-up-back-outline" />

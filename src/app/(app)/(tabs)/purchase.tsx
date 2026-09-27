@@ -1,9 +1,5 @@
-import { Header, Screen, EmptyState } from "@/ui";
+import { NewPurchaseScreen } from "@/features/purchase/NewPurchaseScreen";
 
-export default function Tab() {
-  return (
-    <Screen header={<Header title="purchase" large />}>
-      <EmptyState icon="construct-outline" title="Coming soon" />
-    </Screen>
-  );
+export default function PurchaseTab() {
+  return <NewPurchaseScreen />;
 }

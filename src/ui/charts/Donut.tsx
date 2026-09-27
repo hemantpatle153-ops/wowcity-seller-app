@@ -87,24 +87,26 @@ export function Donut({
           ) : null}
         </View>
       </View>
-      <View style={{ flex: 1, minWidth: 150, gap: 2 }}>
+      <View style={{ flex: 1, minWidth: 140, gap: 4 }}>
         {data.map((d, i) => (
           <Pressable
             key={d.label}
             onPress={() => toggle(i)}
             accessibilityLabel={`${d.label}: ${format(d.value)}, ${pcts[i]} percent`}
-            style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 36, opacity: selected !== null && selected !== i ? 0.5 : 1 }}
+            style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 44, opacity: selected !== null && selected !== i ? 0.5 : 1 }}
           >
             <View style={{ width: 12, height: 12, borderRadius: 4, backgroundColor: colorOf(i) }} />
             <Text variant="small" weight={selected === i ? "700" : "500"} style={{ flex: 1 }} numberOfLines={1}>
               {d.label}
             </Text>
-            <Text variant="small" color="textMuted" tabular style={{ minWidth: 36, textAlign: "right" }}>
-              {pcts[i]}%
-            </Text>
-            <Text variant="small" weight="600" tabular numberOfLines={1} style={{ minWidth: 64, textAlign: "right" }}>
-              {format(d.value)}
-            </Text>
+            <View style={{ alignItems: "flex-end" }}>
+              <Text variant="small" weight="700" tabular numberOfLines={1}>
+                {format(d.value)}
+              </Text>
+              <Text variant="caption" color="textMuted" tabular>
+                {pcts[i]}%
+              </Text>
+            </View>
           </Pressable>
         ))}
       </View>

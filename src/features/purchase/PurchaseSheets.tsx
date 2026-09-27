@@ -91,14 +91,14 @@ export function NotFoundSheet({ code, onClose, onCreate, onScanAgain }: { code: 
           <Text variant="body" weight="700">
             {code}
           </Text>{" "}
-          isn't in your catalogue yet. Create the product and its labels will keep this barcode.
+          {"isn't in your catalogue yet. Create the product and its labels will keep this barcode."}
         </Text>
       </View>
     </Sheet>
   );
 }
 
-export function SuccessSheet({ result, onClose }: { result: (PurchaseResponse & { supplier: string | null }) | null; onClose: () => void }) {
+export function SuccessSheet({ result, onClose }: { result: (PurchaseResponse & { supplier: string | null; billTotal: number }) | null; onClose: () => void }) {
   const theme = useTheme();
   return (
     <Sheet
@@ -141,8 +141,11 @@ export function SuccessSheet({ result, onClose }: { result: (PurchaseResponse & 
           <Text variant="heading" align="center" accessibilityLiveRegion="polite">
             {result.message}
           </Text>
-          <Text variant="hero" tabular>
-            {formatMoney(result.total, { decimals: "auto" })}
+          <Text variant="hero" tabular accessibilityLabel={`Bill total ${formatMoney(result.billTotal)}`}>
+            {formatMoney(result.billTotal, { decimals: "auto" })}
+          </Text>
+          <Text variant="small" color="textMuted" tabular>
+            Purchase value {formatMoney(result.total, { decimals: 2 })} before GST
           </Text>
           <Text variant="body" color="textMuted" align="center">
             {result.itemCount} item{result.itemCount === 1 ? "" : "s"}

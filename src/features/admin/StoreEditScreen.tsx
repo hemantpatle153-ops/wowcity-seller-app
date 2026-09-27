@@ -184,7 +184,7 @@ function StoreForm({ store }: { store: StoreRow | null }) {
             />
           </Row>
           <Text variant="small" color="textMuted">
-            Optional, both or neither. In Google Maps, long-press your shop's pin to copy its coordinates.
+            Optional, both or neither. In Google Maps, long-press your shop’s pin to copy its coordinates.
           </Text>
         </FormSection>
 
@@ -195,7 +195,7 @@ function StoreForm({ store }: { store: StoreRow | null }) {
         </FormSection>
         {!store ? (
           <Callout icon="receipt-outline" tone="info">
-            New stores get their own bill numbers (for example MGR/26-27/0001). You'll see the prefix after saving.
+            New stores get their own bill numbers (for example MGR/26-27/0001). You’ll see the prefix after saving.
           </Callout>
         ) : null}
       </Screen>

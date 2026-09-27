@@ -110,7 +110,7 @@ export function DevicesScreen() {
       ) : (
         <>
           <Callout icon="shield-checkmark-outline" tone="info">
-            These are the phones signed in to your owner account. Staff phones are on each staff member's page.
+            These are the phones signed in to your owner account. Staff phones are on each staff member’s page.
           </Callout>
           {current ? <DeviceCard device={current} current onSignOut={() => signOut(current)} busy={false} index={0} /> : null}
           {others.length ? (
