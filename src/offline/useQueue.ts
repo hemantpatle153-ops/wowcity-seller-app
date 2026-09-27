@@ -1,3 +1,4 @@
+import { AppState } from "react-native";
 import { create } from "zustand";
 import { api } from "@/api";
 import { actorKey } from "@/auth/permissions";
@@ -105,17 +106,32 @@ export async function discardQueued(id: string) {
 
 /** Push queued bills whenever the network comes back. */
 export function startQueueAutoSync(getStoreId: () => string | null) {
+  const signedIn = () => useSession.getState().status === "signedIn";
   let wasOnline = useConnectivity.getState().online;
   const unsubscribe = useConnectivity.subscribe((state) => {
-    if (state.online && !wasOnline) void syncNow(getStoreId(), { catalog: true });
+    if (state.online && !wasOnline && signedIn()) void syncNow(getStoreId(), { catalog: true });
     wasOnline = state.online;
   });
   const timer = setInterval(() => {
     const pending = useOffline.getState().queue.some((q) => q.status === "pending" && isMine(q));
-    if (pending && !queueProcessor.busy) void queueProcessor.run();
+    if (pending && signedIn() && !queueProcessor.busy) void queueProcessor.run();
   }, 30000);
+  // Scans read the phone's catalogue for speed, so keep it fresh: price and stock changes made on the
+  // web (or at another counter) arrive within a few minutes. Only changed rows are downloaded.
+  let lastCatalog = Date.now();
+  const refreshCatalog = () => {
+    if (!signedIn() || !useConnectivity.getState().online || Date.now() - lastCatalog < CATALOG_REFRESH_MS) return;
+    lastCatalog = Date.now();
+    void syncNow(getStoreId(), { customers: false });
+  };
+  const catalogTimer = setInterval(refreshCatalog, CATALOG_REFRESH_MS);
+  const appState = AppState.addEventListener("change", (state) => state === "active" && refreshCatalog());
   return () => {
     unsubscribe();
     clearInterval(timer);
+    clearInterval(catalogTimer);
+    appState.remove();
   };
 }
+
+const CATALOG_REFRESH_MS = 3 * 60 * 1000;
