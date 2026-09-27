@@ -1,9 +1,5 @@
-import { Header, Screen, EmptyState } from "@/ui";
+import { HomeScreen } from "@/features/home/HomeScreen";
 
-export default function Tab() {
-  return (
-    <Screen header={<Header title="home" large />}>
-      <EmptyState icon="construct-outline" title="Coming soon" />
-    </Screen>
-  );
+export default function HomeTab() {
+  return <HomeScreen />;
 }

@@ -1,9 +1,5 @@
-import { Header, Screen, EmptyState } from "@/ui";
+import { StockScreen } from "@/features/stock/StockScreen";
 
-export default function Tab() {
-  return (
-    <Screen header={<Header title="stock" large />}>
-      <EmptyState icon="construct-outline" title="Coming soon" />
-    </Screen>
-  );
+export default function StockTab() {
+  return <StockScreen />;
 }
