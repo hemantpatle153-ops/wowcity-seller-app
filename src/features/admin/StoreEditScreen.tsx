@@ -1,12 +1,13 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import { KeyboardAvoidingView, Linking, Platform } from "react-native";
 import { api, errorMessage } from "@/api";
 import type { StoreRow, StoreSaveBody } from "@/api/types";
 import { gstStateCode, indianStates } from "@/lib/india";
-import { Button, EmptyState, ErrorState, Header, Input, Row, Screen, Select, SkeletonCards, Text, ToggleRow } from "@/ui";
+import { Button, EmptyState, ErrorState, Header, Input, Row, Screen, Select, SkeletonCards, Text, toast, ToggleRow } from "@/ui";
 import { Callout, FormSection, StickyFooter } from "./components";
 import { adminKeys, useAdminMutation, useStores, useUnsavedGuard } from "./hooks";
+import { currentStoreLocation, mapsLink } from "./location";
 import { coordinatesError, gstinError, mapsUrlError, phoneError, pincodeError, stateNameFor } from "./validation";
 
 type Form = {
@@ -71,6 +72,37 @@ function StoreForm({ store }: { store: StoreRow | null }) {
   const [form, setForm] = useState<Form>(initial);
   const [touched, setTouched] = useState(false);
   const set = (patch: Partial<Form>) => setForm({ ...form, ...patch });
+  const [locating, setLocating] = useState(false);
+  const [accuracy, setAccuracy] = useState<number | null>(null);
+  const useMyLocation = async () => {
+    setLocating(true);
+    try {
+      const result = await currentStoreLocation();
+      if (!result.ok) {
+        if (result.error.reason === "blocked") toast.warning(result.error.message, { label: "Settings", onPress: () => void Linking.openSettings() });
+        else toast.warning(result.error.message);
+        return;
+      }
+      const { latitude, longitude, address } = result.location;
+      // Pin the coordinates; only fill address fields that are still empty.
+      setForm((current) => ({
+        ...current,
+        latitude: String(latitude),
+        longitude: String(longitude),
+        googleMapsUrl: current.googleMapsUrl.trim() ? current.googleMapsUrl : mapsLink(latitude, longitude),
+        addressLine1: current.addressLine1.trim() || !address?.line1 ? current.addressLine1 : address.line1,
+        city: current.city.trim() || !address?.city ? current.city : address.city,
+        state: current.state || !address?.state ? current.state : address.state,
+        pincode: current.pincode.trim() || !address?.pincode ? current.pincode : address.pincode
+      }));
+      setAccuracy(result.location.accuracy);
+      toast.success("Store pinned at your current location");
+    } catch (e) {
+      toast.error(errorMessage(e));
+    } finally {
+      setLocating(false);
+    }
+  };
   const dirty = (Object.keys(initial) as (keyof Form)[]).some((k) => initial[k] !== form[k]);
   const guard = useUnsavedGuard(dirty);
   const coords = coordinatesError(form.latitude, form.longitude);
@@ -186,6 +218,16 @@ function StoreForm({ store }: { store: StoreRow | null }) {
             placeholder="https://maps.app.goo.gl/…"
             error={show("googleMapsUrl", form.googleMapsUrl.length > 12)}
           />
+          {Platform.OS !== "web" ? (
+            <Button
+              label={locating ? "Finding you…" : "Use my location"}
+              icon="locate-outline"
+              variant="soft"
+              onPress={useMyLocation}
+              loading={locating}
+              accessibilityHint="Fills latitude and longitude with where this phone is now. Stand inside the shop."
+            />
+          ) : null}
           <Row gap={3} align="flex-start">
             <Input
               label="Latitude"
@@ -207,7 +249,9 @@ function StoreForm({ store }: { store: StoreRow | null }) {
             />
           </Row>
           <Text variant="small" color="textMuted">
-            Optional, both or neither. In Google Maps, long-press your shop’s pin to copy its coordinates.
+            {accuracy !== null
+              ? `Pinned to within about ${Math.max(1, Math.round(accuracy))} m. Check the Maps link opens at your shop.`
+              : "Optional, both or neither. Tap “Use my location” while standing in the shop, or long-press the shop’s pin in Google Maps to copy its coordinates."}
           </Text>
         </FormSection>
 

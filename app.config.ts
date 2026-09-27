@@ -8,6 +8,7 @@ const name = IS_DEV ? "WowCity Seller (Dev)" : IS_PREVIEW ? "WowCity Seller (Pre
 
 const CAMERA = "WowCity Seller uses the camera to scan product barcodes while billing and to take product photos.";
 const PHOTOS = "WowCity Seller uses your photos so you can add product pictures.";
+const LOCATION = "WowCity Seller uses your location only when you tap “Use my location” to pin your store on the map for buyers.";
 const BLUETOOTH = "WowCity Seller uses Bluetooth to print receipts on your thermal printer.";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -66,6 +67,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ["expo-splash-screen", { backgroundColor: "#1E5BD8", image: "./assets/images/splash-icon.png", imageWidth: 96, dark: { backgroundColor: "#15171A" } }],
     ["expo-camera", { cameraPermission: CAMERA, recordAudioAndroid: false }],
     ["expo-image-picker", { photosPermission: PHOTOS, cameraPermission: CAMERA }],
+    [
+      "expo-location",
+      {
+        locationWhenInUsePermission: LOCATION,
+        locationAlwaysAndWhenInUsePermission: false,
+        locationAlwaysPermission: false,
+        isAndroidBackgroundLocationEnabled: false,
+        isIosBackgroundLocationEnabled: false
+      }
+    ],
     "expo-secure-store",
     "expo-sqlite",
     "expo-sharing",
