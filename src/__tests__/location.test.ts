@@ -27,3 +27,18 @@ describe("store location", () => {
     expect(addressFromGeocode(null)).toBeNull();
   });
 });
+
+import { cleanMobileInput, formFromCustomer } from "@/features/customers/form";
+
+describe("customer form", () => {
+  it("strips +91 / 0 from pasted numbers instead of cutting the last digits", () => {
+    expect(cleanMobileInput("+91 98765 43210")).toBe("9876543210");
+    expect(cleanMobileInput("09876543210")).toBe("9876543210");
+    expect(cleanMobileInput("98765")).toBe("98765");
+  });
+
+  it("normalises a saved state so old customers stay editable", () => {
+    const form = formFromCustomer({ id: "c", name: "A", mobile: null, address: null, city: null, state: "Orissa", gstin: null, created_at: "" });
+    expect(form.state).toBe("Odisha");
+  });
+});

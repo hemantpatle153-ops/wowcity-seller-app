@@ -204,7 +204,15 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
             back
             title={d.name}
             subtitle={detailLine || undefined}
-            right={canPrint ? <IconButton icon="print-outline" label="Print barcode label" onPress={() => router.push(`/labels?variant=${d.variantId}` as Href)} /> : undefined}
+            right={
+              canPrint ? (
+                <IconButton
+                  icon="print-outline"
+                  label="Print barcode label"
+                  onPress={() => router.push(`/labels?variant=${d.variantId}&barcode=${encodeURIComponent(d.barcodes[0]?.barcode ?? "")}` as Href)}
+                />
+              ) : undefined
+            }
           />
         }
         onRefresh={() => void item.refetch()}
@@ -324,7 +332,14 @@ export function ItemDetailScreen({ variantId }: { variantId: string }) {
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: theme.space[2] }}>
               {canTransfer ? <ActionTile icon="swap-horizontal" label="Transfer" hint="Move pieces to another store" onPress={() => open("transfer")} /> : null}
               {canListing ? <ActionTile icon="globe-outline" label="Online listing" hint="What buyers see on WowCity" onPress={() => router.push(`/products/${d.productId}/listing`)} /> : null}
-              {canPrint ? <ActionTile icon="barcode-outline" label="Print label" hint="Barcode label for this item" onPress={() => router.push(`/labels?variant=${d.variantId}` as Href)} /> : null}
+              {canPrint ? (
+                <ActionTile
+                  icon="barcode-outline"
+                  label="Print label"
+                  hint="Barcode label for this item"
+                  onPress={() => router.push(`/labels?variant=${d.variantId}&barcode=${encodeURIComponent(d.barcodes[0]?.barcode ?? "")}` as Href)}
+                />
+              ) : null}
             </View>
           </Animated.View>
         ) : null}

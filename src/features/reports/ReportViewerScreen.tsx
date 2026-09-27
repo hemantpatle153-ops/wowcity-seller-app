@@ -96,7 +96,7 @@ export function ReportViewerScreen({ slug }: { slug: string }) {
   const theme = useTheme();
   const me = useSession((s) => s.me);
   const owner = isOwner(me);
-  const canExport = owner && can(me, "reports.export");
+  const canExport = can(me, "reports.export");
   const index = useReportsIndex();
   const meta = index.data?.groups.flatMap((g) => g.reports).find((r) => r.slug === slug);
 

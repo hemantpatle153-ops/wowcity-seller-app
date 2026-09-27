@@ -11,7 +11,7 @@ import { haptic } from "@/lib/haptics";
 import { indianStates } from "@/lib/india";
 import { useTheme } from "@/theme/ThemeProvider";
 import { Button, Card, confirm, EmptyState, ErrorState, Header, Icon, Input, Row, Screen, Select, Skeleton, Stack, Text, toast } from "@/ui";
-import { customerBody, formFromCustomer, gstinStateHint, sameForm, validateCustomer, type CustomerForm, type CustomerFormErrors } from "./form";
+import { cleanMobileInput, customerBody, formFromCustomer, gstinStateHint, sameForm, validateCustomer, type CustomerForm, type CustomerFormErrors } from "./form";
 
 const stateOptions = indianStates.map((s) => ({ value: s.name as string, label: s.name as string }));
 
@@ -101,7 +101,7 @@ function EditForm({ customer }: { customer: CustomerDetailResponse["customer"] }
             label="Mobile"
             prefix="+91"
             value={form.mobile}
-            onChangeText={(t) => set({ mobile: t.replace(/\D/g, "").slice(0, 10) })}
+            onChangeText={(t) => set({ mobile: cleanMobileInput(t) })}
             error={errors.mobile}
             keyboardType="phone-pad"
             textContentType="telephoneNumber"

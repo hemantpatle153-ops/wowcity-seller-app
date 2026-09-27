@@ -1,3 +1,5 @@
+import { useSession } from "@/auth/session";
+import { syncNow } from "@/offline/useQueue";
 import { useQuery, type QueryClient } from "@tanstack/react-query";
 import { api } from "@/api";
 
@@ -20,7 +22,9 @@ export function useSuppliers(q: string) {
 
 /** After a purchase, stock, labels, dues and the dashboard all change. */
 export function invalidateAfterPurchase(qc: QueryClient) {
-  for (const area of ["purchases", "stock", "labels", "dues", "dashboard", "reports", "products"]) void qc.invalidateQueries({ queryKey: [area] });
+  for (const area of ["purchases", "stock", "labels", "dues", "dashboard", "reports", "products", "catalog-search"]) void qc.invalidateQueries({ queryKey: [area] });
+  // New items and prices should scan at the counter straight away, not after the next timed sync.
+  void syncNow(useSession.getState().storeId, { customers: false });
 }
 
 export const payModes = [

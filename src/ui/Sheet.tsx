@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/theme/ThemeProvider";
 import { IconButton } from "./Button";
 import { Text } from "./Text";
+import { ToastHost } from "./Toast";
 
 export type SheetProps = {
   visible: boolean;
@@ -126,6 +127,7 @@ export function Sheet({ visible, onClose, title, subtitle, children, footer, max
             {footer ? <View style={{ paddingHorizontal: theme.space[4], paddingTop: theme.space[2], gap: theme.space[2] }}>{footer}</View> : null}
           </Animated.View>
         </KeyboardAvoidingView>
+        <ToastHost />
       </GestureHandlerRootView>
     </Modal>
   );

@@ -177,7 +177,9 @@ export const usePurchaseDraft = create<PurchaseDraft & Actions>()(
           const items = [...s.items];
           if (index >= 0) items.splice(index + 1, 0, item);
           else items.push(item);
-          return { items, updatedAt: Date.now() };
+          // First item of a new purchase: date it today (the empty draft may be from yesterday).
+          const startingFresh = !draftHasContent(s);
+          return { items, updatedAt: Date.now(), ...(startingFresh ? { date: isoDay() } : {}) };
         }),
       updateItem: (key, patch) => set((s) => ({ items: s.items.map((i) => (i.key === key ? { ...i, ...patch } : i)), updatedAt: Date.now() })),
       removeItem: (key) => {

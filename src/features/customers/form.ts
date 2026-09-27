@@ -12,7 +12,8 @@ export function formFromCustomer(c: CustomerDetailResponse["customer"]): Custome
     mobile: digits.length > 10 ? digits.slice(-10) : digits,
     address: c.address ?? "",
     city: c.city ?? "",
-    state: c.state ?? "",
+    // Saved states like "DELHI" or "Orissa" map to the list name, so old customers stay editable.
+    state: indianStates.find((s) => s.code === gstStateCode(c.state ?? ""))?.name ?? "",
     gstin: (c.gstin ?? "").toUpperCase()
   };
 }
@@ -28,6 +29,13 @@ export function validateCustomer(form: CustomerForm): CustomerFormErrors {
   if (gstin && !GSTIN_PATTERN.test(gstin)) errors.gstin = "That doesn't look like a GSTIN (15 characters, e.g. 23ABCDE1234F1Z5).";
   if (form.state && !indianStates.some((s) => s.name === form.state)) errors.state = "Choose a state from the list.";
   return errors;
+}
+
+/** Typed or pasted mobile: drop a +91 / 0 prefix, keep the last 10 digits. */
+export function cleanMobileInput(text: string) {
+  const digits = text.replace(/\D/g, "");
+  if (digits.length > 10 && (digits.startsWith("91") || digits.startsWith("0"))) return digits.slice(-10);
+  return digits.slice(0, 10);
 }
 
 /** GSTIN state differs from the chosen state: a gentle hint, not an error. */

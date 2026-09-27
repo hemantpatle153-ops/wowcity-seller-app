@@ -39,7 +39,7 @@ function ProfileSheet({ member, visible, onClose }: { member: StaffMember; visib
   const [name, setName] = useState(member.displayName);
   const [mobile, setMobile] = useState(member.mobile ?? "");
   const [touched, setTouched] = useState(false);
-  const save = useAdminMutation(() => api.staff.updateProfile(member.id, { displayName: name.trim(), mobile: mobile.trim() || undefined }), {
+  const save = useAdminMutation(() => api.staff.updateProfile(member.id, { displayName: name.trim(), mobile: mobile.trim() }), {
     invalidate: [adminKeys.staff],
     onSuccess: onClose
   });

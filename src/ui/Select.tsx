@@ -76,7 +76,14 @@ export function Select<V extends string>({
           {error}
         </Text>
       ) : null}
-      <Sheet visible={open} onClose={() => setOpen(false)} title={sheetTitle ?? label ?? "Choose"}>
+      <Sheet
+        visible={open}
+        onClose={() => {
+          setOpen(false);
+          setQ("");
+        }}
+        title={sheetTitle ?? label ?? "Choose"}
+      >
         {searchable || options.length > 12 || allowCustom ? <SearchBar value={q} onChangeText={setQ} placeholder="Search" /> : null}
         {allowCustom && q.trim() && !options.some((o) => o.label.toLowerCase() === q.trim().toLowerCase()) ? (
           <ListRow

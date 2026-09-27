@@ -96,6 +96,9 @@ export function NewPurchaseScreen() {
     const state = usePurchaseDraft.getState();
     if (state.shopCode && state.shopCode !== me.shopCode) state.reset({ shopCode: me.shopCode });
     else if (!state.shopCode) state.set({ shopCode: me.shopCode });
+    // An empty draft saved yesterday must not post today's purchase on yesterday's date (wrong GST period on the 1st).
+    const fresh = usePurchaseDraft.getState();
+    if (!draftHasContent(fresh) && fresh.date !== isoDay()) fresh.set({ date: isoDay() });
   }, [hydrated, me]);
 
   const stores = setup?.stores ?? [];

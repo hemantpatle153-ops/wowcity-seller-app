@@ -1,7 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useDeferredValue, useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { Platform, RefreshControl, ScrollView, View } from "react-native";
 import Animated, { FadeIn, FadeInDown, FadeOut, LinearTransition } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -349,6 +349,10 @@ type JobRow = LabelJobsResponse["rows"][number];
 
 function HistoryTab() {
   const theme = useTheme();
+  const canPrint = can(
+    useSession((s) => s.me),
+    "barcode.print"
+  );
   const insets = useSafeAreaInsets();
   const [source, setSource] = useState<(typeof sources)[number]["key"]>("all");
   const jobs = useInfiniteQuery({
@@ -360,7 +364,8 @@ function HistoryTab() {
   const rows = jobs.data?.pages.flatMap((p) => p.rows) ?? [];
   const renderRow = ({ item }: { item: JobRow }) => (
     <PressableScale
-      onPress={() => router.push(`/labels/jobs/${item.id}`)}
+      onPress={canPrint ? () => router.push(`/labels/jobs/${item.id}`) : undefined}
+      accessibilityRole={canPrint ? "button" : "text"}
       scaleTo={0.985}
       accessibilityLabel={`${item.title}, ${formatRelative(item.at)}, ${item.labels} labels`}
       style={{
@@ -449,13 +454,34 @@ function useJobPreload(jobId: string | undefined) {
   return job;
 }
 
-export function LabelsScreen({ jobId }: { jobId?: string }) {
+/** Adds the item opened from a stock page ("Print label") to the print list once. */
+function useVariantPreload(variantId: string | undefined, barcode: string | undefined) {
+  const term = (barcode ?? "").trim();
+  const found = useQuery({ queryKey: labelKeys.search(term), queryFn: () => api.labels.search(term), enabled: !!variantId && term.length >= 2 });
+  const handled = useRef<string | null>(null);
+  useEffect(() => {
+    if (!variantId || handled.current === variantId || !found.data) return;
+    handled.current = variantId;
+    const item = found.data.items.find((i) => i.variantId === variantId);
+    if (!item) {
+      toast.warning("That item has no barcode to print yet.");
+      return;
+    }
+    const list = usePrintList.getState();
+    if (!list.lines.some((l) => l.item.variantId === variantId)) list.add(item);
+    toast.success(`Added ${item.name} to the print list`);
+  }, [variantId, found.data]);
+  return found;
+}
+
+export function LabelsScreen({ jobId, variantId, barcode }: { jobId?: string; variantId?: string; barcode?: string }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const me = useSession((s) => s.me);
   const canPrint = can(me, "barcode.print");
   const [tab, setTab] = useState<"print" | "history">(canPrint ? "print" : "history");
   const job = useJobPreload(canPrint ? jobId : undefined);
+  useVariantPreload(canPrint ? variantId : undefined, barcode);
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.bg, paddingTop: insets.top }}>
       <Header back title="Barcode labels" subtitle={jobId && job.data ? `Loaded ${job.data.items.length} item${job.data.items.length === 1 ? "" : "s"} from a print job` : undefined} />

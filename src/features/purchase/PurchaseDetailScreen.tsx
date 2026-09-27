@@ -163,7 +163,7 @@ export function PurchaseDetailScreen({ id }: { id: string }) {
               </Text>
             </View>
           </Row>
-          {can(me, "reports.due") ? <Button label="Supplier statement" icon="document-text-outline" variant="soft" onPress={() => router.push(`/dues/supplier/${data.supplier!.id}`)} /> : null}
+          {isOwner(me) ? <Button label="Supplier statement" icon="document-text-outline" variant="soft" onPress={() => router.push(`/dues/supplier/${data.supplier!.id}`)} /> : null}
         </Card>
       ) : (
         <Card>
@@ -256,7 +256,7 @@ export function PurchaseDetailScreen({ id }: { id: string }) {
                     </Text>
                   </View>
                   <Text variant="bodyStrong" tabular>
-                    {m(r.amount)}
+                    {t ? m(r.amount) : "—"}
                   </Text>
                 </Row>
               </View>

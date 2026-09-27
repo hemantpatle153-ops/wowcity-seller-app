@@ -64,6 +64,9 @@ export function EntrySheet({
       void qc.invalidateQueries({ queryKey: ["dashboard"] });
       void qc.invalidateQueries({ queryKey: ["customers"] });
       void qc.invalidateQueries({ queryKey: ["reports"] });
+      // Balances also show on the Sell tab's customer search and on supplier/purchase screens.
+      void qc.invalidateQueries({ queryKey: ["customer-search"] });
+      void qc.invalidateQueries({ queryKey: ["purchases"] });
       onSaved?.();
       onClose();
     },

@@ -128,32 +128,30 @@ describe("receipts", () => {
 
 describe("returns", () => {
   it("previews the refund at what was actually paid per unit, not the list rate", () => {
-    useCart
-      .getState()
-      .startReturn(
-        { invoiceId: "inv", billNumber: "MG/1", date: "2026-09-01", total: 1079.1 },
-        null,
-        [
-          {
-            key: "k",
-            variantId: "v",
-            itemName: "Kurta",
-            detail: "",
-            barcode: "",
-            qty: 1,
-            mrp: 1299,
-            rate: 1199,
-            gstRate: 5,
-            discountPercent: 0,
-            discountAmount: 0,
-            availableQty: null,
-            originalItemId: "o",
-            maxQty: 1,
-            unitRefund: 1079.1
-          }
-        ],
-        "inclusive"
-      );
+    useCart.getState().startReturn(
+      { invoiceId: "inv", billNumber: "MG/1", date: "2026-09-01", total: 1079.1 },
+      null,
+      [
+        {
+          key: "k",
+          variantId: "v",
+          itemName: "Kurta",
+          detail: "",
+          barcode: "",
+          qty: 1,
+          mrp: 1299,
+          rate: 1199,
+          gstRate: 5,
+          discountPercent: 0,
+          discountAmount: 0,
+          availableQty: null,
+          originalItemId: "o",
+          maxQty: 1,
+          unitRefund: 1079.1
+        }
+      ],
+      "inclusive"
+    );
     const totals = computeTotals(useCart.getState(), "Madhya Pradesh", "nearest_rupee", true);
     expect(totals.net).toBe(1079.1);
     expect(totals.taxable + totals.gst).toBeCloseTo(1079.1, 2);

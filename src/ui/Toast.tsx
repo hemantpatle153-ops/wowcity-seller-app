@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { AccessibilityInfo, View } from "react-native";
 import Animated, { FadeInUp, FadeOutUp, LinearTransition } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { create } from "zustand";
@@ -15,12 +15,23 @@ type ToastState = { items: ToastItem[]; show: (kind: ToastKind, message: string,
 
 let counter = 0;
 
+// With a screen reader on, toasts (and their Undo) stay long enough to reach.
+let screenReader = false;
+AccessibilityInfo.isScreenReaderEnabled()
+  .then((on) => (screenReader = on))
+  .catch(() => undefined);
+AccessibilityInfo.addEventListener("screenReaderChanged", (on) => (screenReader = on));
+
 export const useToasts = create<ToastState>((set) => ({
   items: [],
   show: (kind, message, action) => {
     const id = ++counter;
-    set((s) => ({ items: [...s.items.slice(-2), { id, kind, message, action }] }));
-    setTimeout(() => set((s) => ({ items: s.items.filter((t) => t.id !== id) })), action ? 6000 : 3200);
+    // A new plain toast replaces the previous one of the same kind (fast scanning shows one "Added…"),
+    // while toasts with an action (Undo) stay until they time out.
+    set((s) => ({ items: [...s.items.filter((t) => t.action || t.kind !== kind).slice(-1), { id, kind, message, action }] }));
+    if (screenReader) AccessibilityInfo.announceForAccessibility(message);
+    const ms = (action ? 6000 : 3200) * (screenReader ? 3 : 1);
+    setTimeout(() => set((s) => ({ items: s.items.filter((t) => t.id !== id) })), ms);
   },
   dismiss: (id) => set((s) => ({ items: s.items.filter((t) => t.id !== id) }))
 }));
@@ -60,11 +71,7 @@ export function ToastHost() {
           layout={theme.reduceMotion ? undefined : LinearTransition}
           style={{ width: "100%", maxWidth: 520 }}
         >
-          <PressableScale
-            onPress={() => dismiss(item.id)}
-            accessibilityRole="alert"
-            accessibilityLiveRegion="polite"
-            accessibilityLabel={item.message}
+          <View
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -85,7 +92,8 @@ export function ToastHost() {
             }}
           >
             <Icon name={icons[item.kind]} size={22} color={colors[item.kind]} />
-            <Text variant="small" weight="600" style={{ flex: 1 }}>
+            {/* The message is its own element, so a screen reader reaches the action and close buttons separately. */}
+            <Text variant="small" weight="600" style={{ flex: 1 }} accessibilityRole="alert" accessibilityLiveRegion="polite">
               {item.message}
             </Text>
             {item.action ? (
@@ -94,7 +102,7 @@ export function ToastHost() {
                   item.action?.onPress();
                   dismiss(item.id);
                 }}
-                style={{ paddingHorizontal: 10, minHeight: 36, justifyContent: "center" }}
+                style={{ paddingHorizontal: 10, minHeight: 44, justifyContent: "center" }}
                 accessibilityLabel={item.action.label}
               >
                 <Text variant="small" weight="800" color="accent">
@@ -102,7 +110,10 @@ export function ToastHost() {
                 </Text>
               </PressableScale>
             ) : null}
-          </PressableScale>
+            <PressableScale onPress={() => dismiss(item.id)} accessibilityLabel="Dismiss" hitSlop={8} style={{ minWidth: 32, minHeight: 44, alignItems: "center", justifyContent: "center" }}>
+              <Icon name="close" size={18} color="textMuted" />
+            </PressableScale>
+          </View>
         </Animated.View>
       ))}
     </View>
