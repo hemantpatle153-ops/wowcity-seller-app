@@ -1,28 +1,59 @@
 {
-  "cli": { "version": ">= 16.0.0", "appVersionSource": "remote" },
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": { "APP_VARIANT": "development" },
-      "android": { "buildType": "apk" },
-      "ios": { "simulator": false }
+      "env": {
+        "APP_VARIANT": "development"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
+    "demo": {
+      "distribution": "internal",
+      "channel": "demo",
+      "env": {
+        "EXPO_PUBLIC_MOCK": "1",
+        "APP_VARIANT": "preview"
+      },
+      "android": {
+        "buildType": "apk"
+      }
     },
     "preview": {
       "distribution": "internal",
       "channel": "preview",
-      "env": { "APP_VARIANT": "preview" },
-      "android": { "buildType": "apk" }
+      "env": {
+        "APP_VARIANT": "preview",
+        "EXPO_PUBLIC_MOCK": "0",
+        "EXPO_PUBLIC_API_URL": "https://wow-city-api-848484285786.asia-southeast1.run.app/api/v1"
+      },
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {
       "channel": "production",
       "autoIncrement": true,
-      "android": { "buildType": "app-bundle" }
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "environment": "production"
     }
   },
   "submit": {
     "production": {
-      "android": { "track": "internal" },
+      "android": {
+        "track": "internal"
+      },
       "ios": {}
     }
   }
