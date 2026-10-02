@@ -1,4 +1,6 @@
+import * as FileSystem from "expo-file-system/legacy";
 import * as ImagePicker from "expo-image-picker";
+import { Platform } from "react-native";
 import { api, errorMessage, MOCK_MODE } from "@/api";
 import { uuid } from "@/lib/id";
 import { usePurchaseDraft, type PhotoDraft, type PhotoType } from "./draft";
@@ -41,12 +43,43 @@ export async function pickPhotos(source: "camera" | "library", room: number): Pr
   return { photos };
 }
 
-/** PUT to the presigned URL. In mock mode the fake backend answers the upload host too. */
-async function putBytes(url: string, body: Blob, contentType: string) {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const doFetch: typeof fetch = MOCK_MODE && url.startsWith("https://mock.wowcity.local") ? require("@/mock/server").mockFetch : fetch;
-  const response = await doFetch(url, { method: "PUT", headers: { "Content-Type": contentType }, body });
-  if (!response.ok) throw new Error(`The photo upload failed (${response.status}). Tap to try again.`);
+const uploadError = (status: number) => new Error(`The photo upload failed (${status}). Tap to try again.`);
+
+/**
+ * The upload URL is signed for one exact Content-Type and byte count, so the bytes must go up untouched.
+ * On a phone the file is sent by the native uploader straight from disk: React Native's fetch with a Blob
+ * body can drop the length or change the Content-Type on Android, and storage then rejects the signature (403).
+ * In mock mode the fake backend answers the upload host.
+ */
+async function putPhoto(url: string, uri: string, contentType: string) {
+  if (MOCK_MODE && url.startsWith("https://mock.wowcity.local")) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { mockFetch } = require("@/mock/server") as { mockFetch: typeof fetch };
+    const response = await mockFetch(url, { method: "PUT", headers: { "Content-Type": contentType }, body: await (await fetch(uri)).blob() });
+    if (!response.ok) throw uploadError(response.status);
+    return;
+  }
+  if (Platform.OS === "web") {
+    const response = await fetch(url, { method: "PUT", headers: { "Content-Type": contentType }, body: await (await fetch(uri)).blob() });
+    if (!response.ok) throw uploadError(response.status);
+    return;
+  }
+  const result = await FileSystem.uploadAsync(url, uri, {
+    httpMethod: "PUT",
+    uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+    headers: { "Content-Type": contentType }
+  });
+  if (result.status < 200 || result.status >= 300) throw uploadError(result.status);
+}
+
+/** Size of the file exactly as it will be uploaded. */
+async function photoSize(photo: PhotoDraft): Promise<number> {
+  if (Platform.OS !== "web") {
+    const info = await FileSystem.getInfoAsync(photo.uri);
+    if (info.exists && !info.isDirectory && info.size) return info.size;
+  }
+  const blob = await (await fetch(photo.uri)).blob();
+  return blob.size || photo.sizeBytes;
 }
 
 /**
@@ -54,12 +87,11 @@ async function putBytes(url: string, body: Blob, contentType: string) {
  * same Content-Type and exact size. Returns the refs to include in the purchase row.
  */
 export async function uploadPhoto(productId: string, photo: PhotoDraft): Promise<Pick<PhotoDraft, "bucket" | "objectKey" | "sizeBytes">> {
-  const blob = await (await fetch(photo.uri)).blob();
-  const sizeBytes = blob.size || photo.sizeBytes;
+  const sizeBytes = await photoSize(photo);
   if (!sizeBytes) throw new Error("Couldn't read this photo. Try another one.");
   if (sizeBytes > MAX_BYTES) throw new Error("This photo is bigger than 5 MB. Take it again or pick a smaller one.");
   const presigned = await api.purchases.imageUpload({ productId, fileName: photo.fileName, contentType: photo.contentType, sizeBytes });
-  await putBytes(presigned.uploadUrl, blob, photo.contentType);
+  await putPhoto(presigned.uploadUrl, photo.uri, photo.contentType);
   return { bucket: presigned.bucket, objectKey: presigned.objectKey, sizeBytes };
 }
 
