@@ -70,7 +70,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     permissions: ["android.permission.CAMERA", "android.permission.VIBRATE"],
     // Bluetooth permissions arrive with the Bluetooth printer module (its config plugin adds them with
     // neverForLocation); declaring them now, unused, only draws store-review questions.
-    blockedPermissions: ["android.permission.RECORD_AUDIO", "android.permission.ACCESS_BACKGROUND_LOCATION"],
+    blockedPermissions: ["android.permission.RECORD_AUDIO", "android.permission.ACCESS_BACKGROUND_LOCATION", "android.permission.SYSTEM_ALERT_WINDOW"],
     predictiveBackGestureEnabled: false
   },
   web: {
