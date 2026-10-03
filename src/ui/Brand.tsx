@@ -1,16 +1,18 @@
-import Svg, { Path, Rect } from "react-native-svg";
-import { useTheme } from "@/theme/ThemeProvider";
+import Svg, { Defs, LinearGradient, Path, Rect, Stop } from "react-native-svg";
 
-/** WowCity mark: a shop-front "W" in a rounded tile, drawn in the accent colour. */
-export function BrandMark({ size = 56, inverted }: { size?: number; inverted?: boolean }) {
-  const theme = useTheme();
-  const bg = inverted ? theme.colors.accentText : theme.colors.accent;
-  const fg = inverted ? theme.colors.accent : theme.colors.accentText;
+/** WowCity logo (same as luzzan.com): a white "W" on the pink → orange → gold tile. Fixed brand colours. */
+export function BrandMark({ size = 56 }: { size?: number; inverted?: boolean }) {
   return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityLabel="WowCity">
-      <Rect x={0} y={0} width={64} height={64} rx={18} fill={bg} />
-      <Path d="M12 16 h40 l-3 7 H15 z" fill={fg} opacity={0.9} />
-      <Path d="M14 28 L21 50 L28 34 L32 44 L36 34 L43 50 L50 28" stroke={fg} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    <Svg width={size} height={size} viewBox="0 0 40 40" accessibilityLabel="WowCity">
+      <Defs>
+        <LinearGradient id="wowcity-brand" x1="0" y1="0" x2="1" y2="1">
+          <Stop offset="0" stopColor="#ff2e7e" />
+          <Stop offset="0.55" stopColor="#ff7a2f" />
+          <Stop offset="1" stopColor="#ffc23d" />
+        </LinearGradient>
+      </Defs>
+      <Rect width={40} height={40} rx={12} fill="url(#wowcity-brand)" />
+      <Path d="M9 13l4.2 14L20 15.5 26.8 27 31 13" fill="none" stroke="#fff" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round" />
     </Svg>
   );
 }

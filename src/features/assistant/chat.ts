@@ -39,3 +39,41 @@ export function voiceErrorMessage(code: string): string | null {
   if (code === "service-not-allowed" || code === "language-not-supported") return "Voice typing isn't available on this phone. You can type instead.";
   return "Couldn't hear that. Tap the mic and try again.";
 }
+
+export type ReplySpan = { text: string; bold: boolean };
+export type ReplyBlock = { kind: "paragraph" | "bullet"; indent: number; spans: ReplySpan[] };
+
+/** Splits **bold** runs; any stray asterisks left over are dropped. */
+function spansOf(line: string): ReplySpan[] {
+  const out: ReplySpan[] = [];
+  line.split(/(\*\*[^*]+\*\*)/g).forEach((part) => {
+    if (!part) return;
+    const bold = /^\*\*[^*]+\*\*$/.test(part);
+    const text = (bold ? part.slice(2, -2) : part).replace(/\*+/g, "").replace(/__/g, "");
+    if (text) out.push({ text, bold });
+  });
+  return out;
+}
+
+/**
+ * Turns the assistant"s reply into paragraphs and bullet rows, so Markdown the model may still send
+ * (**bold**, "- item", "### Heading") shows as clean formatting instead of symbols.
+ */
+export function parseReply(text: string): ReplyBlock[] {
+  const blocks: ReplyBlock[] = [];
+  for (const raw of text.replace(/\r/g, "").split("\n")) {
+    if (!raw.trim()) continue;
+    const bullet = raw.match(/^(\s*)(?:[-*•]|\d+[.)])\s+(.*)$/);
+    if (bullet) {
+      blocks.push({ kind: "bullet", indent: bullet[1].length >= 2 ? 1 : 0, spans: spansOf(bullet[2]) });
+      continue;
+    }
+    const heading = raw.match(/^\s*#{1,6}\s+(.*)$/);
+    if (heading) {
+      blocks.push({ kind: "paragraph", indent: 0, spans: [{ text: heading[1].replace(/\*+/g, ""), bold: true }] });
+      continue;
+    }
+    blocks.push({ kind: "paragraph", indent: 0, spans: spansOf(raw.trim()) });
+  }
+  return blocks;
+}

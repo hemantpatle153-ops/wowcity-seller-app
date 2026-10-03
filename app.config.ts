@@ -64,7 +64,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: bundleId,
     versionCode: 3,
     adaptiveIcon: {
-      backgroundColor: "#1E5BD8",
+      backgroundColor: "#FF6A3D",
       foregroundImage: "./assets/images/android-icon-foreground.png",
       backgroundImage: "./assets/images/android-icon-background.png",
       monochromeImage: "./assets/images/android-icon-monochrome.png"
@@ -82,7 +82,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "expo-router",
-    ["expo-splash-screen", { backgroundColor: "#1E5BD8", image: "./assets/images/splash-icon.png", imageWidth: 96, dark: { backgroundColor: "#15171A" } }],
+    ["expo-splash-screen", { backgroundColor: "#FFFFFF", image: "./assets/images/splash-icon.png", imageWidth: 120, dark: { backgroundColor: "#15171A" } }],
     ["expo-camera", { cameraPermission: CAMERA, recordAudioAndroid: false }],
     ["expo-image-picker", { photosPermission: PHOTOS, cameraPermission: CAMERA }],
     [

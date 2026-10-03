@@ -1,5 +1,5 @@
 import { ApiError } from "@/api/errors";
-import { friendlyError, historyFor, joinSpeech, voiceErrorMessage, type ChatItem } from "@/features/assistant/chat";
+import { friendlyError, historyFor, joinSpeech, parseReply, voiceErrorMessage, type ChatItem } from "@/features/assistant/chat";
 import { mockFetch, resetMock, setMockLatency } from "@/mock/server";
 
 const BASE = "https://mock.wowcity.local/api/v1";
@@ -40,6 +40,15 @@ describe("Sarah, the shop assistant", () => {
     expect(voiceErrorMessage("aborted")).toBeNull();
     expect(voiceErrorMessage("no-speech")).toBeNull();
     expect(voiceErrorMessage("not-allowed")).toMatch(/microphone/);
+  });
+
+  it("shows Markdown from the model as clean bullets and bold text", () => {
+    const blocks = parseReply("Sales:\n- **Today**: ₹1,798\n  * 2 bills");
+    expect(blocks.map((b) => [b.kind, b.indent, b.spans.map((s) => (s.bold ? `[${s.text}]` : s.text)).join("")])).toEqual([
+      ["paragraph", 0, "Sales:"],
+      ["bullet", 0, "[Today]: ₹1,798"],
+      ["bullet", 1, "2 bills"]
+    ]);
   });
 
   it("answers in demo mode and counts questions", async () => {

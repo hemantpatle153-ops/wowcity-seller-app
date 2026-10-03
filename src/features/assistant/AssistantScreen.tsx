@@ -7,6 +7,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 import { Badge, EmptyState, Header, IconButton, Row, Text } from "@/ui";
 import { PressableScale } from "@/ui/Pressable";
 import { ASSISTANT_NAME, friendlyError, historyFor, SUGGESTIONS, type ChatItem } from "./chat";
+import { ReplyText } from "./ReplyText";
 import { useVoiceInput } from "./useVoiceInput";
 
 export function AssistantScreen() {
@@ -188,9 +189,13 @@ function Bubble({ item }: { item: ChatItem }) {
           borderColor: theme.colors.border
         }}
       >
-        <Text variant="body" color={mine ? "accentText" : "text"} selectable>
-          {item.content}
-        </Text>
+        {mine ? (
+          <Text variant="body" color="accentText" selectable>
+            {item.content}
+          </Text>
+        ) : (
+          <ReplyText text={item.content} failed={item.failed} />
+        )}
       </View>
       {item.toolsUsed?.length ? (
         <Row gap={1} wrap>
