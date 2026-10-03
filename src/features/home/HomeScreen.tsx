@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { errorMessage } from "@/api";
@@ -7,7 +8,7 @@ import { useSession } from "@/auth/session";
 import { formatRelative } from "@/lib/format";
 import { useConnectivity } from "@/state/connectivity";
 import { useTheme } from "@/theme/ThemeProvider";
-import { Badge, ChipRow, ErrorState, Row, Screen, Skeleton, SkeletonCards, Stack, Text } from "@/ui";
+import { Badge, ChipRow, ErrorState, IconButton, Row, Screen, Skeleton, SkeletonCards, Stack, Text } from "@/ui";
 import { StorePill } from "@/ui/StorePill";
 import { MyDayCard } from "./MyDayCard";
 import {
@@ -158,6 +159,7 @@ export function HomeScreen() {
               {firstName ? `, ${firstName}` : ""}
             </Text>
             <StorePill />
+            <IconButton icon="sparkles" label="Ask Sarah, your AI assistant" variant="soft" color="accent" onPress={() => router.push("/assistant")} />
           </Row>
           <Text variant="heading" numberOfLines={1} accessibilityRole="header">
             {me?.shopName ?? "Home"}

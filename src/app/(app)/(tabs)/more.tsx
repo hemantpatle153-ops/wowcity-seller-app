@@ -43,7 +43,8 @@ export default function More() {
           { label: "Bills", hint: "Today's bills, returns, reprint", icon: "receipt-outline", href: "/bills", show: can(me, "sale.view", "sale.create") },
           { label: "Dues", hint: "Who owes you, who you owe", icon: "wallet-outline", href: "/dues", show: can(me, "reports.due"), tone: "warning" },
           { label: "Customers", hint: "Profiles, visits and spend", icon: "people-outline", href: "/customers", show: owner },
-          { label: "Reports", hint: "Sales, GST, stock, profit", icon: "stats-chart-outline", href: "/reports", tone: "info" }
+          { label: "Reports", hint: "Sales, GST, stock, profit", icon: "stats-chart-outline", href: "/reports", tone: "info" },
+          { label: "Ask Sarah", hint: "AI assistant for your shop's numbers", icon: "sparkles-outline", href: "/assistant" }
         ]}
       />
       <MenuSection

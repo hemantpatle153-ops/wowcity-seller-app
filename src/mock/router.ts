@@ -3,6 +3,7 @@ import type { Db } from "./db";
 import { parseQuery, type Ctx, type Route } from "./http";
 import { reportExportRoute, reportRoutes } from "./reports";
 import { adminRoutes } from "./routes/admin";
+import { assistantRoutes } from "./routes/assistant";
 import { authRoutes } from "./routes/auth";
 import { dashboardRoutes } from "./routes/dashboard";
 import { inventoryRoutes } from "./routes/inventory";
@@ -12,7 +13,7 @@ import { salesRoutes } from "./routes/sales";
 import { authenticate } from "./state";
 import { MockHttpError, type MockResult } from "./util";
 
-const V1_ROUTES: Route[] = [...authRoutes, ...dashboardRoutes, ...salesRoutes, ...peopleRoutes, ...inventoryRoutes, ...purchaseRoutes, ...reportRoutes, ...adminRoutes];
+const V1_ROUTES: Route[] = [...authRoutes, ...dashboardRoutes, ...salesRoutes, ...peopleRoutes, ...inventoryRoutes, ...purchaseRoutes, ...reportRoutes, ...adminRoutes, ...assistantRoutes];
 const ROOT_ROUTES: Route[] = [imageUploadRoute, reportExportRoute];
 
 function match(routes: Route[], method: string, path: string): { route: Route; params: Record<string, string> } | null {

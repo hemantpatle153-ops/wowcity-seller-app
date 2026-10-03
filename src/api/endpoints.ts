@@ -19,6 +19,10 @@ export function createEndpoints(client: ApiClient) {
     },
     me: () => client.get<T.MeResponse>("/me"),
     dashboard: (store?: string) => client.get<T.DashboardResponse>("/dashboard", { store }),
+    assistant: {
+      status: () => client.get<T.AssistantStatus>("/assistant"),
+      ask: (body: T.AssistantAskBody) => client.post<T.AssistantAnswer>("/assistant", body)
+    },
 
     catalog: {
       lookup: (q: string, storeId: string, inStock = true) => client.get<T.CatalogLookupResponse>("/catalog/lookup", { q, storeId, inStock: inStock ? undefined : "false" })

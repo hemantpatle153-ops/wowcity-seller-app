@@ -1559,3 +1559,10 @@ export interface ProductImageAddBody {
   contentType: "image/jpeg" | "image/png" | "image/webp";
   variantId?: UUID;
 }
+
+// ---------------------------------------------------------------------------------------------
+// AI assistant (POST /assistant): answers from this shop's data only, through server-side tools.
+export type AssistantTurn = { role: "user" | "assistant"; content: string };
+export type AssistantStatus = { enabled: boolean; questionsToday: number; dailyLimit: number };
+export type AssistantAskBody = { messages: AssistantTurn[] };
+export type AssistantAnswer = { answer: string; toolsUsed: string[]; questionsToday: number | null; dailyLimit: number };
