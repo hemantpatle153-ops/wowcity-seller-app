@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Animated, { FadeInDown, LinearTransition } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { can } from "@/auth/permissions";
@@ -75,7 +76,7 @@ export function SellScreen() {
   const primaryLabel = returnMode ? `Refund ${formatMoney(totals.net)}` : cart.billType === "estimate" ? `Save estimate · ${formatMoney(totals.net)}` : `Charge ${formatMoney(totals.net)}`;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: theme.colors.bg }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: theme.colors.bg }} behavior="padding">
       <View style={{ paddingTop: insets.top + 8, paddingHorizontal: 16, gap: 12, backgroundColor: theme.colors.bg }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <View style={{ flex: 1 }}>

@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Animated, { FadeInRight, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { api, errorMessage } from "@/api";
 import type { OtpSignupShop } from "@/api/types";
@@ -128,7 +129,7 @@ export default function Signup() {
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <Screen
         header={<Header back title="Create your shop" onBack={step > 0 ? () => setStep(step - 1) : undefined} />}
         footerSpace={80}

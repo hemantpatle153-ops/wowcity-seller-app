@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Animated, { FadeInLeft, FadeInRight, LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { api, errorMessage } from "@/api";
 import type { PermissionGroup, RolePreset, StaffCreateBody, WorkerGrantablePermission } from "@/api/types";
@@ -114,7 +115,7 @@ function Wizard({ groups, presets, taken }: { groups: PermissionGroup[]; presets
   const entering = theme.reduceMotion ? undefined : (direction === 1 ? FadeInRight : FadeInLeft).duration(240);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <Screen
         header={
           <>

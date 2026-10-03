@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform } from "react-native";
+import { Platform } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { api, errorMessage } from "@/api";
 import { deviceInfo, useSession } from "@/auth/session";
 import { Button, Header, Input, Screen, Segmented, Stack, Text } from "@/ui";
@@ -42,7 +43,7 @@ export default function OwnerSignIn() {
   const idValid = /^\S+@\S+\.\S+$/.test(identifier.trim()) || identifier.replace(/\D/g, "").length >= 10;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <Screen header={<Header back title="Owner sign in" />}>
         <Segmented
           accessibilityLabel="Sign-in method"

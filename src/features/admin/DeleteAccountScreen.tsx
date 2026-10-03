@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { KeyboardAvoidingView, Linking, Platform, View } from "react-native";
+import { Linking, View } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { api, ApiError, errorMessage } from "@/api";
 import { useSession } from "@/auth/session";
@@ -105,7 +106,7 @@ export function DeleteAccountScreen() {
 
   const enter = (i: number) => (theme.reduceMotion ? undefined : FadeInDown.duration(260).delay(i * 60));
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <Screen
         header={<Header back title="Delete account" />}
         footerSpace={110}

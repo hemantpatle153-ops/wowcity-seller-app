@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Linking, Platform } from "react-native";
+import { Linking, Platform } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { api, errorMessage } from "@/api";
 import type { StoreRow, StoreSaveBody } from "@/api/types";
 import { gstStateCode, indianStates } from "@/lib/india";
@@ -134,7 +135,7 @@ function StoreForm({ store }: { store: StoreRow | null }) {
   };
   const gstinState = form.gstin.length >= 2 ? stateNameFor(gstStateCode(form.gstin.slice(0, 2))) : null;
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <Screen
         header={<Header back title={store ? "Edit store" : "Add store"} subtitle={store?.name} />}
         footerSpace={110}

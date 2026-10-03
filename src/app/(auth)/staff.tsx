@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, type TextInput } from "react-native";
+import { type TextInput } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { api, errorMessage } from "@/api";
 import { deviceInfo, useSession } from "@/auth/session";
 import { usePreferences } from "@/state/preferences";
@@ -27,7 +28,7 @@ export default function StaffSignIn() {
   const ready = shopCode.trim().length >= 3 && username.trim().length > 0 && pin.length > 0;
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <Screen header={<Header back title="Staff sign in" subtitle="Your owner gives you these details" />}>
         <Stack gap={4}>
           <Input
