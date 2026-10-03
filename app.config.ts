@@ -17,6 +17,8 @@ const name = IS_DEV ? "WowCity Seller (Dev)" : IS_PREVIEW ? "WowCity Seller (Pre
 
 const CAMERA = "WowCity Seller uses the camera to scan product barcodes while billing and to take product photos.";
 const PHOTOS = "WowCity Seller uses your photos so you can add product pictures.";
+const MICROPHONE = "WowCity Seller uses the microphone only when you tap the mic to speak a question to Sarah, the assistant.";
+const SPEECH = "WowCity Seller turns what you say to Sarah into text.";
 const LOCATION = "WowCity Seller uses your location only when you tap “Use my location” to pin your store on the map for buyers.";
 const BLUETOOTH = "WowCity Seller uses Bluetooth to print receipts on your thermal printer.";
 
@@ -70,7 +72,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     permissions: ["android.permission.CAMERA", "android.permission.VIBRATE"],
     // Bluetooth permissions arrive with the Bluetooth printer module (its config plugin adds them with
     // neverForLocation); declaring them now, unused, only draws store-review questions.
-    blockedPermissions: ["android.permission.RECORD_AUDIO", "android.permission.ACCESS_BACKGROUND_LOCATION", "android.permission.SYSTEM_ALERT_WINDOW"],
+    blockedPermissions: ["android.permission.ACCESS_BACKGROUND_LOCATION", "android.permission.SYSTEM_ALERT_WINDOW"],
     predictiveBackGestureEnabled: false
   },
   web: {
@@ -96,7 +98,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "expo-secure-store",
     "expo-sqlite",
     "expo-sharing",
-    "expo-localization"
+    "expo-localization",
+    ["expo-speech-recognition", { microphonePermission: MICROPHONE, speechRecognitionPermission: SPEECH }]
   ],
   experiments: { typedRoutes: true, reactCompiler: true },
   extra: {

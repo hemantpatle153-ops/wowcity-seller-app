@@ -7,6 +7,7 @@ import { useTheme } from "@/theme/ThemeProvider";
 import { Badge, EmptyState, Header, IconButton, Row, Text } from "@/ui";
 import { PressableScale } from "@/ui/Pressable";
 import { ASSISTANT_NAME, friendlyError, historyFor, SUGGESTIONS, type ChatItem } from "./chat";
+import { useVoiceInput } from "./useVoiceInput";
 
 export function AssistantScreen() {
   const theme = useTheme();
@@ -20,10 +21,12 @@ export function AssistantScreen() {
   const questionsToday = used ?? status.data?.questionsToday ?? 0;
   const limit = status.data?.dailyLimit ?? 0;
   const enabled = status.data?.enabled !== false;
+  const voice = useVoiceInput(setDraft);
 
   async function ask(text: string) {
     const question = text.trim();
     if (!question || busy) return;
+    if (voice.listening) voice.stop();
     const next: ChatItem[] = [...items, { id: Date.now(), role: "user", content: question }];
     setItems(next);
     setDraft("");
@@ -128,8 +131,35 @@ export function AssistantScreen() {
                 fontSize: theme.type("body").fontSize
               }}
             />
+            {voice.available && enabled ? (
+              <IconButton
+                icon={voice.listening ? "stop" : "mic-outline"}
+                label={voice.listening ? "Stop listening" : "Speak your question"}
+                variant="soft"
+                color={voice.listening ? "danger" : "accent"}
+                onPress={() => (voice.listening ? voice.stop() : voice.start(draft))}
+              />
+            ) : null}
             <IconButton icon="send" label="Send" variant="filled" disabled={!canSend} onPress={() => ask(draft)} />
           </Row>
+          {voice.available && enabled ? (
+            <Row gap={2} justify="center">
+              <Text variant="caption" color={voice.error ? "danger" : "textMuted"} numberOfLines={2} style={{ flexShrink: 1 }}>
+                {voice.error ?? (voice.listening ? "Listening… speak now" : "Tap the mic to speak in")}
+              </Text>
+              {voice.error || voice.listening ? null : (
+                <PressableScale
+                  onPress={() => voice.setLang(voice.lang === "en-IN" ? "hi-IN" : "en-IN")}
+                  accessibilityLabel={`Voice language ${voice.lang === "en-IN" ? "English" : "Hindi"}. Tap to switch.`}
+                  style={{ paddingHorizontal: 10, paddingVertical: 2, borderRadius: theme.radius.pill, backgroundColor: theme.colors.accentSoft }}
+                >
+                  <Text variant="caption" color="accentSoftText" weight="700">
+                    {voice.lang === "en-IN" ? "English ⇄" : "हिंदी ⇄"}
+                  </Text>
+                </PressableScale>
+              )}
+            </Row>
+          ) : null}
           {limit ? (
             <Text variant="caption" color="textFaint" align="center">
               {questionsToday}/{limit} questions today · {ASSISTANT_NAME} can make mistakes, check important numbers in Reports

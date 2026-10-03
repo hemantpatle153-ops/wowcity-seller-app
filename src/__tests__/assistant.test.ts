@@ -1,5 +1,5 @@
 import { ApiError } from "@/api/errors";
-import { friendlyError, historyFor, type ChatItem } from "@/features/assistant/chat";
+import { friendlyError, historyFor, joinSpeech, voiceErrorMessage, type ChatItem } from "@/features/assistant/chat";
 import { mockFetch, resetMock, setMockLatency } from "@/mock/server";
 
 const BASE = "https://mock.wowcity.local/api/v1";
@@ -31,6 +31,15 @@ describe("Sarah, the shop assistant", () => {
   it("explains the daily limit and being offline in plain words", () => {
     expect(friendlyError(new ApiError(429, "daily_limit", "x"))).toMatch(/tomorrow/);
     expect(friendlyError(new ApiError(0, "network", "x"))).toMatch(/offline/);
+  });
+
+  it("adds what was heard after what was already typed", () => {
+    expect(joinSpeech("", " aaj ki sale ")).toBe("aaj ki sale");
+    expect(joinSpeech("Kal ki ", "sale kitni hui")).toBe("Kal ki sale kitni hui");
+    expect(joinSpeech("typed", "")).toBe("typed");
+    expect(voiceErrorMessage("aborted")).toBeNull();
+    expect(voiceErrorMessage("no-speech")).toBeNull();
+    expect(voiceErrorMessage("not-allowed")).toMatch(/microphone/);
   });
 
   it("answers in demo mode and counts questions", async () => {
