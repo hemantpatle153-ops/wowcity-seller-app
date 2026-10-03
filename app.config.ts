@@ -27,7 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name,
   slug: "wowcity-seller",
   owner: process.env.EXPO_OWNER || undefined,
-  version: "1.0.1",
+  version: "1.0.2",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "wowcityseller",
@@ -62,7 +62,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: bundleId,
-    versionCode: 2,
+    versionCode: 3,
     adaptiveIcon: {
       backgroundColor: "#1E5BD8",
       foregroundImage: "./assets/images/android-icon-foreground.png",
