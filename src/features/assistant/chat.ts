@@ -77,3 +77,11 @@ export function parseReply(text: string): ReplyBlock[] {
   }
   return blocks;
 }
+
+export const EMPTY_REPLY = "Sorry, I couldn't answer that. Try asking in a different way.";
+
+/** Reply blocks that actually have words in them; a reply with none shows a short apology instead of empty bullets. */
+export function visibleBlocks(text: string): ReplyBlock[] {
+  const blocks = parseReply(text).filter((b) => b.spans.some((s) => /[\p{L}\p{N}]/u.test(s.text)));
+  return blocks.length ? blocks : [{ kind: "paragraph", indent: 0, spans: [{ text: EMPTY_REPLY, bold: false }] }];
+}

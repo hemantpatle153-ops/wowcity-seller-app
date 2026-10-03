@@ -107,7 +107,17 @@ export function AssistantScreen() {
             </Row>
           ) : null}
         </ScrollView>
-        <View style={{ borderTopWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface, paddingHorizontal: theme.space[3], paddingTop: theme.space[2], paddingBottom: theme.space[2] + insets.bottom, gap: 4 }}>
+        <View
+          style={{
+            borderTopWidth: 1,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.surface,
+            paddingHorizontal: theme.space[3],
+            paddingTop: theme.space[2],
+            paddingBottom: theme.space[2] + insets.bottom,
+            gap: 4
+          }}
+        >
           <Row gap={2} align="flex-end">
             <TextInput
               value={draft}
@@ -177,7 +187,8 @@ function Bubble({ item }: { item: ChatItem }) {
   const theme = useTheme();
   const mine = item.role === "user";
   return (
-    <View style={{ alignSelf: mine ? "flex-end" : "flex-start", maxWidth: "88%", gap: 6 }}>
+    // Sarah's replies take a fixed width so Android wraps long lines and bullets inside the bubble.
+    <View style={mine ? { alignSelf: "flex-end", maxWidth: "88%", gap: 6 } : { alignSelf: "stretch", marginRight: "8%", gap: 6 }}>
       <View
         style={{
           paddingHorizontal: theme.space[3],
